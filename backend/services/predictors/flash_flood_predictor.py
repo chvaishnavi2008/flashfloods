@@ -104,8 +104,9 @@ class FlashFloodPredictor(BaseHazardPredictor):
             norm_hist_flood * weights["historical_susceptibility"]
         )
 
-        # Apply catchment terrain slope multiplier (steeper slopes accelerate flash floods)
-        raw_score = base_score * features["terrain_multiplier"]
+        # Apply catchment terrain slope multiplier when active precipitation or runoff occurs
+        multiplier = features["terrain_multiplier"] if (features["rainfall_intensity_mm_hr"] > 5.0 or features["river_capacity_pct"] > 30.0) else 1.0
+        raw_score = base_score * multiplier
         risk_score = min(100.0, max(0.0, raw_score))
         risk_level = self.get_level(risk_score)
 

@@ -180,5 +180,15 @@ export const api = {
     });
     if (!res.ok) throw new Error('Failed to apply simulation scenario');
     return res.json();
+  },
+
+  async applyDemoPhase(phase, locationId = null) {
+    const res = await fetch(`${API_BASE_URL}/simulation/demo-phase`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phase, location_id: locationId })
+    });
+    if (!res.ok) throw new Error('Failed to apply demo phase');
+    return res.json();
   }
 };

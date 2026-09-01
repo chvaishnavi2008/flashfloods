@@ -66,6 +66,8 @@ export function AppProvider({ children }) {
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [isAlertHistoryOpen, setIsAlertHistoryOpen] = useState(false);
+  const [demoPhase, setDemoPhase] = useState(1);
+  const [isScenarioRunning, setIsScenarioRunning] = useState(false);
   const [loading, setLoading] = useState(true);
   const [statusMessage, setStatusMessage] = useState('');
 
@@ -290,6 +292,68 @@ export function AppProvider({ children }) {
     }
   };
 
+  // Apply SIH 7-Phase Disaster Scenario Step
+  const applyDemoPhase = async (phaseNum) => {
+    try {
+      setIsSimulating(true);
+      const phaseInt = Math.max(1, Math.min(7, parseInt(phaseNum, 10)));
+      setDemoPhase(phaseInt);
+      setStatusMessage(`Advancing to Phase ${phaseInt}/7...`);
+      
+      const res = await api.applyDemoPhase(phaseInt, selectedLocationId);
+      await fetchSystemData();
+      await fetchLocationData(selectedLocationId);
+
+      setSimulationState(prev => ({
+        ...prev,
+        demo_phase: phaseInt,
+        active_scenario: 'sih_uttarakhand_deluge',
+        scenario_title: res.phase_metadata?.title || `Phase ${phaseInt}`,
+        description: res.phase_metadata?.story_details || ''
+      }));
+
+      if (phaseInt >= 5 && res.alert) {
+        setActiveAlert(res.alert);
+        setShowEmergencyModal(true);
+        if (!isSirenMuted) {
+          soundService.playEmergencySiren();
+          setIsSirenActive(true);
+        }
+      } else if (phaseInt === 1) {
+        soundService.stopEmergencySiren();
+        setIsSirenActive(false);
+        setShowEmergencyModal(false);
+        setActiveAlert(null);
+      }
+      return res;
+    } catch (err) {
+      console.error('[AppContext] Error applying demo phase:', err);
+    } finally {
+      setIsSimulating(false);
+      setStatusMessage('');
+    }
+  };
+
+  // Automated 60-90s SIH Scenario Progression Runner
+  const runDisasterScenario = async () => {
+    setIsScenarioRunning(true);
+    for (let p = 1; p <= 7; p++) {
+      await applyDemoPhase(p);
+      // Wait 10-11 seconds per phase so 7 phases complete in ~75 seconds total
+      await new Promise(resolve => setTimeout(resolve, 10500));
+    }
+    setIsScenarioRunning(false);
+  };
+
+  const pauseDisasterScenario = () => {
+    setIsScenarioRunning(false);
+  };
+
+  const resetDisasterScenario = async () => {
+    setIsScenarioRunning(false);
+    await applyDemoPhase(1);
+  };
+
   // Toggle Siren Audio Mute
   const toggleSiren = () => {
     const muted = soundService.toggleMute();
@@ -433,6 +497,13 @@ export function AppProvider({ children }) {
         setShowNotificationModal,
         isAlertHistoryOpen,
         setIsAlertHistoryOpen,
+        demoPhase,
+        setDemoPhase,
+        isScenarioRunning,
+        applyDemoPhase,
+        runDisasterScenario,
+        pauseDisasterScenario,
+        resetDisasterScenario,
         loading,
         statusMessage,
         selectLocation,

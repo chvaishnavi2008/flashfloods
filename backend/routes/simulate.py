@@ -8,13 +8,30 @@ simulate_bp = Blueprint('simulate', __name__)
 @simulate_bp.route('/api/simulation/status', methods=['GET'])
 def get_simulation_status():
     """
-    Returns the current simulation metadata, timeline step (T0, T+1, T+2),
-    and list of reproducible SIH demonstration scenarios.
+    Returns current simulation metadata, timeline step (T0, T+1, T+2),
+    and 7-Phase SIH demonstration scenario data.
     """
     return jsonify({
         "success": True,
         "data": SimulationEngine.get_simulation_status()
     }), 200
+
+@simulate_bp.route('/api/simulation/demo-phase', methods=['POST'])
+def apply_demo_phase():
+    """
+    Applies one of the 7 discrete phases of the SIH Judging Demo Scenario:
+    POST /api/simulation/demo-phase
+    {
+      "phase": 1 | 2 | 3 | 4 | 5 | 6 | 7,
+      "location_id": Optional[int]
+    }
+    """
+    data = request.get_json() or {}
+    phase = int(data.get('phase', 1))
+    location_id = data.get('location_id')
+    
+    result = SimulationEngine.apply_sih_demo_phase(phase, location_id)
+    return jsonify(result), 200
 
 @simulate_bp.route('/api/simulation/timeline', methods=['POST'])
 def apply_timeline_step():

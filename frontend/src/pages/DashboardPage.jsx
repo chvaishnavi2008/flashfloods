@@ -8,6 +8,7 @@ import LocationSearch from '../components/LocationSearch';
 import CitizenSosModal from '../components/CitizenSosModal';
 import PipelineTraceViewer from '../components/PipelineTraceViewer';
 import SimulationTimelineBar from '../components/SimulationTimelineBar';
+import SihDisasterDemoTheater from '../components/SihDisasterDemoTheater';
 import ImpactAssessmentPanel from '../components/ImpactAssessmentPanel';
 import WhatShouldIDoPanel from '../components/WhatShouldIDoPanel';
 import { 
@@ -93,8 +94,10 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* 2. SIH Live Disaster Simulation Layer Controller */}
-      <SimulationTimelineBar />
+      {/* 2. SIH Judging Demonstration Theater (7-Phase Disaster Walkthrough) */}
+      <section>
+        <SihDisasterDemoTheater />
+      </section>
 
       {/* 3. Stage 6: Prominent 'WHAT SHOULD I DO RIGHT NOW?' Action Directives */}
       <section>
