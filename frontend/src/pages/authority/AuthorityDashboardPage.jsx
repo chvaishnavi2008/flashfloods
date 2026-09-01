@@ -432,13 +432,13 @@ export default function AuthorityDashboardPage() {
           </div>
         </section>
 
-        {/* Emergency Response & Field Units (6 cols) */}
+        {/* Field Rescue & Response Units Allocation (6 cols) */}
         <section className="lg:col-span-6 bg-[#0B1120] border border-slate-700/80 rounded p-4 shadow-sm space-y-3">
           <div className="flex items-center justify-between pb-2 border-b border-slate-800">
             <div className="flex items-center gap-2">
               <Truck className="w-4 h-4 text-emerald-400" />
               <h2 className="text-xs font-bold uppercase tracking-wider text-white">
-                EMERGENCY RESPONSE OPERATIONS
+                FIELD RESCUE & UNIT DEPLOYMENTS
               </h2>
             </div>
             <span className="text-emerald-400 text-[10px] font-bold">4 TEAMS ACTIVE</span>
@@ -472,19 +472,9 @@ export default function AuthorityDashboardPage() {
             ))}
           </div>
 
-          <div className="flex gap-2 pt-1 border-t border-slate-800 text-[11px]">
-            <button
-              onClick={() => setActivePage('emergency-response')}
-              className="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded font-bold text-center"
-            >
-              Review SOS Queue ({pendingSosCount})
-            </button>
-            <button
-              onClick={() => setActivePage('emergency-response')}
-              className="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded font-bold text-center"
-            >
-              Dispatch Response Units
-            </button>
+          <div className="pt-2 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+            <span>Rescue Command Frequency: <strong>VHF Ch 16</strong></span>
+            <span className="text-emerald-400 font-bold">NDRF / SDRF Linked</span>
           </div>
         </section>
       </div>

@@ -65,9 +65,6 @@ export default function App() {
         return <AlertsPage />;
       case 'impact-assessment':
         return <ImpactAssessmentPage />;
-      case 'emergency-response':
-      case 'safe-locations':
-        return <EmergencyResponsePage />;
       case 'ai-risk-engine':
         return <AiRiskEnginePage />;
       case 'simulation-studio':

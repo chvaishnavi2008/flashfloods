@@ -33,7 +33,6 @@ export default function AuthoritySidebar() {
     { id: 'risk-intelligence', label: 'Risk Intelligence', icon: Map },
     { id: 'alerts', label: 'Alerts & Warnings', icon: BellRing, badge: activeAlertsCount },
     { id: 'impact-assessment', label: 'Impact Assessment', icon: Users },
-    { id: 'emergency-response', label: 'Emergency Response', icon: ShieldCheck, badge: pendingSosCount > 0 ? `${pendingSosCount} SOS` : null },
     { id: 'ai-risk-engine', label: 'AI Risk Engine', icon: Brain },
     { id: 'simulation-studio', label: 'Simulation Studio', icon: Zap },
     { id: 'settings', label: 'System Settings', icon: Settings }
