@@ -6,6 +6,7 @@ import AiExplanationPanel from '../components/AiExplanationPanel';
 import SafeLocationList from '../components/SafeLocationList';
 import LocationSearch from '../components/LocationSearch';
 import PipelineTraceViewer from '../components/PipelineTraceViewer';
+import ImpactAssessmentPanel from '../components/ImpactAssessmentPanel';
 import { 
   MapPin, 
   CheckCircle2, 
@@ -201,6 +202,9 @@ export default function LocationRiskPage() {
           </div>
         </div>
       </section>
+
+      {/* Stage 4: Estimated Impact & Exposure Assessment Panel */}
+      <ImpactAssessmentPanel />
 
       {/* AI Risk Explanation Panel */}
       <AiExplanationPanel />
