@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import CitizenSosModal from './CitizenSosModal';
 import { 
-  LayoutDashboard, 
+  Home, 
   Map, 
   BellRing, 
+  Building2, 
+  Navigation, 
+  HeartPulse, 
+  ShieldAlert, 
+  UserCheck, 
+  LayoutDashboard, 
   Users, 
   ShieldCheck, 
   Brain, 
   Zap, 
-  Settings, 
-  ShieldAlert, 
-  UserCheck, 
-  HeartPulse,
-  Radio,
-  Building2,
-  Navigation
+  Settings 
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -33,65 +33,101 @@ export default function Sidebar() {
   const pendingSosCount = (sosRequests || []).filter(s => s.status === 'PENDING').length;
   const activeAlertsCount = systemRisk?.stats?.active_alerts || 0;
 
-  // The 8 Canonical Product Workspaces
-  const navItems = [
+  // 1. Citizen-First Navigation (Simple, Human, Action-Oriented)
+  const citizenNavItems = [
     { 
       id: 'dashboard', 
-      label: 'Dashboard', 
-      tag: 'Real-time overview',
+      label: 'Home', 
+      tag: 'Am I safe?',
+      icon: Home 
+    },
+    { 
+      id: 'map', 
+      label: 'Danger Map', 
+      tag: 'Floods & slopes',
+      icon: Map 
+    },
+    { 
+      id: 'alerts', 
+      label: 'My Alerts', 
+      tag: 'Local warnings',
+      icon: BellRing, 
+      badge: activeAlertsCount 
+    },
+    { 
+      id: 'safe-locations', 
+      label: 'Safe Places', 
+      tag: 'Relief shelters',
+      icon: Building2 
+    },
+    { 
+      id: 'evacuation', 
+      label: 'Evacuation', 
+      tag: 'Safest routes',
+      icon: Navigation 
+    },
+    { 
+      id: 'emergency-help', 
+      label: 'Emergency Help', 
+      tag: 'SOS & contacts',
+      icon: HeartPulse,
+      highlightRed: true
+    }
+  ];
+
+  // 2. Authority Command Navigation (Full Technical Intelligence Workspaces)
+  const authorityNavItems = [
+    { 
+      id: 'authority', 
+      label: 'Command Dashboard', 
       icon: LayoutDashboard 
     },
     { 
       id: 'risk-intelligence', 
       label: 'Risk Intelligence', 
-      tag: 'Threat GIS & layers',
       icon: Map 
     },
     { 
       id: 'alerts', 
       label: 'Alerts & Warnings', 
-      tag: 'Broadcast feeds',
       icon: BellRing, 
       badge: activeAlertsCount 
     },
     { 
       id: 'impact-assessment', 
       label: 'Impact Assessment', 
-      tag: 'Exposure & assets',
       icon: Users 
     },
     { 
       id: 'emergency-response', 
       label: 'Emergency Response', 
-      tag: 'Shelters & routes',
       icon: ShieldCheck 
     },
     { 
       id: 'ai-risk-engine', 
       label: 'AI Risk Engine', 
-      tag: 'Formula & pipeline',
       icon: Brain 
     },
     { 
       id: 'simulation-studio', 
       label: 'Simulation Studio', 
-      tag: 'SIH 7-phase demo',
       icon: Zap,
-      highlight: true
+      highlightIndigo: true 
     },
     { 
       id: 'settings', 
       label: 'Settings', 
-      tag: 'Subscriptions & role',
       icon: Settings 
     }
   ];
 
+  const currentNavItems = userRole === 'authority' ? authorityNavItems : citizenNavItems;
+
   return (
     <aside className="w-64 bg-[#1E293B] border-r border-[#334155] flex flex-col justify-between h-[calc(100vh-64px)] p-4 shrink-0 overflow-y-auto font-mono">
-      {/* Navigation List */}
+      {/* Top Navigation Items */}
       <div className="space-y-5">
-        {/* Role Switcher Pill */}
+        {/* Active Role Indicator Card */}
         <div className={`p-2.5 rounded-xl border flex items-center justify-between transition-all ${
           userRole === 'authority'
             ? 'bg-red-950/40 border-red-500/40 text-red-300'
@@ -105,53 +141,63 @@ export default function Sidebar() {
             )}
             <div className="truncate">
               <span className="text-[9px] uppercase tracking-wider block opacity-70">
-                Mode
+                Experience
               </span>
               <span className="text-xs font-bold truncate">
-                {userRole === 'authority' ? 'Authority SEOC' : 'Citizen Safety'}
+                {userRole === 'authority' ? 'Authority Command' : 'Citizen Safety'}
               </span>
             </div>
           </div>
 
           <button
-            onClick={() => setUserRole(userRole === 'authority' ? 'citizen' : 'authority')}
+            onClick={() => {
+              const nextRole = userRole === 'authority' ? 'citizen' : 'authority';
+              setUserRole(nextRole);
+              setActivePage(nextRole === 'authority' ? 'authority' : 'dashboard');
+            }}
             className="text-[10px] underline hover:text-white transition-all ml-1 shrink-0"
           >
             Switch
           </button>
         </div>
 
-        {/* 8 Clean Core Workspaces */}
+        {/* Navigation Item Links */}
         <div>
           <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2 px-2">
-            Disaster Workspaces
+            {userRole === 'authority' ? 'SEOC Workspaces' : 'Citizen Safety Navigation'}
           </p>
           <nav className="space-y-1">
-            {navItems.map((item) => {
+            {currentNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = activePage === item.id || 
-                (item.id === 'risk-intelligence' && (activePage === 'map' || activePage === 'location-risk')) ||
-                (item.id === 'emergency-response' && activePage === 'safe-locations');
-              
+                (item.id === 'map' && activePage === 'map') ||
+                (item.id === 'safe-locations' && activePage === 'safe-locations');
+
               return (
                 <button
                   key={item.id}
                   onClick={() => setActivePage(item.id)}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                     isActive
-                      ? item.highlight
-                        ? 'bg-indigo-600/30 text-indigo-200 border border-indigo-500/60 shadow-md ring-1 ring-indigo-500/30'
-                        : 'bg-blue-600/20 text-blue-300 border border-blue-500/40 shadow-sm'
-                      : item.highlight
-                        ? 'text-indigo-300 hover:bg-indigo-950/40 border border-indigo-500/20'
-                        : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                      ? item.highlightIndigo
+                        ? 'bg-indigo-600/30 text-indigo-200 border border-indigo-500/60 shadow-md'
+                        : item.highlightRed
+                          ? 'bg-red-600/30 text-red-200 border border-red-500/60 shadow-md'
+                          : userRole === 'authority'
+                            ? 'bg-red-600/20 text-red-300 border border-red-500/40 shadow-sm'
+                            : 'bg-blue-600/20 text-blue-300 border border-blue-500/40 shadow-sm'
+                      : item.highlightRed
+                        ? 'text-red-300 hover:bg-red-950/40 border border-red-500/20'
+                        : item.highlightIndigo
+                          ? 'text-indigo-300 hover:bg-indigo-950/40 border border-indigo-500/20'
+                          : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 truncate">
                     <Icon className={`w-4 h-4 shrink-0 ${
                       isActive 
-                        ? (item.highlight ? 'text-indigo-300' : 'text-blue-400') 
-                        : (item.highlight ? 'text-indigo-400' : 'text-slate-400')
+                        ? (userRole === 'authority' ? 'text-red-400' : 'text-blue-400') 
+                        : (item.highlightRed ? 'text-red-400' : (item.highlightIndigo ? 'text-indigo-400' : 'text-slate-400'))
                     }`} />
                     <div className="text-left truncate">
                       <span className="block font-bold truncate">{item.label}</span>
@@ -169,27 +215,31 @@ export default function Sidebar() {
           </nav>
         </div>
 
-        {/* SOS Emergency Trigger Button */}
-        <div className="pt-2">
-          <button
-            onClick={() => setIsSosOpen(true)}
-            className="w-full flex items-center justify-center gap-2 p-2.5 bg-red-600/20 border border-red-500 text-red-300 hover:bg-red-600 hover:text-white rounded-xl text-xs font-bold transition-all shadow-md"
-          >
-            <HeartPulse className="w-4 h-4 animate-pulse text-red-400" />
-            <span>REQUEST SOS RESCUE</span>
-          </button>
-        </div>
+        {/* SOS Button in Sidebar (Citizen Mode) */}
+        {userRole === 'citizen' && (
+          <div className="pt-2">
+            <button
+              onClick={() => setIsSosOpen(true)}
+              className="w-full flex items-center justify-center gap-2 p-3 bg-red-600/20 border border-red-500 text-red-300 hover:bg-red-600 hover:text-white rounded-xl text-xs font-bold transition-all shadow-md"
+            >
+              <HeartPulse className="w-4 h-4 animate-pulse text-red-400" />
+              <span>REQUEST SOS RESCUE</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Footer Info */}
       <div className="pt-3 border-t border-[#334155] text-[10px] text-slate-400 space-y-1">
         <div className="flex justify-between">
-          <span>Himalayan Arc:</span>
+          <span>Active Sector:</span>
           <span className="text-blue-400 font-bold">Chamoli (Alaknanda)</span>
         </div>
         <div className="flex justify-between">
-          <span>Early Warning:</span>
-          <span className="text-emerald-400 font-bold">CAP-RSS v1.2</span>
+          <span>Mode:</span>
+          <span className={userRole === 'authority' ? 'text-red-400 font-bold' : 'text-emerald-400 font-bold'}>
+            {userRole === 'authority' ? 'SEOC Expert' : 'Citizen Plain-Language'}
+          </span>
         </div>
       </div>
 

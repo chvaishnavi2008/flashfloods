@@ -7,25 +7,53 @@ import NotificationModal from './components/NotificationModal';
 import EarlyWarningAlertModal from './components/EarlyWarningAlertModal';
 import AlertHistoryModal from './components/AlertHistoryModal';
 
-// Pages
-import DashboardPage from './pages/DashboardPage';
+// Citizen-First Simple Pages
+import CitizenHomePage from './pages/CitizenHomePage';
+import CitizenDangerMapPage from './pages/CitizenDangerMapPage';
+import CitizenSafePlacesPage from './pages/CitizenSafePlacesPage';
+import CitizenEvacuationPage from './pages/CitizenEvacuationPage';
+import CitizenEmergencyHelpPage from './pages/CitizenEmergencyHelpPage';
+
+// Authority Command Technical Workspaces
+import AuthorityPage from './pages/AuthorityPage';
 import RiskIntelligencePage from './pages/RiskIntelligencePage';
 import AlertsPage from './pages/AlertsPage';
 import ImpactAssessmentPage from './pages/ImpactAssessmentPage';
 import EmergencyResponsePage from './pages/EmergencyResponsePage';
 import AiRiskEnginePage from './pages/AiRiskEnginePage';
 import SimulationStudioPage from './pages/SimulationStudioPage';
-import AuthorityPage from './pages/AuthorityPage';
 import SettingsPage from './pages/SettingsPage';
+import DashboardPage from './pages/DashboardPage';
 
 export default function App() {
   const { activePage, userRole, isAlertHistoryOpen, setIsAlertHistoryOpen } = useApp();
 
   const renderActivePage = () => {
+    // 1. Citizen Experience (Simple, Actionable, High-Contrast)
+    if (userRole === 'citizen') {
+      switch (activePage) {
+        case 'map':
+          return <CitizenDangerMapPage />;
+        case 'safe-locations':
+          return <CitizenSafePlacesPage />;
+        case 'evacuation':
+          return <CitizenEvacuationPage />;
+        case 'emergency-help':
+          return <CitizenEmergencyHelpPage />;
+        case 'alerts':
+          return <AlertsPage />;
+        case 'settings':
+          return <SettingsPage />;
+        case 'dashboard':
+        default:
+          return <CitizenHomePage />;
+      }
+    }
+
+    // 2. Authority SEOC Command Experience (Full Technical Multi-Hazard Intelligence)
     switch (activePage) {
       case 'risk-intelligence':
       case 'map':
-      case 'location-risk':
         return <RiskIntelligencePage />;
       case 'alerts':
         return <AlertsPage />;
@@ -38,13 +66,13 @@ export default function App() {
         return <AiRiskEnginePage />;
       case 'simulation-studio':
         return <SimulationStudioPage />;
-      case 'authority':
-        return <AuthorityPage />;
       case 'settings':
         return <SettingsPage />;
       case 'dashboard':
-      default:
         return <DashboardPage />;
+      case 'authority':
+      default:
+        return <AuthorityPage />;
     }
   };
 
