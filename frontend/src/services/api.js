@@ -122,5 +122,22 @@ export const api = {
     const res = await fetch(`${API_BASE_URL}/pipeline/${locationId}`);
     if (!res.ok) throw new Error('Failed to fetch pipeline trace');
     return res.json();
+  },
+
+  // 10. Direct Risk Intelligence Engine Evaluation
+  async evaluateCustomRisk(payload) {
+    const res = await fetch(`${API_BASE_URL}/risk/evaluate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Failed to evaluate risk payload');
+    return res.json();
+  },
+
+  async getHazardRisk(locationId, hazardKey) {
+    const res = await fetch(`${API_BASE_URL}/risk/${locationId}/hazard/${hazardKey}`);
+    if (!res.ok) throw new Error(`Failed to fetch hazard risk for ${hazardKey}`);
+    return res.json();
   }
 };

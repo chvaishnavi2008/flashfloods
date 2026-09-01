@@ -89,7 +89,7 @@ class DisasterIntelligencePipeline:
         cy_pred = hazard_predictions.get("cyclone", {})
 
         # Dynamic score aggregation across all registered predictors
-        scores = [pred.get("score", 0.0) for pred in hazard_predictions.values()]
+        scores = [float(pred.get("riskScore", pred.get("score", 0.0))) for pred in hazard_predictions.values()]
         if not scores:
             scores = [0.0]
         
@@ -219,19 +219,21 @@ class DisasterIntelligencePipeline:
             "summary": {
                 "overall_score": round(composite_score, 1),
                 "overall_level": overall_level,
+                "riskScore": round(composite_score, 1),
+                "riskLevel": overall_level,
                 "lead_time_minutes": lead_time,
-                "flash_flood_score": ff_pred.get("score", 0.0),
-                "flash_flood_level": ff_pred.get("level", "LOW"),
-                "landslide_score": ls_pred.get("score", 0.0),
-                "landslide_level": ls_pred.get("level", "LOW"),
-                "heavy_rainfall_score": hr_pred.get("score", 0.0),
-                "heavy_rainfall_level": hr_pred.get("level", "LOW"),
-                "flood_score": fl_pred.get("score", 0.0),
-                "flood_level": fl_pred.get("level", "LOW"),
-                "cyclone_score": cy_pred.get("score", 0.0),
-                "cyclone_level": cy_pred.get("level", "LOW"),
-                "glof_score": hazard_predictions.get("glof", {}).get("score", 0.0),
-                "glof_level": hazard_predictions.get("glof", {}).get("level", "LOW"),
+                "flash_flood_score": ff_pred.get("riskScore", ff_pred.get("score", 0.0)),
+                "flash_flood_level": ff_pred.get("riskLevel", ff_pred.get("level", "LOW")),
+                "landslide_score": ls_pred.get("riskScore", ls_pred.get("score", 0.0)),
+                "landslide_level": ls_pred.get("riskLevel", ls_pred.get("level", "LOW")),
+                "heavy_rainfall_score": hr_pred.get("riskScore", hr_pred.get("score", 0.0)),
+                "heavy_rainfall_level": hr_pred.get("riskLevel", hr_pred.get("level", "LOW")),
+                "flood_score": fl_pred.get("riskScore", fl_pred.get("score", 0.0)),
+                "flood_level": fl_pred.get("riskLevel", fl_pred.get("level", "LOW")),
+                "cyclone_score": cy_pred.get("riskScore", cy_pred.get("score", 0.0)),
+                "cyclone_level": cy_pred.get("riskLevel", cy_pred.get("level", "LOW")),
+                "glof_score": hazard_predictions.get("glof", {}).get("riskScore", hazard_predictions.get("glof", {}).get("score", 0.0)),
+                "glof_level": hazard_predictions.get("glof", {}).get("riskLevel", hazard_predictions.get("glof", {}).get("level", "LOW")),
                 "hazard_predictions": hazard_predictions,
                 "exposed_population": impact_assessment.get("exposed_population", 0),
                 "recommended_action": directive

@@ -138,21 +138,34 @@ class RiskAssessment(db.Model):
             "location_id": self.location_id,
             "overall_score": round(self.overall_score, 1),
             "overall_level": self.overall_level,
+            "riskScore": round(self.overall_score, 1),
+            "riskLevel": self.overall_level,
+            "confidence": 0.91,
+            "factors": factors,
+            "recommendedActions": [self.recommended_action] if self.recommended_action else [],
             "flash_flood": {
                 "score": round(self.flash_flood_score, 1),
-                "level": self.flash_flood_level
+                "level": self.flash_flood_level,
+                "riskScore": round(self.flash_flood_score, 1),
+                "riskLevel": self.flash_flood_level
             },
             "flood": {
                 "score": round(self.flood_score, 1),
-                "level": self.flood_level
+                "level": self.flood_level,
+                "riskScore": round(self.flood_score, 1),
+                "riskLevel": self.flood_level
             },
             "landslide": {
                 "score": round(self.landslide_score, 1),
-                "level": self.landslide_level
+                "level": self.landslide_level,
+                "riskScore": round(self.landslide_score, 1),
+                "riskLevel": self.landslide_level
             },
             "heavy_rainfall": {
                 "score": round(self.heavy_rainfall_score, 1),
-                "level": self.heavy_rainfall_level
+                "level": self.heavy_rainfall_level,
+                "riskScore": round(self.heavy_rainfall_score, 1),
+                "riskLevel": self.heavy_rainfall_level
             },
             "lead_time_minutes": self.lead_time_minutes,
             "contributing_factors": factors,
