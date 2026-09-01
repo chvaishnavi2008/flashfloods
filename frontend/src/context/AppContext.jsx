@@ -22,6 +22,7 @@ export function AppProvider({ children }) {
   const [selectedShelter, setSelectedShelter] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [latestNotification, setLatestNotification] = useState(null);
+  const [pipelineData, setPipelineData] = useState(null);
   
   // Citizen SOS Rescue Requests Queue
   const [sosRequests, setSosRequests] = useState([
@@ -99,6 +100,12 @@ export function AppProvider({ children }) {
         setSelectedLocation(riskRes.location);
         setLocationRisk(riskRes.risk_assessment);
         setEnvironmentalData(riskRes.environmental_data);
+        if (riskRes.pipeline_stages) {
+          setPipelineData({
+            stages: riskRes.pipeline_stages,
+            impact: riskRes.impact_assessment
+          });
+        }
 
         // Check if critical/high risk triggers emergency alert state
         if (riskRes.risk_assessment.overall_level === 'CRITICAL') {
@@ -316,6 +323,7 @@ export function AppProvider({ children }) {
         updateSosStatus,
         notifications,
         latestNotification,
+        pipelineData,
         selectedLayer,
         setSelectedLayer,
         isSimulating,

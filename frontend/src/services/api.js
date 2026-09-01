@@ -115,5 +115,12 @@ export const api = {
     const res = await fetch(`${API_BASE_URL}/environmental-data${query}`);
     if (!res.ok) throw new Error('Failed to fetch environmental data');
     return res.json();
+  },
+
+  // 9. Complete 6-Stage Disaster Intelligence Pipeline Trace
+  async getPipelineTrace(locationId) {
+    const res = await fetch(`${API_BASE_URL}/pipeline/${locationId}`);
+    if (!res.ok) throw new Error('Failed to fetch pipeline trace');
+    return res.json();
   }
 };

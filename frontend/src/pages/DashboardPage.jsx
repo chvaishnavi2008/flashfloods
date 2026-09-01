@@ -6,6 +6,7 @@ import AiExplanationPanel from '../components/AiExplanationPanel';
 import SafeLocationList from '../components/SafeLocationList';
 import LocationSearch from '../components/LocationSearch';
 import CitizenSosModal from '../components/CitizenSosModal';
+import PipelineTraceViewer from '../components/PipelineTraceViewer';
 import { 
   AlertTriangle, 
   ShieldAlert, 
@@ -279,7 +280,12 @@ export default function DashboardPage() {
         <RiskMap height="460px" showRoute={true} />
       </section>
 
-      {/* 5. AI Risk Explanation & Nearest Safe Shelters Grid */}
+      {/* 5. Complete 6-Stage Disaster Intelligence Pipeline Trace */}
+      <section>
+        <PipelineTraceViewer />
+      </section>
+
+      {/* 6. AI Risk Explanation & Nearest Safe Shelters Grid */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-6">
           <AiExplanationPanel />

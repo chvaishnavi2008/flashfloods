@@ -5,6 +5,7 @@ import HazardCard from '../components/HazardCard';
 import AiExplanationPanel from '../components/AiExplanationPanel';
 import SafeLocationList from '../components/SafeLocationList';
 import LocationSearch from '../components/LocationSearch';
+import PipelineTraceViewer from '../components/PipelineTraceViewer';
 import { 
   MapPin, 
   CheckCircle2, 
@@ -203,6 +204,9 @@ export default function LocationRiskPage() {
 
       {/* AI Risk Explanation Panel */}
       <AiExplanationPanel />
+
+      {/* Complete 6-Stage Disaster Intelligence Pipeline Trace */}
+      <PipelineTraceViewer />
 
       {/* Safe Locations List */}
       <SafeLocationList />

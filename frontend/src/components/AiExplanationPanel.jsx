@@ -35,11 +35,15 @@ export default function AiExplanationPanel() {
 
       {/* AI Grounded Summary */}
       <div className="p-5 space-y-4">
-        <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-200 text-sm leading-relaxed">
+        <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-200 text-sm leading-relaxed space-y-2">
           <p className="font-sans">
             {locationRisk.ai_explanation ||
               `In ${selectedLocation?.name}, the current risk index (${locationRisk.overall_score}/100 - ${locationRisk.overall_level}) is driven by localized precipitation rates and saturated soil moisture levels across surrounding mountain slopes.`}
           </p>
+          <div className="pt-2 border-t border-slate-800/80 flex items-center gap-2 text-[11px] font-mono text-slate-400">
+            <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+            <span>Reasoning Source: Deterministic Hydrological & Geotechnical Physics Engine with Pluggable ML Hooks</span>
+          </div>
         </div>
 
         {/* Contributing Environmental Factors */}

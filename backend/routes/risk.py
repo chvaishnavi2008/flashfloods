@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from models import Location, RiskAssessment, EnvironmentalData, Alert
 from services.risk_engine import PrototypeRiskAssessmentEngine
+from services.pipeline_engine import DisasterIntelligencePipeline
 from services.ai_service import AiIntelligenceService
 from database import db
 
@@ -90,7 +91,7 @@ def get_location_risk(location_id):
         db.session.add(env_data)
         db.session.commit()
         
-    # Recalculate risk on demand from latest environmental telemetry
+    # Recalculate risk on demand from latest environmental telemetry via modular pipeline
     risk_calc = PrototypeRiskAssessmentEngine.evaluate_composite_risk(env_data, location)
     
     # Generate / update AI explanation
@@ -124,5 +125,26 @@ def get_location_risk(location_id):
         "success": True,
         "location": location.to_dict(),
         "environmental_data": env_data.to_dict(),
-        "risk_assessment": latest_assessment.to_dict()
+        "risk_assessment": latest_assessment.to_dict(),
+        "impact_assessment": risk_calc.get("impact_assessment", {}),
+        "pipeline_stages": risk_calc.get("pipeline_stages", {})
     }), 200
+
+@risk_bp.route('/api/pipeline/<int:location_id>', methods=['GET'])
+def get_pipeline_trace(location_id):
+    """
+    Returns the complete 6-stage Disaster Intelligence Pipeline trace:
+    DATA -> RISK ANALYSIS -> HAZARD PREDICTION -> IMPACT ASSESSMENT -> EARLY WARNING -> ACTION RECOMMENDATION
+    """
+    location = Location.query.get(location_id)
+    if not location:
+        return jsonify({"success": False, "error": "Location not found"}), 404
+        
+    env_data = EnvironmentalData.query.filter_by(location_id=location_id).first()
+    if not env_data:
+        env_data = EnvironmentalData(location_id=location_id)
+        db.session.add(env_data)
+        db.session.commit()
+        
+    pipeline_result = DisasterIntelligencePipeline.execute_pipeline(env_data, location)
+    return jsonify(pipeline_result), 200

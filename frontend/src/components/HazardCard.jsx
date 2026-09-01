@@ -33,6 +33,20 @@ export default function HazardCard({
           borderColor: level === 'CRITICAL' ? 'border-red-500' : 'border-slate-700',
           bgHeader: 'bg-amber-950/40'
         };
+      case 'cyclone':
+        return {
+          icon: Waves,
+          color: 'text-purple-400',
+          borderColor: level === 'CRITICAL' ? 'border-red-500' : 'border-slate-700',
+          bgHeader: 'bg-purple-950/40'
+        };
+      case 'glof':
+        return {
+          icon: Mountain,
+          color: 'text-teal-400',
+          borderColor: level === 'CRITICAL' ? 'border-red-500' : 'border-slate-700',
+          bgHeader: 'bg-teal-950/40'
+        };
       case 'heavy_rainfall':
       default:
         return {
