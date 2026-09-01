@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HimaRaksha - Citizen Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#574425",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "secondary-container": "#3c4a5e",
+                        "on-secondary-fixed": "#0d1c2f",
+                        "on-tertiary-container": "#957d5a",
+                        "tertiary-fixed-dim": "#dec29a",
+                        "on-tertiary-fixed": "#271901",
+                        "surface-container-low": "#1b1b1d",
+                        "surface-container-highest": "#353436",
+                        "on-secondary": "#233144",
+                        "error": "#ffb4ab",
+                        "primary-container": "#0f172a",
+                        "tertiary-container": "#231500",
+                        "secondary-fixed-dim": "#b9c7e0",
+                        "outline": "#909097",
+                        "surface-variant": "#353436",
+                        "on-error": "#690005",
+                        "primary": "#bec6e0",
+                        "on-secondary-fixed-variant": "#3a485c",
+                        "on-primary-container": "#798098",
+                        "inverse-on-surface": "#303032",
+                        "secondary-fixed": "#d5e3fd",
+                        "tertiary": "#dec29a",
+                        "surface-dim": "#131315",
+                        "on-primary-fixed": "#131b2e",
+                        "error-container": "#93000a",
+                        "surface-container-lowest": "#0e0e10",
+                        "primary-fixed-dim": "#bec6e0",
+                        "primary-fixed": "#dae2fd",
+                        "on-tertiary": "#3e2d11",
+                        "surface-tint": "#bec6e0",
+                        "surface": "#131315",
+                        "on-surface-variant": "#c6c6cd",
+                        "inverse-primary": "#565e74",
+                        "on-secondary-container": "#abb9d2",
+                        "surface-bright": "#39393b",
+                        "outline-variant": "#45464d",
+                        "secondary": "#b9c7e0",
+                        "on-error-container": "#ffdad6",
+                        "on-primary": "#283044",
+                        "background": "#131315",
+                        "tertiary-fixed": "#fcdeb5",
+                        "surface-container-high": "#2a2a2b",
+                        "surface-container": "#1f1f21",
+                        "on-background": "#e4e2e4",
+                        "on-surface": "#e4e2e4",
+                        "inverse-surface": "#e4e2e4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "margin": "16px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "gutter": "12px",
+                        "lg": "24px",
+                        "base": "4px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "data-mono": ["JetBrains Mono"],
+                        "label-caps": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "data-mono": ["13px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "label-caps": ["11px", { "lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .data-mono { font-family: 'JetBrains Mono', monospace; }
+        .grid-bg {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(71, 85, 105, 0.1) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(71, 85, 105, 0.1) 1px, transparent 1px);
+        }
+        .pulse-critical {
+            animation: pulse-red 2s infinite;
+        }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(255, 180, 171, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 180, 171, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 180, 171, 0); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col grid-bg relative">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-md h-16 bg-surface border-b border-outline-variant flat no shadows">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary text-2xl">shield</span>
+<span class="font-display-lg text-display-lg font-bold text-primary">HimaRaksha</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-label-caps text-label-caps text-on-surface-variant bg-surface-container-highest px-2 py-1 rounded border border-outline-variant">DEMO / SIMULATED DATA</span>
+<div class="hidden md:flex gap-4">
+<span class="material-symbols-outlined text-on-surface-variant hover:bg-secondary-container transition-colors cursor-pointer active:scale-95 p-2 rounded-full" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:bg-secondary-container transition-colors cursor-pointer active:scale-95 p-2 rounded-full" data-icon="settings">settings</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:bg-secondary-container transition-colors cursor-pointer active:scale-95 p-2 rounded-full" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Hidden on Mobile) -->
+<nav class="hidden md:flex fixed left-0 top-0 h-full pt-20 pb-4 flex-col bg-surface-container-low dark:bg-surface-container-low w-[280px] border-r border-outline-variant flat no shadows z-40">
+<div class="px-md mb-6">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 bg-primary-container rounded flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-primary">account_balance</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface">Command Center</h2>
+<p class="font-label-caps text-label-caps text-on-surface-variant">HimaRaksha Official</p>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-sm flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-caps text-label-caps">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 bg-secondary-container text-on-secondary-container rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span class="font-label-caps text-label-caps">Risk Map</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="water_drop">water_drop</span>
+<span class="font-label-caps text-label-caps">Flood Monitoring</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="landslide">landslide</span>
+<span class="font-label-caps text-label-caps">Landslide Monitoring</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="home_pin">home_pin</span>
+<span class="font-label-caps text-label-caps">Safe Zones</span>
+</a>
+</div>
+<div class="px-md mt-auto pt-4 border-t border-outline-variant">
+<button class="w-full bg-error-container text-on-error-container font-label-caps text-label-caps py-2 px-4 rounded border border-error hover:bg-error transition-colors flex items-center justify-center gap-2 mb-4 pulse-critical">
+<span class="material-symbols-outlined text-sm">campaign</span>
+                Broadcast Emergency Alert
+            </button>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label-caps text-label-caps">Support</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 pt-20 pb-20 md:pb-6 md:ml-[280px] px-gutter w-full max-w-[1600px] mx-auto flex flex-col gap-md">
+<!-- Location Selector -->
+<section class="bg-surface-container-low border border-outline-variant rounded p-sm flex flex-col md:flex-row gap-sm items-center justify-between">
+<div class="flex items-center gap-2 text-on-surface-variant overflow-x-auto w-full whitespace-nowrap pb-2 md:pb-0 scrollbar-hide">
+<span class="material-symbols-outlined text-sm">my_location</span>
+<div class="flex items-center gap-1 font-data-mono text-data-mono">
+<span class="text-primary cursor-pointer hover:underline">India</span>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span class="text-primary cursor-pointer hover:underline">Himachal Pradesh</span>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span class="text-primary cursor-pointer hover:underline">Shimla</span>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span class="text-on-surface font-bold">Ward 4</span>
+</div>
+</div>
+<button class="bg-surface-variant border border-outline-variant text-on-surface px-3 py-1 rounded font-label-caps text-label-caps hover:bg-secondary-container transition-colors shrink-0">
+                Change Location
+            </button>
+</section>
+<!-- Current Status Banner -->
+<section class="w-full bg-error-container border border-error rounded p-md flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden pulse-critical">
+<div class="absolute right-0 top-0 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-[120px]" data-weight="fill">warning</span>
+</div>
+<div class="flex items-center gap-4 z-10">
+<div class="bg-error text-on-error rounded-full p-2 flex items-center justify-center h-12 w-12 shrink-0">
+<span class="material-symbols-outlined text-3xl" data-weight="fill">warning</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-on-error-container">STATUS: CRITICAL RISK</h1>
+<p class="font-body-md text-body-md text-on-error-container opacity-90 mt-1">Immediate evacuation recommended for low-lying areas in Ward 4.</p>
+</div>
+</div>
+<div class="text-right z-10 shrink-0">
+<div class="font-data-mono text-data-mono text-on-error-container opacity-80">Last Updated</div>
+<div class="font-data-mono text-data-mono font-bold text-on-error-container">T-00:02:14</div>
+</div>
+</section>
+<!-- Hazard View Cards (Bento Grid) -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Flash Flood Risk -->
+<div class="bg-surface-container border border-outline-variant rounded flex flex-col relative overflow-hidden">
+<div class="p-sm bg-surface-container-high border-b border-outline-variant flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="water_drop">water_drop</span>
+<span class="font-label-caps text-label-caps text-on-surface">Flash Flood Risk</span>
+</div>
+<span class="font-data-mono text-data-mono text-error">RISING ↑</span>
+</div>
+<div class="p-md flex-1 flex flex-col justify-center items-center gap-2">
+<div class="relative w-32 h-32 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-variant" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<path class="text-error" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="85, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-display-lg text-display-lg text-error">8.5</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">/10</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-center mt-2 max-w-[80%]">Water levels in Beas river tributary exceeding danger mark by 1.2m.</p>
+</div>
+</div>
+<!-- Landslide Risk -->
+<div class="bg-surface-container border border-outline-variant rounded flex flex-col relative overflow-hidden">
+<div class="p-sm bg-surface-container-high border-b border-outline-variant flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary" data-icon="landslide">landslide</span>
+<span class="font-label-caps text-label-caps text-on-surface">Landslide Risk</span>
+</div>
+<span class="font-data-mono text-data-mono text-tertiary">STABLE -</span>
+</div>
+<div class="p-md flex-1 flex flex-col justify-center items-center gap-2">
+<div class="relative w-32 h-32 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-variant" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<path class="text-tertiary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="62, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-display-lg text-display-lg text-tertiary">6.2</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">/10</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-center mt-2 max-w-[80%]">Soil moisture saturated. Moderate risk on slopes > 30 degrees.</p>
+</div>
+</div>
+</section>
+<!-- Evacuation & Safe Zone Section -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-md">
+<!-- Map/Safe Zone Context -->
+<div class="lg:col-span-2 bg-surface-container border border-outline-variant rounded p-1 flex flex-col relative min-h-[300px]">
+<div class="absolute top-4 left-4 z-10 bg-surface-container-high/90 backdrop-blur border border-outline-variant p-2 rounded">
+<div class="font-label-caps text-label-caps text-on-surface mb-1">Nearest Safe Zone</div>
+<div class="font-headline-sm text-headline-sm text-primary">Govt High School</div>
+<div class="font-data-mono text-data-mono text-on-surface-variant flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px]">directions_walk</span> 1.2km • Est. 15 mins
+                    </div>
+</div>
+<div class="absolute bottom-4 right-4 z-10 flex flex-col gap-2">
+<button class="bg-surface-container-high border border-outline-variant text-on-surface p-2 rounded hover:bg-secondary-container transition-colors shadow-lg">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="bg-surface-container-high border border-outline-variant text-on-surface p-2 rounded hover:bg-secondary-container transition-colors shadow-lg">
+<span class="material-symbols-outlined">remove</span>
+</button>
+</div>
+<div class="w-full h-full bg-surface-container-lowest rounded overflow-hidden relative border border-outline-variant/50 flex items-center justify-center" data-alt="A highly detailed, top-down satellite map view of a mountainous region in night mode. The map interface uses a dark tech aesthetic with deep blues and slate greys. Glowing red zones indicate hazard areas, while a safe route is marked with a dotted blue line leading to a green pulsing safe zone. The lighting is digital and crisp, conveying a high-tech command center map display." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCq_5srxIwMI82qlG3XUnqbCV7wipnV--OBK1wPe8N4z1DbhH-waU_1gQVzaOgFulgkTnXldWJqKEr3RMF5sfK2atcUQZzGOPQd1cbBCOv3KIeTDxjJ4pI7VKxgR0lUFDq9WWROVNwk3qP3v-TFzDjEsP8-KFb5bOFkM6_McnjF50ff3I3R6cOKOdxGkwAOD5nn4rKltePOx4eXO5YJ5HJ7mqg1bfHRGrqdVT3i2gSg10lFNo-el2ClvA')">
+<!-- Fallback map visual if image fails -->
+<div class="absolute inset-0 grid-bg opacity-20"></div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col gap-sm justify-center">
+<button class="w-full h-16 bg-error text-on-error font-headline-sm text-headline-sm rounded border border-error-container hover:brightness-110 transition-all flex items-center justify-center gap-3 shadow-lg active:scale-95">
+<span class="material-symbols-outlined text-2xl" data-weight="fill">directions_run</span>
+                    START EVACUATION
+                </button>
+<button class="w-full h-14 bg-surface-container-highest border border-outline-variant text-on-surface font-headline-sm text-headline-sm rounded hover:bg-secondary-container transition-colors flex items-center justify-center gap-3 active:scale-95">
+<span class="material-symbols-outlined text-xl" data-icon="home_pin">home_pin</span>
+                    View Safe Zones
+                </button>
+<button class="w-full h-14 bg-surface-container-highest border border-outline-variant text-on-surface font-headline-sm text-headline-sm rounded hover:bg-secondary-container transition-colors flex items-center justify-center gap-3 active:scale-95">
+<span class="material-symbols-outlined text-xl" data-icon="emergency">emergency</span>
+                    Emergency Services
+                </button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-gutter md:hidden bg-surface-container-highest dark:bg-surface-container-highest rounded-t-full border-t border-outline-variant shadow-lg">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-body-sm text-body-sm">Risk Status</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+<span class="font-body-sm text-body-sm">Safe Zones</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="emergency">emergency</span>
+<span class="font-body-sm text-body-sm">Emergency</span>
+</a>
+</nav>
+</body></html>

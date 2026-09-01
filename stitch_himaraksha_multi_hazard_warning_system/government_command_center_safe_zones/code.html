@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Safe Zone Management - Command Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#574425",
+                        "surface-container-lowest": "#0e0e10",
+                        "on-secondary": "#233144",
+                        "primary-fixed": "#dae2fd",
+                        "surface-tint": "#bec6e0",
+                        "surface-bright": "#39393b",
+                        "primary": "#bec6e0",
+                        "on-primary-container": "#798098",
+                        "tertiary-fixed-dim": "#dec29a",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-container": "#abb9d2",
+                        "tertiary": "#dec29a",
+                        "inverse-surface": "#e4e2e4",
+                        "outline": "#909097",
+                        "surface": "#131315",
+                        "primary-fixed-dim": "#bec6e0",
+                        "surface-container": "#1f1f21",
+                        "surface-container-high": "#2a2a2b",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "surface-variant": "#353436",
+                        "tertiary-fixed": "#fcdeb5",
+                        "surface-dim": "#131315",
+                        "on-primary-fixed": "#131b2e",
+                        "surface-container-highest": "#353436",
+                        "surface-container-low": "#1b1b1d",
+                        "on-tertiary-container": "#957d5a",
+                        "on-error": "#690005",
+                        "secondary": "#b9c7e0",
+                        "on-tertiary-fixed": "#271901",
+                        "on-primary": "#283044",
+                        "secondary-fixed-dim": "#b9c7e0",
+                        "on-surface-variant": "#c6c6cd",
+                        "on-background": "#e4e2e4",
+                        "on-secondary-fixed": "#0d1c2f",
+                        "outline-variant": "#45464d",
+                        "inverse-primary": "#565e74",
+                        "on-secondary-fixed-variant": "#3a485c",
+                        "inverse-on-surface": "#303032",
+                        "tertiary-container": "#231500",
+                        "on-surface": "#e4e2e4",
+                        "secondary-container": "#3c4a5e",
+                        "secondary-fixed": "#d5e3fd",
+                        "background": "#131315",
+                        "error-container": "#93000a",
+                        "primary-container": "#0f172a",
+                        "on-tertiary": "#3e2d11"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "sm": "8px",
+                        "xs": "4px",
+                        "base": "4px",
+                        "margin": "16px",
+                        "xl": "32px",
+                        "gutter": "12px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "data-mono": ["JetBrains Mono"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-caps": ["11px", { "lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "data-mono": ["13px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .demo-watermark {
+            pointer-events: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 10vw;
+            color: rgba(255, 255, 255, 0.03);
+            z-index: 9999;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body class="bg-[#0F172A] text-on-surface font-body-md antialiased overflow-hidden selection:bg-primary selection:text-on-primary">
+<div class="demo-watermark">DEMO / SIMULATED DATA</div>
+<!-- SideNavBar (from JSON) -->
+<nav class="fixed left-0 top-0 h-full pt-20 pb-4 flex flex-col bg-surface-container-low dark:bg-surface-container-low h-full w-[280px] border-r border-outline-variant z-40 shadow-none">
+<div class="px-md pb-md mb-md border-b border-outline-variant flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface">Command Center</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">HimaRaksha Official</p>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-sm space-y-1">
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Overview</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="font-body-md text-body-md">Risk Map</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">water_drop</span>
+<span class="font-body-md text-body-md">Flood Monitoring</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">landslide</span>
+<span class="font-body-md text-body-md">Landslide Monitoring</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">sensors</span>
+<span class="font-body-md text-body-md">Sensor Data</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="font-body-md text-body-md">Predictions</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">notification_important</span>
+<span class="font-body-md text-body-md">Alerts</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">directions_run</span>
+<span class="font-body-md text-body-md">Evacuation</span>
+</a>
+<!-- ACTIVE TAB -->
+<a class="flex items-center gap-sm px-md py-sm bg-secondary-container text-on-secondary-container rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home_pin</span>
+<span class="font-body-md text-body-md font-semibold">Safe Zones</span>
+</a>
+</div>
+<div class="px-md mt-auto pt-md border-t border-outline-variant space-y-1">
+<button class="w-full flex items-center justify-center gap-sm py-sm px-md bg-error/20 border border-error/50 text-error hover:bg-error/30 rounded-lg font-label-caps text-label-caps uppercase transition-colors">
+<span class="material-symbols-outlined text-[16px]">campaign</span>
+                Broadcast Emergency Alert
+            </button>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg mt-sm transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body-sm text-body-sm">Support</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-[280px] h-screen flex flex-col relative z-10">
+<!-- Top Banner / Location Hierarchy -->
+<header class="h-12 bg-surface border-b border-outline-variant flex items-center justify-between px-lg shrink-0">
+<div class="flex items-center gap-xs text-on-surface-variant font-data-mono text-data-mono">
+<span class="hover:text-primary cursor-pointer transition-colors">India</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="hover:text-primary cursor-pointer transition-colors">Uttarakhand</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="hover:text-primary cursor-pointer transition-colors">Chamoli</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="hover:text-primary cursor-pointer transition-colors">Joshimath</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-semibold">Ward 04</span>
+</div>
+<div class="flex items-center gap-sm">
+<span class="px-2 py-0.5 rounded bg-[#334155] border border-outline-variant text-on-surface font-label-caps text-label-caps text-xs">
+                    DEMO / SIMULATED DATA
+                </span>
+<div class="text-on-surface-variant font-data-mono text-data-mono text-xs flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                    2024-05-14 14:32:00 IST
+                </div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="flex-1 overflow-auto p-lg flex flex-col gap-lg">
+<div class="flex items-center justify-between">
+<h2 class="font-display-lg text-display-lg text-on-surface">Safe Zone Management - Ward 04</h2>
+<div class="flex gap-sm">
+<button class="bg-[#1E293B] border border-[#475569] text-on-surface px-md py-sm rounded flex items-center gap-xs hover:bg-[#384455] transition-colors font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[16px]">filter_list</span>
+                        Filter
+                    </button>
+<button class="bg-primary border border-primary text-[#0F172A] px-md py-sm rounded flex items-center gap-xs hover:bg-primary-fixed-dim transition-colors font-label-caps text-label-caps font-bold">
+<span class="material-symbols-outlined text-[16px]">add</span>
+                        Add Shelter
+                    </button>
+</div>
+</div>
+<!-- Summary Stats -->
+<div class="grid grid-cols-4 gap-gutter">
+<div class="bg-[#1E293B] border border-[#475569] rounded-lg p-md flex flex-col gap-xs">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Total Shelters</span>
+<span class="font-headline-md text-headline-md text-on-surface font-data-mono text-2xl">4</span>
+</div>
+<div class="bg-[#1E293B] border border-[#475569] rounded-lg p-md flex flex-col gap-xs">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Total Capacity</span>
+<span class="font-headline-md text-headline-md text-on-surface font-data-mono text-2xl">2,800</span>
+</div>
+<div class="bg-[#1E293B] border border-[#475569] rounded-lg p-md flex flex-col gap-xs relative overflow-hidden">
+<div class="absolute right-0 top-0 bottom-0 w-1 bg-tertiary"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Current Occupancy</span>
+<span class="font-headline-md text-headline-md text-on-surface font-data-mono text-2xl">1,450</span>
+</div>
+<div class="bg-[#1E293B] border border-[#475569] rounded-lg p-md flex flex-col gap-xs relative overflow-hidden">
+<div class="absolute right-0 top-0 bottom-0 w-1 bg-primary"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Overall Available</span>
+<span class="font-headline-md text-headline-md text-on-surface font-data-mono text-2xl">1,350</span>
+</div>
+</div>
+<!-- Main Split Layout -->
+<div class="flex-1 grid grid-cols-12 gap-gutter min-h-0">
+<!-- Table/List -->
+<div class="col-span-7 bg-[#1E293B] border border-[#475569] rounded-lg flex flex-col overflow-hidden">
+<div class="bg-[#334155] border-b border-[#475569] px-md py-sm grid grid-cols-12 gap-sm items-center font-label-caps text-label-caps text-on-surface-variant uppercase">
+<div class="col-span-4">Shelter Name</div>
+<div class="col-span-2 text-right">Capacity</div>
+<div class="col-span-3 text-right">Occupancy</div>
+<div class="col-span-3 text-right">Status</div>
+</div>
+<div class="flex-1 overflow-y-auto">
+<!-- Row 1 -->
+<div class="border-b border-[#475569] px-md py-sm grid grid-cols-12 gap-sm items-center hover:bg-[#384455] transition-colors group">
+<div class="col-span-4">
+<div class="font-body-md text-on-surface font-medium truncate">Government High School</div>
+<div class="font-data-mono text-xs text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">directions_walk</span> 1.2km
+                                </div>
+</div>
+<div class="col-span-2 text-right font-data-mono text-data-mono text-on-surface">500</div>
+<div class="col-span-3 text-right">
+<div class="font-data-mono text-data-mono text-on-surface">320</div>
+<div class="w-full bg-[#0F172A] rounded-full h-1 mt-1 overflow-hidden border border-[#475569]">
+<div class="bg-emerald-500 h-full" style="width: 64%"></div>
+</div>
+<div class="text-[10px] font-data-mono text-on-surface-variant text-right mt-0.5">64%</div>
+</div>
+<div class="col-span-3 flex justify-end items-center gap-sm">
+<span class="px-2 py-0.5 rounded text-emerald-400 border border-emerald-400/30 bg-emerald-400/10 font-label-caps text-[10px]">OPEN</span>
+<button class="opacity-0 group-hover:opacity-100 p-1 text-on-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined text-[18px]">map</span></button>
+<button class="opacity-0 group-hover:opacity-100 p-1 text-on-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="border-b border-[#475569] px-md py-sm grid grid-cols-12 gap-sm items-center hover:bg-[#384455] transition-colors bg-[#0F172A]/30 group">
+<div class="col-span-4">
+<div class="font-body-md text-on-surface font-medium truncate">Community Hall B</div>
+<div class="font-data-mono text-xs text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">directions_walk</span> 2.5km
+                                </div>
+</div>
+<div class="col-span-2 text-right font-data-mono text-data-mono text-on-surface">300</div>
+<div class="col-span-3 text-right">
+<div class="font-data-mono text-data-mono text-on-surface">280</div>
+<div class="w-full bg-[#0F172A] rounded-full h-1 mt-1 overflow-hidden border border-[#475569]">
+<div class="bg-amber-500 h-full" style="width: 93%"></div>
+</div>
+<div class="text-[10px] font-data-mono text-amber-500 text-right mt-0.5">93%</div>
+</div>
+<div class="col-span-3 flex justify-end items-center gap-sm">
+<span class="px-2 py-0.5 rounded text-amber-400 border border-amber-400/30 bg-amber-400/10 font-label-caps text-[10px]">NEAR CAP</span>
+<button class="opacity-0 group-hover:opacity-100 p-1 text-on-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined text-[18px]">map</span></button>
+<button class="opacity-0 group-hover:opacity-100 p-1 text-on-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="border-b border-[#475569] px-md py-sm grid grid-cols-12 gap-sm items-center hover:bg-[#384455] transition-colors group">
+<div class="col-span-4">
+<div class="font-body-md text-on-surface font-medium truncate">Primary Health Center</div>
+<div class="font-data-mono text-xs text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">directions_walk</span> 0.8km
+                                </div>
+</div>
+<div class="col-span-2 text-right font-data-mono text-data-mono text-on-surface">150</div>
+<div class="col-span-3 text-right">
+<div class="font-data-mono text-data-mono text-on-surface">45</div>
+<div class="w-full bg-[#0F172A] rounded-full h-1 mt-1 overflow-hidden border border-[#475569]">
+<div class="bg-emerald-500 h-full" style="width: 30%"></div>
+</div>
+<div class="text-[10px] font-data-mono text-on-surface-variant text-right mt-0.5">30%</div>
+</div>
+<div class="col-span-3 flex justify-end items-center gap-sm">
+<span class="px-2 py-0.5 rounded text-emerald-400 border border-emerald-400/30 bg-emerald-400/10 font-label-caps text-[10px]">OPEN</span>
+<button class="opacity-0 group-hover:opacity-100 p-1 text-on-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined text-[18px]">map</span></button>
+<button class="opacity-0 group-hover:opacity-100 p-1 text-on-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+</div>
+</div>
+<!-- Row 4 -->
+<div class="border-b border-[#475569] px-md py-sm grid grid-cols-12 gap-sm items-center hover:bg-[#384455] transition-colors bg-[#0F172A]/30 group">
+<div class="col-span-4">
+<div class="font-body-md text-on-surface font-medium truncate">Stadium Complex</div>
+<div class="font-data-mono text-xs text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">directions_walk</span> 3.2km
+                                </div>
+</div>
+<div class="col-span-2 text-right font-data-mono text-data-mono text-on-surface">1850</div>
+<div class="col-span-3 text-right">
+<div class="font-data-mono text-data-mono text-on-surface">805</div>
+<div class="w-full bg-[#0F172A] rounded-full h-1 mt-1 overflow-hidden border border-[#475569]">
+<div class="bg-emerald-500 h-full" style="width: 43%"></div>
+</div>
+<div class="text-[10px] font-data-mono text-on-surface-variant text-right mt-0.5">43%</div>
+</div>
+<div class="col-span-3 flex justify-end items-center gap-sm">
+<span class="px-2 py-0.5 rounded text-emerald-400 border border-emerald-400/30 bg-emerald-400/10 font-label-caps text-[10px]">OPEN</span>
+<button class="opacity-0 group-hover:opacity-100 p-1 text-on-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined text-[18px]">map</span></button>
+<button class="opacity-0 group-hover:opacity-100 p-1 text-on-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Map View (Placeholder for GIS) -->
+<div class="col-span-5 bg-[#1E293B] border border-[#475569] rounded-lg flex flex-col overflow-hidden relative group">
+<!-- Map Image Placeholder -->
+<div class="absolute inset-0 bg-cover bg-center w-full h-full opacity-60 mix-blend-screen pointer-events-none" data-alt="A highly detailed, dark-themed digital tactical map of a mountainous urban area (Joshimath), rendered in a command center UI style. The map features stark contrast with deep navy and slate grey terrain, sharp cyan glowing grid lines, and distinct topographical contours. Several strategic points are marked: three with glowing green circular nodes and one with a pulsing amber node, connected by faint, data-driven pathlines. The aesthetic is extremely high-tech, utilitarian, and strictly functional, lacking any decorative elements, resembling a military or disaster management GIS display." data-location="Joshimath" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDPhgt1ZOvDbzeBTc4j8IPAtPqT-IPSDzsEPMwTcmIA7sQtmZYAUHeB9OVyrDYjN3F1kKPSLZY7egEd1EvELdpEN1zGNjkXLNhE2gvyZv5JhtnxFwy5PX_xR41Kh2Uk4VU6-VKCZoz9tKITbtLcEBxXwOHpwBaGNy7-gvYjZtiGbORiXgiNr9t_xxxlkg4WUjM8OYkT1eIMT8AUuvj6t40oQiR0doKxRNKiYoRDslfqsbve0jJ8WsHoig')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-[#0F172A]/80 to-transparent pointer-events-none"></div>
+<!-- GIS Controls Overlay -->
+<div class="absolute top-sm right-sm flex flex-col gap-xs pointer-events-auto">
+<button class="w-8 h-8 bg-[#334155]/80 backdrop-blur border border-[#475569] rounded flex items-center justify-center text-on-surface hover:bg-[#384455] transition-colors"><span class="material-symbols-outlined text-[18px]">add</span></button>
+<button class="w-8 h-8 bg-[#334155]/80 backdrop-blur border border-[#475569] rounded flex items-center justify-center text-on-surface hover:bg-[#384455] transition-colors"><span class="material-symbols-outlined text-[18px]">remove</span></button>
+<button class="w-8 h-8 mt-xs bg-[#334155]/80 backdrop-blur border border-[#475569] rounded flex items-center justify-center text-on-surface hover:bg-[#384455] transition-colors"><span class="material-symbols-outlined text-[18px]">my_location</span></button>
+<button class="w-8 h-8 bg-[#334155]/80 backdrop-blur border border-[#475569] rounded flex items-center justify-center text-on-surface hover:bg-[#384455] transition-colors"><span class="material-symbols-outlined text-[18px]">layers</span></button>
+</div>
+<!-- Map Legend Overlay -->
+<div class="absolute bottom-sm left-sm right-sm bg-[#1E293B]/90 backdrop-blur border border-[#475569] rounded p-sm flex items-center justify-between text-xs pointer-events-auto">
+<div class="flex gap-md font-data-mono text-on-surface-variant">
+<div class="flex items-center gap-xs"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Open</div>
+<div class="flex items-center gap-xs"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Near Cap</div>
+<div class="flex items-center gap-xs"><span class="w-2 h-2 rounded-full bg-red-500"></span> Full</div>
+</div>
+<div class="font-data-mono text-on-surface-variant">
+                            COORD: 30.5539° N, 79.5658° E
+                        </div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

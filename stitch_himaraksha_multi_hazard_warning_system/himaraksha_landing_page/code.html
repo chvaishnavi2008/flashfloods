@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HimaRaksha | Early Warning System</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#bec6e0",
+                        "surface-container-lowest": "#0e0e10",
+                        "on-tertiary-container": "#957d5a",
+                        "error-container": "#93000a",
+                        "secondary": "#b9c7e0",
+                        "on-secondary-fixed-variant": "#3a485c",
+                        "inverse-primary": "#565e74",
+                        "on-secondary-fixed": "#0d1c2f",
+                        "tertiary-container": "#231500",
+                        "error": "#ffb4ab",
+                        "secondary-fixed-dim": "#b9c7e0",
+                        "on-error": "#690005",
+                        "on-secondary-container": "#abb9d2",
+                        "on-surface": "#e4e2e4",
+                        "on-tertiary-fixed-variant": "#574425",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#bec6e0",
+                        "outline": "#909097",
+                        "inverse-surface": "#e4e2e4",
+                        "surface-container-high": "#2a2a2b",
+                        "on-tertiary-fixed": "#271901",
+                        "primary-fixed": "#dae2fd",
+                        "surface-variant": "#353436",
+                        "surface-bright": "#39393b",
+                        "tertiary-fixed-dim": "#dec29a",
+                        "surface-tint": "#bec6e0",
+                        "on-secondary": "#233144",
+                        "on-primary-fixed": "#131b2e",
+                        "background": "#131315",
+                        "on-surface-variant": "#c6c6cd",
+                        "inverse-on-surface": "#303032",
+                        "surface": "#131315",
+                        "secondary-container": "#3c4a5e",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "outline-variant": "#45464d",
+                        "secondary-fixed": "#d5e3fd",
+                        "surface-container-highest": "#353436",
+                        "on-primary-container": "#798098",
+                        "surface-dim": "#131315",
+                        "primary-container": "#0f172a",
+                        "on-primary": "#283044",
+                        "surface-container-low": "#1b1b1d",
+                        "on-background": "#e4e2e4",
+                        "tertiary-fixed": "#fcdeb5",
+                        "tertiary": "#dec29a",
+                        "on-tertiary": "#3e2d11",
+                        "surface-container": "#1f1f21"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin": "16px",
+                        "lg": "24px",
+                        "base": "4px",
+                        "gutter": "12px",
+                        "sm": "8px",
+                        "xl": "32px",
+                        "xs": "4px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "data-mono": ["JetBrains Mono"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-caps": ["11px", { "lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "data-mono": ["13px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .pulse-green {
+            animation: pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col antialiased">
+<!-- Minimal Header -->
+<header class="w-full border-b border-outline-variant bg-surface flex items-center justify-between px-md h-16 z-50">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[24px]">security</span>
+<h1 class="font-headline-sm text-headline-sm text-primary font-bold">HimaRaksha</h1>
+</div>
+<div class="flex items-center gap-xs border border-outline-variant rounded px-sm py-xs bg-surface-container-low">
+<div class="w-2 h-2 rounded-full bg-[#10B981] pulse-green"></div>
+<span class="font-data-mono text-data-mono text-on-surface-variant">SYS.ONLINE_</span>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow flex flex-col relative">
+<!-- Background Map Layer -->
+<div class="absolute inset-0 z-0 opacity-20 pointer-events-none" data-alt="A highly stylized, minimalist dark mode GIS map displaying topographical contour lines and river networks. Rendered in monochromatic deep slate and grey tones, with sharp, precise, high-contrast vector lines. It looks like a professional military or command-center operational dashboard background, devoid of color except for subtle terrain elevation shadows. No gradients, very technical and grid-aligned." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCf7plgebZVe5VmyBPaz3XJtv2b4gEy1UmPIg1SgQ5TFIHhBdxL__4plKCAR0OzZ9dvgfjqEsh4HueYIxt5uciZ50OuL6z_qgZq2VIIDpzMKilhbAKfBvXb224ptN1FMRWydA3f450EUWPcc5v4FU-0QipTWXKu8EqL1znUQ9Cwor27ZgVU_gZTPJQU6RSOFgSzkhbPo5Qs987GFTI87L87qG0oCnlP2CM5UvNUgx2C9VvXSft5-l6-aQ')"></div>
+<div class="relative z-10 w-full max-w-[1200px] mx-auto px-md py-xl flex flex-col items-center justify-center min-h-[calc(100vh-64px)]">
+<div class="text-center max-w-[800px] mb-xl">
+<h2 class="font-display-lg text-display-lg text-on-surface mb-md">Hyper-Local Flood &amp; Landslide Early Warning System</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-lg font-data-mono tracking-widest uppercase">Detect. Warn. Evacuate.</p>
+<div class="p-sm bg-surface-container border border-outline-variant rounded-DEFAULT inline-block mb-lg">
+<p class="font-body-md text-body-md text-on-surface">Mission Objective: Monitor environmental risks, detect emerging threats, and guide communities to safety.</p>
+</div>
+</div>
+<!-- Action Portals -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md w-full max-w-[700px] mb-xl">
+<button class="flex items-center justify-center gap-sm bg-on-surface text-surface font-label-caps text-label-caps py-sm px-md rounded-DEFAULT hover:bg-on-surface-variant transition-colors border border-transparent">
+<span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+                    GOVERNMENT PORTAL
+                </button>
+<button class="flex items-center justify-center gap-sm bg-transparent border border-outline-variant text-on-surface font-label-caps text-label-caps py-sm px-md rounded-DEFAULT hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[18px]">public</span>
+                    CITIZEN PORTAL
+                </button>
+</div>
+<!-- Hazard Coverage Modules -->
+<div class="w-full max-w-[1000px] grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Module 1 -->
+<div class="bg-surface-container-low border border-outline-variant p-md rounded-DEFAULT flex items-start gap-md hover:bg-surface-container transition-colors">
+<div class="bg-primary-container p-sm rounded-DEFAULT border border-outline-variant">
+<span class="material-symbols-outlined text-primary text-[24px]">water_drop</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-xs">Flash Flood Detection</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-sm">Real-time river gauge monitoring and catchment area rainfall analysis. Automated risk scoring.</p>
+<div class="flex gap-xs items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant bg-surface-variant px-xs py-[2px] rounded">SENSORS: ACTIVE</span>
+</div>
+</div>
+</div>
+<!-- Module 2 -->
+<div class="bg-surface-container-low border border-outline-variant p-md rounded-DEFAULT flex items-start gap-md hover:bg-surface-container transition-colors">
+<div class="bg-primary-container p-sm rounded-DEFAULT border border-outline-variant">
+<span class="material-symbols-outlined text-primary text-[24px]">landslide</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-xs">Landslide Susceptibility</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-sm">Soil moisture integration and geological slope stability models. Predictive anomaly detection.</p>
+<div class="flex gap-xs items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant bg-surface-variant px-xs py-[2px] rounded">MODELS: NOMINAL</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Minimal Footer -->
+<footer class="w-full border-t border-outline-variant bg-surface px-md py-sm flex justify-between items-center text-on-surface-variant z-50">
+<span class="font-data-mono text-data-mono">HimaRaksha v1.4.2</span>
+<span class="font-data-mono text-data-mono">SECURE CONNECTION</span>
+</footer>
+</body></html>

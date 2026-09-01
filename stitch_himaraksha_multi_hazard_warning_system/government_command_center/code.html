@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HimaRaksha - Command Center Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#bec6e0",
+                        "surface-container-lowest": "#0e0e10",
+                        "on-tertiary-container": "#957d5a",
+                        "error-container": "#93000a",
+                        "secondary": "#b9c7e0",
+                        "on-secondary-fixed-variant": "#3a485c",
+                        "inverse-primary": "#565e74",
+                        "on-secondary-fixed": "#0d1c2f",
+                        "tertiary-container": "#231500",
+                        "error": "#ffb4ab",
+                        "secondary-fixed-dim": "#b9c7e0",
+                        "on-error": "#690005",
+                        "on-secondary-container": "#abb9d2",
+                        "on-surface": "#e4e2e4",
+                        "on-tertiary-fixed-variant": "#574425",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#bec6e0",
+                        "outline": "#909097",
+                        "inverse-surface": "#e4e2e4",
+                        "surface-container-high": "#2a2a2b",
+                        "on-tertiary-fixed": "#271901",
+                        "primary-fixed": "#dae2fd",
+                        "surface-variant": "#353436",
+                        "surface-bright": "#39393b",
+                        "tertiary-fixed-dim": "#dec29a",
+                        "surface-tint": "#bec6e0",
+                        "on-secondary": "#233144",
+                        "on-primary-fixed": "#131b2e",
+                        "background": "#131315",
+                        "on-surface-variant": "#c6c6cd",
+                        "inverse-on-surface": "#303032",
+                        "surface": "#131315",
+                        "secondary-container": "#3c4a5e",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "outline-variant": "#45464d",
+                        "secondary-fixed": "#d5e3fd",
+                        "surface-container-highest": "#353436",
+                        "on-primary-container": "#798098",
+                        "surface-dim": "#131315",
+                        "primary-container": "#0f172a",
+                        "on-primary": "#283044",
+                        "surface-container-low": "#1b1b1d",
+                        "on-background": "#e4e2e4",
+                        "tertiary-fixed": "#fcdeb5",
+                        "tertiary": "#dec29a",
+                        "on-tertiary": "#3e2d11",
+                        "surface-container": "#1f1f21"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin": "16px",
+                        "lg": "24px",
+                        "base": "4px",
+                        "gutter": "12px",
+                        "sm": "8px",
+                        "xl": "32px",
+                        "xs": "4px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "data-mono": ["JetBrains Mono"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-caps": ["11px", { "lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "data-mono": ["13px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .map-pulse {
+            animation: pulse-red 2s infinite;
+        }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+        }
+        .data-card {
+            background-color: theme('colors.surface-container-high');
+            border: 1px solid theme('colors.outline-variant');
+            padding: theme('spacing.md');
+            border-radius: theme('borderRadius.DEFAULT');
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen overflow-hidden flex">
+<!-- TopNavBar (Mobile Only) -->
+<nav class="md:hidden fixed top-0 w-full z-50 flex justify-between items-center px-md h-16 bg-surface border-b border-outline-variant">
+<span class="font-display-lg text-display-lg font-bold text-primary">HimaRaksha</span>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer active:scale-95">notifications</span>
+<span class="material-symbols-outlined text-primary cursor-pointer active:scale-95">settings</span>
+<span class="material-symbols-outlined text-primary cursor-pointer active:scale-95">account_circle</span>
+</div>
+</nav>
+<!-- SideNavBar (Web Only) -->
+<nav class="hidden md:flex fixed left-0 top-0 h-full pt-20 pb-4 flex-col bg-surface-container-low dark:bg-surface-container-low w-[280px] border-r border-outline-variant z-40 transition-all duration-200 ease-in-out">
+<div class="px-md mb-8 flex items-center gap-3">
+<img alt="Government Logo" class="w-10 h-10 object-contain" data-alt="A small, authoritative governmental crest or seal used as a logo for the HimaRaksha dashboard, featuring sharp, minimalist linework in white on a dark slate background, conveying official status and emergency response readiness. Corporate modern style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrjnZaMvp4SLDgMZvyNjNbHLSGKs3hrNgwA4noD0IBCX4yZbWkkhUChM2SGDfn9MQOUmYv4MKa7CP9r3gRzAMArs8HCNLOAfMn_zba2vJZi0mmGhwcnt4X06sRybXedQdjW9xSFFAcg7D53vUwGvPzdHWVtyZFQXh11v9sX5vfSqVkd9FCMqCjsw1IPgJ-S1TsLDjlXof5AQuBUyDfcC889l4giZfqD4ZkgsiiE99Xoof9AhwKlyk5bA"/>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface">Command Center</h1>
+<p class="font-label-caps text-label-caps text-on-surface-variant">HimaRaksha Official</p>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-2 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 bg-secondary-container text-on-secondary-container rounded-lg font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" data-weight="fill">dashboard</span>
+                Overview
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-caps text-label-caps transition-colors" href="#">
+<span class="material-symbols-outlined">map</span>
+                Risk Map
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-caps text-label-caps transition-colors" href="#">
+<span class="material-symbols-outlined">water_drop</span>
+                Flood Monitoring
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-caps text-label-caps transition-colors" href="#">
+<span class="material-symbols-outlined">landslide</span>
+                Landslide Monitoring
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-caps text-label-caps transition-colors" href="#">
+<span class="material-symbols-outlined">sensors</span>
+                Sensor Data
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-caps text-label-caps transition-colors" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+                Predictions
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-caps text-label-caps transition-colors" href="#">
+<span class="material-symbols-outlined">notification_important</span>
+                Alerts
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-caps text-label-caps transition-colors" href="#">
+<span class="material-symbols-outlined">directions_run</span>
+                Evacuation
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-caps text-label-caps transition-colors" href="#">
+<span class="material-symbols-outlined">home_pin</span>
+                Safe Zones
+            </a>
+</div>
+<div class="px-md mt-auto pt-4 border-t border-outline-variant space-y-2">
+<button class="w-full bg-error text-on-error font-label-caps text-label-caps py-2 rounded flex items-center justify-center gap-2 hover:bg-red-400 transition-colors">
+<span class="material-symbols-outlined">warning</span>
+                Broadcast Emergency Alert
+            </button>
+<div class="space-y-1 mt-4">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-caps text-label-caps transition-colors" href="#">
+<span class="material-symbols-outlined">help</span>
+                    Support
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-caps text-label-caps transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+                    Settings
+                </a>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-[280px] h-screen flex flex-col relative pt-16 md:pt-0">
+<!-- Top Control Bar (Select Monitoring Area) -->
+<header class="bg-surface-container-high border-b border-outline-variant p-sm flex flex-col md:flex-row md:items-center justify-between gap-4 z-30">
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">SELECT MONITORING AREA:</span>
+<div class="flex gap-2 font-data-mono text-data-mono text-primary flex-wrap">
+<span class="bg-surface px-2 py-1 border border-outline-variant rounded">India</span> &gt; 
+                    <span class="bg-surface px-2 py-1 border border-outline-variant rounded">Uttarakhand</span> &gt; 
+                    <span class="bg-surface px-2 py-1 border border-outline-variant rounded">Chamoli</span> &gt; 
+                    <span class="bg-surface px-2 py-1 border border-outline-variant rounded">Joshimath</span> &gt; 
+                    <span class="bg-surface px-2 py-1 border border-primary rounded font-bold">Ward 04</span>
+</div>
+</div>
+<div class="text-right flex items-center gap-4">
+<span class="font-data-mono text-data-mono text-on-surface-variant">SYS_TIME: 14:32:05 IST</span>
+<button class="border border-outline-variant px-3 py-1 text-label-caps hover:bg-surface-variant rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">tune</span> Filters
+                </button>
+</div>
+</header>
+<!-- Dashboard Layout Grid -->
+<div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-gutter p-gutter overflow-y-auto">
+<!-- Left Column: Risk Analysis -->
+<section class="lg:col-span-3 flex flex-col gap-gutter">
+<!-- Overall Area Risk -->
+<div class="data-card border-error">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant mb-2">OVERALL AREA RISK - WARD 04</h2>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[48px] text-error map-pulse">warning</span>
+<div>
+<div class="font-display-lg text-display-lg text-error">CRITICAL</div>
+<div class="font-data-mono text-data-mono text-on-surface-variant">SCORE: 91/100</div>
+</div>
+</div>
+</div>
+<div class="mt-4 bg-error-container text-on-error-container px-3 py-2 rounded flex justify-between items-center font-data-mono text-data-mono border border-error">
+<span>EST. LEAD TIME:</span>
+<span class="font-bold text-lg">35m</span>
+</div>
+</div>
+<!-- Hazard Cards -->
+<div class="data-card">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant mb-3">HAZARD PROBABILITY</h2>
+<div class="space-y-3">
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-orange-400">water_drop</span>
+<span class="font-body-sm text-body-sm">Flash Flood</span>
+</div>
+<span class="font-data-mono text-data-mono text-orange-400">87% HIGH</span>
+</div>
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error">landslide</span>
+<span class="font-body-sm text-body-sm">Landslide</span>
+</div>
+<span class="font-data-mono text-data-mono text-error font-bold">93% CRITICAL</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error">warning</span>
+<span class="font-body-sm text-body-sm">Multi-Hazard</span>
+</div>
+<span class="font-data-mono text-data-mono text-error font-bold">93% CRITICAL</span>
+</div>
+</div>
+</div>
+<!-- Environmental Conditions -->
+<div class="data-card flex-1">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant mb-3">ENVIRONMENTAL CONDITIONS</h2>
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-surface p-2 border border-outline-variant rounded">
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-1">RAINFALL</div>
+<div class="font-data-mono text-data-mono text-error">145 mm/hr</div>
+</div>
+<div class="bg-surface p-2 border border-outline-variant rounded">
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-1">SOIL MOISTURE</div>
+<div class="font-data-mono text-data-mono text-error">92%</div>
+</div>
+<div class="bg-surface p-2 border border-outline-variant rounded">
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-1">WATER LEVEL</div>
+<div class="font-data-mono text-data-mono text-orange-400">87% CAP</div>
+</div>
+<div class="bg-surface p-2 border border-error rounded">
+<div class="font-label-caps text-label-caps text-error mb-1">SLOPE STAB.</div>
+<div class="font-data-mono text-data-mono text-error">HIGH RISK</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Center Column: GIS Map -->
+<section class="lg:col-span-6 flex flex-col relative border border-outline-variant rounded bg-surface-container-lowest overflow-hidden min-h-[400px]">
+<!-- Mock Map Background -->
+<div class="absolute inset-0 opacity-40 bg-[url('placeholder')] bg-cover bg-center mix-blend-luminosity" data-alt="A highly detailed, dark-themed GIS topographical map of a mountainous region (Joshimath, India), showing elevation contour lines, river systems, and urban footprint in a utilitarian, operational command center style. Monochromatic dark blues and slates." data-location="Joshimath, India" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC8Whmw0YSg7OqKbMMSTybKxnrNGUeudl1HMgt8UCHgFKnKqcHJvwzWEbNLhi0MyLPD42Ttd4yNcLlA8N7EDovpFLd0HC7W-CtE9EaatHwAUNH0c-yEwp-_ufMhZWDbyoiqaqUqG8iYbfLpz8dHgHNmEtbAn3lhd_bwdw-Uz2OcB9P_RGK-YN2D2DDa2IYIRkyAbvHrLt3fAaBbcTWiBBDbU1Ud7ObV1j1bXMKLWonZhrHiB46Z7fRCdg');"></div>
+<!-- Map Overlay Grid (Decorative) -->
+<div class="absolute inset-0" style="background-size: 50px 50px; background-image: linear-gradient(to right, rgba(71, 85, 105, 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(71, 85, 105, 0.1) 1px, transparent 1px);"></div>
+<!-- Floating Map Controls (Top Right) -->
+<div class="absolute top-sm right-sm flex flex-col gap-1 z-10">
+<button class="bg-surface-container-high border border-outline-variant p-1 hover:bg-surface-variant rounded">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="bg-surface-container-high border border-outline-variant p-1 hover:bg-surface-variant rounded">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<button class="bg-surface-container-high border border-outline-variant p-1 hover:bg-surface-variant rounded mt-2">
+<span class="material-symbols-outlined">layers</span>
+</button>
+</div>
+<!-- Coordinate Display -->
+<div class="absolute bottom-sm left-sm bg-surface-container-high/80 backdrop-blur border border-outline-variant px-2 py-1 font-data-mono text-[10px] text-on-surface-variant rounded z-10">
+                    LAT: 30.5516° N | LNG: 79.5658° E | ZOOM: 14z
+                </div>
+<!-- Map Markers -->
+<div class="absolute top-1/2 left-1/3 transform -translate-x-1/2 -translate-y-1/2 z-10 group cursor-pointer">
+<div class="w-4 h-4 bg-error rounded-full map-pulse"></div>
+<!-- Popup Info -->
+<div class="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-surface-container-high border border-outline-variant rounded p-sm shadow-xl hidden group-hover:block w-48 z-20">
+<div class="font-label-caps text-label-caps border-b border-outline-variant pb-1 mb-1 text-error">WARD 04 - CRITICAL</div>
+<div class="font-data-mono text-[10px] space-y-1">
+<div>Sensors Active: 12/12</div>
+<div>Evac Required: YES</div>
+</div>
+</div>
+</div>
+<div class="absolute top-1/3 right-1/4 transform -translate-x-1/2 -translate-y-1/2 z-10">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-green-400 bg-surface-container-high rounded-full border border-green-400 p-1">school</span>
+<span class="bg-surface-container-high border border-outline-variant px-1 mt-1 font-label-caps text-[9px] rounded">SAFE ZONE (GOVT HS)</span>
+</div>
+</div>
+</section>
+<!-- Right Column: Operations & Simulation -->
+<section class="lg:col-span-3 flex flex-col gap-gutter">
+<!-- Alert Center -->
+<div class="data-card border-error bg-error-container/20">
+<div class="flex items-center gap-2 text-error mb-3">
+<span class="material-symbols-outlined">campaign</span>
+<h2 class="font-label-caps text-label-caps font-bold">ALERT CENTER</h2>
+</div>
+<div class="font-headline-sm text-headline-sm text-error mb-4">🚨 RISK THRESHOLD EXCEEDED</div>
+<button class="w-full bg-error text-on-error font-label-caps text-label-caps py-3 rounded font-bold hover:bg-red-500 transition-colors">
+                        ISSUE EMERGENCY ALERT
+                    </button>
+</div>
+<!-- Evacuation Monitoring -->
+<div class="data-card">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">directions_run</span> EVACUATION MONITORING
+                    </h2>
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Affected Pop:</span>
+<span class="font-data-mono text-data-mono">2,450</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Evacuated:</span>
+<span class="font-data-mono text-data-mono text-primary">620</span>
+</div>
+<div class="w-full bg-surface h-2 rounded overflow-hidden mt-1 border border-outline-variant">
+<div class="bg-primary h-full" style="width: 25%"></div>
+</div>
+<div class="flex justify-between items-center mt-2 border-t border-outline-variant pt-2">
+<span class="font-label-caps text-label-caps">STATUS:</span>
+<span class="font-label-caps text-label-caps text-orange-400">IN PROGRESS</span>
+</div>
+</div>
+</div>
+<!-- Simulation Control Panel -->
+<div class="data-card flex-1 border-primary/50">
+<h2 class="font-label-caps text-label-caps text-primary mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">science</span> SIMULATION CONTROLS
+                    </h2>
+<div class="space-y-2">
+<button class="w-full border border-outline-variant text-on-surface font-label-caps text-label-caps py-2 rounded hover:bg-surface-variant transition-colors flex justify-start px-3 items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary">water</span> SIMULATE FLOOD
+                        </button>
+<button class="w-full border border-outline-variant text-on-surface font-label-caps text-label-caps py-2 rounded hover:bg-surface-variant transition-colors flex justify-start px-3 items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-tertiary">landscape</span> SIMULATE LANDSLIDE
+                        </button>
+<button class="w-full border border-error text-error font-label-caps text-label-caps py-2 rounded hover:bg-error-container transition-colors flex justify-start px-3 items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">storm</span> SIMULATE COMBINED EVENT
+                        </button>
+<button class="w-full mt-4 text-on-surface-variant font-label-caps text-label-caps py-2 hover:text-primary transition-colors border-t border-outline-variant">
+                            RESET SIMULATION
+                        </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-gutter bg-surface-container-highest dark:bg-surface-container-highest border-t border-outline-variant rounded-t-full shadow-lg">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined text-[20px]">home</span>
+<span class="font-body-sm text-body-sm text-[10px]">Risk Status</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined text-[20px]">location_on</span>
+<span class="font-body-sm text-body-sm text-[10px]">Safe Zones</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined text-[20px]">emergency</span>
+<span class="font-body-sm text-body-sm text-[10px]">Emergency</span>
+</a>
+</nav>
+</body></html>
