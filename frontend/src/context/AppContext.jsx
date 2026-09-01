@@ -53,6 +53,14 @@ export function AppProvider({ children }) {
   // Map & Simulation states
   const [selectedLayer, setSelectedLayer] = useState('overall'); // 'overall' | 'flash_flood' | 'flood' | 'landslide' | 'heavy_rainfall' | 'safe_locations'
   const [isSimulating, setIsSimulating] = useState(false);
+  const [simulationState, setSimulationState] = useState({
+    timeline_step: 'T0',
+    active_scenario: 'baseline',
+    scenario_title: 'Nominal Baseline Monitoring',
+    description: 'Baseline regional weather telemetry and hydrological monitoring.',
+    is_simulation: true,
+    demo_label: 'Simulation / Demo Data'
+  });
   const [isSirenActive, setIsSirenActive] = useState(false);
   const [isSirenMuted, setIsSirenMuted] = useState(false);
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
@@ -207,6 +215,80 @@ export function AppProvider({ children }) {
     }
   };
 
+  // Apply Progressive Timeline Step (T0 -> T+1 -> T+2)
+  const applyTimelineStep = async (step) => {
+    try {
+      setIsSimulating(true);
+      setStatusMessage(`Advancing simulation to ${step}...`);
+      const res = await api.applyTimelineStep(step, selectedLocationId);
+      await fetchSystemData();
+      await fetchLocationData(selectedLocationId);
+      
+      setSimulationState(prev => ({
+        ...prev,
+        timeline_step: step,
+        scenario_title: res.config?.title || step,
+        description: res.config?.description || ''
+      }));
+
+      if (step === 'T+2' && res.alert) {
+        setActiveAlert(res.alert);
+        setShowEmergencyModal(true);
+        if (!isSirenMuted) {
+          soundService.playEmergencySiren();
+          setIsSirenActive(true);
+        }
+      } else if (step === 'T0') {
+        soundService.stopEmergencySiren();
+        setIsSirenActive(false);
+        setShowEmergencyModal(false);
+      }
+      return res;
+    } catch (err) {
+      console.error('[AppContext] Error applying timeline step:', err);
+    } finally {
+      setIsSimulating(false);
+      setStatusMessage('');
+    }
+  };
+
+  // Apply Multi-Hazard Scenario Preset
+  const applySimulationScenario = async (scenarioId) => {
+    try {
+      setIsSimulating(true);
+      setStatusMessage(`Applying scenario: ${scenarioId}...`);
+      const res = await api.applySimulationScenario(scenarioId);
+      await fetchSystemData();
+      await fetchLocationData(selectedLocationId);
+      
+      setSimulationState(prev => ({
+        ...prev,
+        active_scenario: scenarioId,
+        scenario_title: res.name || scenarioId
+      }));
+
+      if (scenarioId !== 'reset_nominal' && res.alert) {
+        setActiveAlert(res.alert);
+        setShowEmergencyModal(true);
+        if (!isSirenMuted) {
+          soundService.playEmergencySiren();
+          setIsSirenActive(true);
+        }
+      } else if (scenarioId === 'reset_nominal') {
+        soundService.stopEmergencySiren();
+        setIsSirenActive(false);
+        setShowEmergencyModal(false);
+        setActiveAlert(null);
+      }
+      return res;
+    } catch (err) {
+      console.error('[AppContext] Error applying simulation scenario:', err);
+    } finally {
+      setIsSimulating(false);
+      setStatusMessage('');
+    }
+  };
+
   // Toggle Siren Audio Mute
   const toggleSiren = () => {
     const muted = soundService.toggleMute();
@@ -327,6 +409,9 @@ export function AppProvider({ children }) {
         selectedLayer,
         setSelectedLayer,
         isSimulating,
+        simulationState,
+        applyTimelineStep,
+        applySimulationScenario,
         isSirenActive,
         isSirenMuted,
         showEmergencyModal,

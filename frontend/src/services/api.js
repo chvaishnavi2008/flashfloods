@@ -139,5 +139,32 @@ export const api = {
     const res = await fetch(`${API_BASE_URL}/risk/${locationId}/hazard/${hazardKey}`);
     if (!res.ok) throw new Error(`Failed to fetch hazard risk for ${hazardKey}`);
     return res.json();
+  },
+
+  // 11. Simulated Live Disaster Data Layer
+  async getSimulationStatus() {
+    const res = await fetch(`${API_BASE_URL}/simulation/status`);
+    if (!res.ok) throw new Error('Failed to fetch simulation status');
+    return res.json();
+  },
+
+  async applyTimelineStep(step, locationId = null) {
+    const res = await fetch(`${API_BASE_URL}/simulation/timeline`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ step, location_id: locationId })
+    });
+    if (!res.ok) throw new Error('Failed to apply timeline step');
+    return res.json();
+  },
+
+  async applySimulationScenario(scenarioId) {
+    const res = await fetch(`${API_BASE_URL}/simulation/scenario`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scenario: scenarioId })
+    });
+    if (!res.ok) throw new Error('Failed to apply simulation scenario');
+    return res.json();
   }
 };

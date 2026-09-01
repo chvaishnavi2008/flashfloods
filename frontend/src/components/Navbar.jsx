@@ -116,8 +116,9 @@ export default function Navbar() {
         </div>
 
         {/* Demo Simulated Data Badge */}
-        <span className="px-2 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono text-[10px] font-semibold hidden xl:inline-block">
-          SIMULATED TELEMETRY
+        <span className="px-2.5 py-1 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono text-[10px] font-bold flex items-center gap-1.5 shadow-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+          LIVE SIMULATION / DEMO DATA
         </span>
 
         {/* Role Switcher (Citizen vs Authority) */}

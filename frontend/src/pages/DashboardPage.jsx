@@ -7,6 +7,7 @@ import SafeLocationList from '../components/SafeLocationList';
 import LocationSearch from '../components/LocationSearch';
 import CitizenSosModal from '../components/CitizenSosModal';
 import PipelineTraceViewer from '../components/PipelineTraceViewer';
+import SimulationTimelineBar from '../components/SimulationTimelineBar';
 import { 
   AlertTriangle, 
   ShieldAlert, 
@@ -90,7 +91,10 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* 2. Citizen Safety Fast-Action Cards (Am I in Danger? / Nearest Shelter / SOS Helpline) */}
+      {/* 2. SIH Live Disaster Simulation Layer Controller */}
+      <SimulationTimelineBar />
+
+      {/* 3. Citizen Safety Fast-Action Cards (Am I in Danger? / Nearest Shelter / SOS Helpline) */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Card 1: My Neighborhood Safety Status */}
         <div className="bg-[#1E293B] border border-slate-700 rounded-xl p-5 shadow-md flex flex-col justify-between space-y-3">

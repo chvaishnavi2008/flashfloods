@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import RiskMap from '../components/RiskMap';
+import SimulationTimelineBar from '../components/SimulationTimelineBar';
 import { 
   ShieldAlert, 
   Send, 
@@ -140,6 +141,9 @@ export default function AuthorityPage() {
           </div>
         </div>
       </div>
+
+      {/* SIH Live Disaster Simulation Layer Controller */}
+      <SimulationTimelineBar />
 
       {/* Authority Control Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-700 pb-2 overflow-x-auto text-xs font-mono">
