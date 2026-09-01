@@ -1,22 +1,21 @@
 import React from 'react';
 import { useApp } from './context/AppContext';
+
+// 1. Citizen Portal Components (LOCKED & APPROVED)
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import AuthorityHeader from './components/AuthorityHeader';
-import AuthoritySidebar from './components/AuthoritySidebar';
-import NotificationModal from './components/NotificationModal';
-import EarlyWarningAlertModal from './components/EarlyWarningAlertModal';
-import AlertHistoryModal from './components/AlertHistoryModal';
-
-// Citizen-First Simple Pages
 import CitizenHomePage from './pages/CitizenHomePage';
 import CitizenDangerMapPage from './pages/CitizenDangerMapPage';
 import CitizenSafePlacesPage from './pages/CitizenSafePlacesPage';
 import CitizenEvacuationPage from './pages/CitizenEvacuationPage';
 import CitizenEmergencyHelpPage from './pages/CitizenEmergencyHelpPage';
 
-// Authority Command Technical Workspaces
-import AuthorityPage from './pages/AuthorityPage';
+// 2. Authority SEOC Command Components (DEDICATED INSTITUTIONAL SUITE)
+import AuthorityHeader from './components/authority/AuthorityHeader';
+import AuthoritySidebar from './components/authority/AuthoritySidebar';
+import AuthorityDashboardPage from './pages/authority/AuthorityDashboardPage';
+
+// Shared Technical Intelligence Workspaces (For Authority & Deep Inspection)
 import RiskIntelligencePage from './pages/RiskIntelligencePage';
 import AlertsPage from './pages/AlertsPage';
 import ImpactAssessmentPage from './pages/ImpactAssessmentPage';
@@ -24,7 +23,11 @@ import EmergencyResponsePage from './pages/EmergencyResponsePage';
 import AiRiskEnginePage from './pages/AiRiskEnginePage';
 import SimulationStudioPage from './pages/SimulationStudioPage';
 import SettingsPage from './pages/SettingsPage';
-import DashboardPage from './pages/DashboardPage';
+
+// Modals
+import NotificationModal from './components/NotificationModal';
+import EarlyWarningAlertModal from './components/EarlyWarningAlertModal';
+import AlertHistoryModal from './components/AlertHistoryModal';
 
 export default function App() {
   const { activePage, userRole, isAlertHistoryOpen, setIsAlertHistoryOpen } = useApp();
@@ -32,7 +35,7 @@ export default function App() {
   const isAuthority = userRole === 'authority';
 
   const renderActivePage = () => {
-    // 1. Citizen Experience (Simple, Actionable, High-Contrast)
+    // 1. Citizen Safety Experience (100% Locked & Approved)
     if (!isAuthority) {
       switch (activePage) {
         case 'map':
@@ -53,7 +56,7 @@ export default function App() {
       }
     }
 
-    // 2. Authority SEOC Command Experience (Full Technical Multi-Hazard Intelligence)
+    // 2. Authority SEOC Command Experience (Dedicated Government Command Dashboard)
     switch (activePage) {
       case 'risk-intelligence':
       case 'map':
@@ -72,10 +75,9 @@ export default function App() {
       case 'settings':
         return <SettingsPage />;
       case 'dashboard':
-        return <DashboardPage />;
       case 'authority':
       default:
-        return <AuthorityPage />;
+        return <AuthorityDashboardPage />;
     }
   };
 
@@ -83,17 +85,17 @@ export default function App() {
     <div className={`min-h-screen flex flex-col selection:bg-red-600 selection:text-white ${
       isAuthority ? 'bg-[#070B14] text-slate-200' : 'bg-[#0F172A] text-slate-100'
     }`}>
-      {/* Dynamic Header: Institutional AuthorityHeader vs Citizen Navbar */}
+      {/* Dynamic Header: Institutional AuthorityHeader vs Approved Citizen Navbar */}
       {isAuthority ? <AuthorityHeader /> : <Navbar />}
 
       {/* Main Layout Container */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Dynamic Navigation: Institutional AuthoritySidebar vs Citizen Sidebar */}
+        {/* Dynamic Navigation: Institutional AuthoritySidebar vs Approved Citizen Sidebar */}
         {isAuthority ? <AuthoritySidebar /> : <Sidebar />}
 
         {/* Scrollable Workspace Canvas */}
         <main className={`flex-1 overflow-y-auto ${
-          isAuthority ? 'p-3 lg:p-5 bg-[#070B14]' : 'p-4 lg:p-8 bg-[#0F172A]'
+          isAuthority ? 'p-3 lg:p-4 bg-[#070B14]' : 'p-4 lg:p-8 bg-[#0F172A]'
         }`}>
           <div className={isAuthority ? 'max-w-full mx-auto' : 'max-w-7xl mx-auto'}>
             {renderActivePage()}
@@ -101,7 +103,7 @@ export default function App() {
         </main>
       </div>
 
-      {/* Official Early Warning Broadcast Modal (In-App & Multi-Channel Simulation) */}
+      {/* Official Early Warning Broadcast Modal */}
       <EarlyWarningAlertModal />
 
       {/* Prototype SMS / Push Notification Popup */}
