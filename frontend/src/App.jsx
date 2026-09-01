@@ -5,6 +5,8 @@ import Sidebar from './components/Sidebar';
 import EmergencyBanner from './components/EmergencyBanner';
 import EmergencyModal from './components/EmergencyModal';
 import NotificationModal from './components/NotificationModal';
+import EarlyWarningAlertModal from './components/EarlyWarningAlertModal';
+import AlertHistoryModal from './components/AlertHistoryModal';
 
 // Pages
 import DashboardPage from './pages/DashboardPage';
@@ -16,7 +18,7 @@ import AuthorityPage from './pages/AuthorityPage';
 import SettingsPage from './pages/SettingsPage';
 
 export default function App() {
-  const { activePage, userRole } = useApp();
+  const { activePage, userRole, isAlertHistoryOpen, setIsAlertHistoryOpen } = useApp();
 
   const renderActivePage = () => {
     switch (activePage) {
@@ -59,11 +61,14 @@ export default function App() {
         </main>
       </div>
 
-      {/* Urgent Emergency Directive Modal */}
-      <EmergencyModal />
+      {/* Official Early Warning Broadcast Modal (In-App & Multi-Channel Simulation) */}
+      <EarlyWarningAlertModal />
 
       {/* Prototype SMS / Push Notification Popup */}
       <NotificationModal />
+
+      {/* Alert History & Archive Management Drawer */}
+      <AlertHistoryModal isOpen={isAlertHistoryOpen} onClose={() => setIsAlertHistoryOpen(false)} />
     </div>
   );
 }

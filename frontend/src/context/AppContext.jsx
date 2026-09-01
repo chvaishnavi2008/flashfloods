@@ -65,6 +65,7 @@ export function AppProvider({ children }) {
   const [isSirenMuted, setIsSirenMuted] = useState(false);
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [isAlertHistoryOpen, setIsAlertHistoryOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [statusMessage, setStatusMessage] = useState('');
 
@@ -344,6 +345,18 @@ export function AppProvider({ children }) {
     }
   };
 
+  // Reactivate Alert
+  const reactivateAlert = async (alertId) => {
+    try {
+      const res = await api.reactivateAlert(alertId);
+      if (res.success) {
+        await fetchSystemData();
+      }
+    } catch (err) {
+      console.error('[AppContext] Reactivate alert error:', err);
+    }
+  };
+
   // Subscribe Citizen
   const subscribeCitizen = async (userData) => {
     try {
@@ -368,10 +381,9 @@ export function AppProvider({ children }) {
       phone: sosData.phone || '+91 98765 43210',
       location_name: selectedLocation ? `${selectedLocation.name} (${selectedLocation.state})` : 'Monitored Sector',
       people_count: sosData.people_count || 1,
-      urgency: sosData.urgency || 'HIGH',
+      message: sosData.message || 'Urgent evacuation / rescue required.',
       status: 'PENDING',
-      message: sosData.message || 'Immediate flood/landslide rescue required.',
-      timestamp: 'Just now'
+      created_at: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
     setSosRequests(prev => [newSos, ...prev]);
     return newSos;
@@ -397,6 +409,7 @@ export function AppProvider({ children }) {
         systemRisk,
         alerts,
         activeAlert,
+        setActiveAlert,
         safeLocations,
         selectedShelter,
         setSelectedShelter,
@@ -418,6 +431,8 @@ export function AppProvider({ children }) {
         setShowEmergencyModal,
         showNotificationModal,
         setShowNotificationModal,
+        isAlertHistoryOpen,
+        setIsAlertHistoryOpen,
         loading,
         statusMessage,
         selectLocation,
@@ -426,6 +441,7 @@ export function AppProvider({ children }) {
         stopSiren,
         issueAlert,
         resolveAlert,
+        reactivateAlert,
         subscribeCitizen,
         refreshData: fetchSystemData
       }}

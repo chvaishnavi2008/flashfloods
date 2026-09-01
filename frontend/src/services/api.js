@@ -63,6 +63,20 @@ export const api = {
     return res.json();
   },
 
+  async reactivateAlert(alertId) {
+    const res = await fetch(`${API_BASE_URL}/alerts/${alertId}/reactivate`, {
+      method: 'POST'
+    });
+    if (!res.ok) throw new Error('Failed to reactivate alert');
+    return res.json();
+  },
+
+  async getNotificationChannels() {
+    const res = await fetch(`${API_BASE_URL}/notifications/channels`);
+    if (!res.ok) throw new Error('Failed to fetch notification channels');
+    return res.json();
+  },
+
   // 5. Safe Locations / Shelters
   async getSafeLocations(locationId = null) {
     const query = locationId ? `?location_id=${locationId}` : '';
