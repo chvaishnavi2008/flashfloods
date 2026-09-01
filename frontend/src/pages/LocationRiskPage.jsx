@@ -7,6 +7,7 @@ import SafeLocationList from '../components/SafeLocationList';
 import LocationSearch from '../components/LocationSearch';
 import PipelineTraceViewer from '../components/PipelineTraceViewer';
 import ImpactAssessmentPanel from '../components/ImpactAssessmentPanel';
+import WhatShouldIDoPanel from '../components/WhatShouldIDoPanel';
 import { 
   MapPin, 
   CheckCircle2, 
@@ -168,6 +169,9 @@ export default function LocationRiskPage() {
           </div>
         </div>
       </div>
+
+      {/* Stage 6: Prominent 'WHAT SHOULD I DO RIGHT NOW?' Action Directives */}
+      <WhatShouldIDoPanel />
 
       {/* Environmental Telemetry Raw Metrics Table */}
       <section className="bg-[#1E293B] border border-slate-700 rounded-xl p-5 shadow-lg space-y-4">

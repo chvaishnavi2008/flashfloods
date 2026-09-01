@@ -110,6 +110,7 @@ class PralayWatchRiskEngine:
             "contributing_factors": json.dumps(factors),
             "recommended_action": summary["recommended_action"],
             "impact_assessment": stage4,
+            "action_recommendations": pipeline_output["pipeline_stages"]["stage6_action_recommendation"].get("action_guidance", {}),
             "pipeline_stages": pipeline_output["pipeline_stages"]
         }
 

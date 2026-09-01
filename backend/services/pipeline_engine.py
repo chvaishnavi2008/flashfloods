@@ -2,6 +2,7 @@ import json
 from typing import Dict, Any, List
 from services.predictors.registry import HazardPredictorRegistry
 from services.impact_engine import ImpactAssessmentEngine
+from services.action_engine import ActionRecommendationEngine
 from config import Config
 
 class DisasterIntelligencePipeline:
@@ -161,42 +162,31 @@ class DisasterIntelligencePipeline:
         }
 
         # =====================================================================
-        # STAGE 6: ACTION & SAFETY RECOMMENDATIONS
+        # STAGE 6: ACTION & SAFETY RECOMMENDATIONS ("WHAT SHOULD I DO RIGHT NOW?")
         # =====================================================================
-        if overall_level == "CRITICAL":
-            directive = "IMMEDIATE EVACUATION ORDER: Move toward designated safe shelters or higher ground. Avoid riverbeds, bridges, and mountain roads."
-            action_steps = [
-                "1. Move immediately toward designated high-ground safe relief shelters.",
-                "2. Turn off domestic electricity and gas valves before leaving.",
-                "3. Stay away from fast-flowing streams and drainage culverts.",
-                "4. Carry emergency go-bag (water, first aid, torch, vital documents)."
-            ]
-        elif overall_level == "HIGH":
-            directive = "PRE-EVACUATION ALERT: Prepare emergency go-bags, monitor official broadcast channels, and stay prepared for short-notice movement."
-            action_steps = [
-                "1. Identify your nearest safe shelter and verify non-flooded route.",
-                "2. Keep mobile phones charged and monitor local SDMA SMS broadcasts.",
-                "3. Avoid parking vehicles near riverbanks or loose hillsides."
-            ]
-        elif overall_level == "MODERATE":
-            directive = "ADVISORY WATCH: Exercise caution, avoid non-essential travel in hilly sectors and low-lying culverts."
-            action_steps = [
-                "1. Inspect local stormwater drainage around residence.",
-                "2. Maintain situational awareness via weather updates."
-            ]
-        else:
-            directive = "NORMAL MONITORING: Environmental parameters within safe baseline ranges."
-            action_steps = ["1. Normal routine with periodic automated sensor telemetry tracking."]
+        # Identify dominant hazard for tailored action directives
+        dom_hazard = "Flash Flood"
+        if ls_pred.get("riskScore", 0) > ff_pred.get("riskScore", 0) and ls_pred.get("riskScore", 0) > hr_pred.get("riskScore", 0):
+            dom_hazard = "Landslide"
+        elif hr_pred.get("riskScore", 0) > ff_pred.get("riskScore", 0) and hr_pred.get("riskScore", 0) > ls_pred.get("riskScore", 0):
+            dom_hazard = "Extreme Rainfall"
+
+        safe_locs_list = getattr(location, 'safe_locations', []) if location else []
+        action_recommendations = ActionRecommendationEngine.generate_recommendations(
+            dom_hazard, composite_score, overall_level, location, impact_assessment, safe_locs_list
+        )
+
+        directive = action_recommendations["immediate_actions"][0] if action_recommendations.get("immediate_actions") else "Normal monitoring."
 
         stage6_action = {
             "stage_name": "6. Action & Safety Recommendations",
+            "action_guidance": action_recommendations,
             "primary_directive": directive,
-            "action_checklist": action_steps,
-            "emergency_contacts": {
-                "state_disaster_helpline": "1070",
-                "national_emergency_rescue": "112",
-                "ndrf_control_room": "011-24363260"
-            }
+            "action_checklist": action_recommendations.get("immediate_actions", []),
+            "places_to_avoid": action_recommendations.get("places_to_avoid", []),
+            "suggested_safe_direction": action_recommendations.get("suggested_safe_direction", {}),
+            "nearest_safe_location": action_recommendations.get("nearest_safe_location", {}),
+            "emergency_contacts": action_recommendations.get("emergency_information", {})
         }
 
         # =====================================================================

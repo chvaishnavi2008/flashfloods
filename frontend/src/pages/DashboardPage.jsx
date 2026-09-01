@@ -9,6 +9,7 @@ import CitizenSosModal from '../components/CitizenSosModal';
 import PipelineTraceViewer from '../components/PipelineTraceViewer';
 import SimulationTimelineBar from '../components/SimulationTimelineBar';
 import ImpactAssessmentPanel from '../components/ImpactAssessmentPanel';
+import WhatShouldIDoPanel from '../components/WhatShouldIDoPanel';
 import { 
   AlertTriangle, 
   ShieldAlert, 
@@ -95,7 +96,12 @@ export default function DashboardPage() {
       {/* 2. SIH Live Disaster Simulation Layer Controller */}
       <SimulationTimelineBar />
 
-      {/* 3. Citizen Safety Fast-Action Cards (Am I in Danger? / Nearest Shelter / SOS Helpline) */}
+      {/* 3. Stage 6: Prominent 'WHAT SHOULD I DO RIGHT NOW?' Action Directives */}
+      <section>
+        <WhatShouldIDoPanel />
+      </section>
+
+      {/* 4. Citizen Safety Fast-Action Cards (Am I in Danger? / Nearest Shelter / SOS Helpline) */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Card 1: My Neighborhood Safety Status */}
         <div className="bg-[#1E293B] border border-slate-700 rounded-xl p-5 shadow-md flex flex-col justify-between space-y-3">
