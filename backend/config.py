@@ -4,7 +4,11 @@ from risk_config import RISK_LEVEL_THRESHOLDS, HAZARD_WEIGHTS, NORMALIZATION_BOU
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "pralaywatch-super-secret-key-sih-2026")
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///pralaywatch.db")
+    
+    # Serverless SQLite compatibility: On Vercel, use writable /tmp directory
+    _is_vercel = bool(os.environ.get("VERCEL"))
+    _default_db = "sqlite:////tmp/pralaywatch.db" if _is_vercel else "sqlite:///pralaywatch.db"
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", _default_db)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Standardized Risk Level Thresholds (0 - 100)
