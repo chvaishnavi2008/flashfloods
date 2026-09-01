@@ -3,17 +3,18 @@ import { useApp } from './context/AppContext';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import EmergencyBanner from './components/EmergencyBanner';
-import EmergencyModal from './components/EmergencyModal';
 import NotificationModal from './components/NotificationModal';
 import EarlyWarningAlertModal from './components/EarlyWarningAlertModal';
 import AlertHistoryModal from './components/AlertHistoryModal';
 
 // Pages
 import DashboardPage from './pages/DashboardPage';
-import RiskMapPage from './pages/RiskMapPage';
-import LocationRiskPage from './pages/LocationRiskPage';
+import RiskIntelligencePage from './pages/RiskIntelligencePage';
 import AlertsPage from './pages/AlertsPage';
-import SafeLocationsPage from './pages/SafeLocationsPage';
+import ImpactAssessmentPage from './pages/ImpactAssessmentPage';
+import EmergencyResponsePage from './pages/EmergencyResponsePage';
+import AiRiskEnginePage from './pages/AiRiskEnginePage';
+import SimulationStudioPage from './pages/SimulationStudioPage';
 import AuthorityPage from './pages/AuthorityPage';
 import SettingsPage from './pages/SettingsPage';
 
@@ -22,14 +23,21 @@ export default function App() {
 
   const renderActivePage = () => {
     switch (activePage) {
+      case 'risk-intelligence':
       case 'map':
-        return <RiskMapPage />;
       case 'location-risk':
-        return <LocationRiskPage />;
+        return <RiskIntelligencePage />;
       case 'alerts':
         return <AlertsPage />;
+      case 'impact-assessment':
+        return <ImpactAssessmentPage />;
+      case 'emergency-response':
       case 'safe-locations':
-        return <SafeLocationsPage />;
+        return <EmergencyResponsePage />;
+      case 'ai-risk-engine':
+        return <AiRiskEnginePage />;
+      case 'simulation-studio':
+        return <SimulationStudioPage />;
       case 'authority':
         return <AuthorityPage />;
       case 'settings':
@@ -44,9 +52,6 @@ export default function App() {
     <div className="min-h-screen bg-[#0F172A] text-slate-100 flex flex-col selection:bg-blue-600 selection:text-white">
       {/* Top Navbar */}
       <Navbar />
-
-      {/* Persistent Emergency Warning Banner if Critical / High Hazard Detected */}
-      <EmergencyBanner />
 
       {/* Main Layout Container */}
       <div className="flex-1 flex overflow-hidden">
