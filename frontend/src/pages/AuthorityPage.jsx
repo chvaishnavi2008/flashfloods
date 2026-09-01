@@ -1,24 +1,27 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import RiskMap from '../components/RiskMap';
-import SimulationTimelineBar from '../components/SimulationTimelineBar';
 import { 
   ShieldAlert, 
   Send, 
   AlertTriangle, 
   Users, 
   Activity, 
-  Home, 
+  Building2, 
   Plus, 
-  CheckCircle2,
-  Clock,
-  Radio,
-  Truck,
-  HeartPulse,
-  PhoneCall,
-  Check,
-  Flame,
-  RotateCcw
+  CheckCircle2, 
+  Clock, 
+  Radio, 
+  Truck, 
+  HeartPulse, 
+  PhoneCall, 
+  Check, 
+  Layers, 
+  Navigation,
+  FileText,
+  Eye,
+  Server,
+  Filter
 } from 'lucide-react';
 
 export default function AuthorityPage() {
@@ -28,13 +31,14 @@ export default function AuthorityPage() {
     alerts, 
     issueAlert, 
     resolveAlert, 
-    safeLocations,
-    selectedLocationId,
-    selectLocation,
-    sosRequests,
+    safeLocations, 
+    selectedLocationId, 
+    selectLocation, 
+    sosRequests, 
     updateSosStatus,
-    triggerSimulation,
-    isSimulating
+    setActivePage,
+    pipelineData,
+    environmentalData
   } = useApp();
 
   const [formData, setFormData] = useState({
@@ -43,14 +47,15 @@ export default function AuthorityPage() {
     severity: 'CRITICAL',
     title: '',
     message: '',
-    radius_km: 15,
-    lead_time_min: 35,
-    issued_by: 'State Disaster Management Authority'
+    radius_km: 25,
+    lead_time_min: 30,
+    issued_by: 'State Disaster Management Authority (SEOC)'
   });
 
+  const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
-  const [activeTab, setActiveTab] = useState('dispatch'); // 'dispatch' | 'sos' | 'shelters' | 'map'
+  const [selectedIncident, setSelectedIncident] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -73,10 +78,9 @@ export default function AuthorityPage() {
         lead_time_min: Number(formData.lead_time_min)
       });
 
-      setSuccessMsg('Emergency alert broadcast successfully to all citizen portals and prototype notification dispatchers!');
+      setSuccessMsg('Official emergency broadcast dispatched to CAP feeds, SMS simulation queue, and in-app HUD.');
       setTimeout(() => setSuccessMsg(''), 5000);
-      
-      // Reset form
+      setIsBroadcastModalOpen(false);
       setFormData(prev => ({ ...prev, title: '', message: '' }));
     } catch (err) {
       console.error('Failed to issue alert:', err);
@@ -85,436 +89,370 @@ export default function AuthorityPage() {
     }
   };
 
-  const totalPopulation = locations.reduce((acc, l) => acc + (l.population || 0), 0);
-  const pendingSosCount = sosRequests.filter(s => s.status === 'PENDING').length;
+  const pendingSosCount = (sosRequests || []).filter(s => s.status === 'PENDING').length;
+  const criticalCount = systemRisk?.stats?.critical_zones || 0;
+  const highCount = systemRisk?.stats?.high_risk_zones || 0;
+
+  // Mock institutional priority incidents derived from live locations
+  const priorityIncidents = [
+    {
+      id: 'INC-01',
+      location: 'Chamoli, Uttarakhand',
+      locationId: 1,
+      hazard: 'Flash Flood & Landslide',
+      riskScore: 87,
+      severity: 'CRITICAL',
+      populationAtRisk: '12,400',
+      status: 'ACTIVE',
+      leadTime: '30 mins'
+    },
+    {
+      id: 'INC-02',
+      location: 'Kullu - Manali, Himachal Pradesh',
+      locationId: 2,
+      hazard: 'Flash Flood',
+      riskScore: 78,
+      severity: 'HIGH',
+      populationAtRisk: '8,200',
+      status: 'ACTIVE',
+      leadTime: '45 mins'
+    },
+    {
+      id: 'INC-03',
+      location: 'Wayanad (Meppadi), Kerala',
+      locationId: 8,
+      hazard: 'Debris Flow Landslide',
+      riskScore: 82,
+      severity: 'CRITICAL',
+      populationAtRisk: '5,600',
+      status: 'ACTIVE',
+      leadTime: '20 mins'
+    },
+    {
+      id: 'INC-04',
+      location: 'Chungthang (Teesta), Sikkim',
+      locationId: 3,
+      hazard: 'GLOF Moraine Breach',
+      riskScore: 74,
+      severity: 'HIGH',
+      populationAtRisk: '3,800',
+      status: 'MONITORING',
+      leadTime: '60 mins'
+    }
+  ];
+
+  // Field response unit platoon data
+  const responseUnits = [
+    { id: 'SDRF-UK-01', name: 'SDRF 1st Battalion Platoon A', location: 'Chamoli', status: 'DEPLOYED', tasks: 'Riverbank Evacuation' },
+    { id: 'NDRF-14-BN', name: '14th NDRF Urban Search & Rescue', location: 'Joshimath', status: 'DEPLOYED', tasks: 'Landslide Clearance' },
+    { id: 'SDRF-HP-04', name: 'SDRF Mountain Rescue Team', location: 'Kullu', status: 'AVAILABLE', tasks: 'Standby at Base' },
+    { id: 'MED-AIR-02', name: 'State Disaster Medical Response Unit', location: 'Dehradun', status: 'AVAILABLE', tasks: 'Air Ambulance Standby' }
+  ];
 
   return (
-    <div className="space-y-6 pb-12">
-      {/* Authority Hero Banner */}
-      <div className="bg-gradient-to-r from-red-950 via-[#1E293B] to-slate-900 border border-red-500/40 rounded-2xl p-6 shadow-xl space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-red-600/30 text-red-400 border border-red-500/50 rounded-xl">
-              <ShieldAlert className="w-7 h-7" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-red-400">
-                  STATE DISASTER MANAGEMENT AUTHORITY (SDMA / SEOC)
-                </span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-600 text-white">
-                  GOVERNMENT COMMAND CONSOLE
-                </span>
-              </div>
-              <h2 className="text-2xl font-black text-white mt-0.5">
-                Multi-Hazard Emergency Operations & Dispatch Center
-              </h2>
-            </div>
+    <div className="space-y-4 pb-12 font-mono text-xs text-slate-200">
+      {/* ========================================================================= */}
+      {/* 1. TOP OPERATIONAL STATUS & STATISTICS STRIP                              */}
+      {/* ========================================================================= */}
+      <div className="bg-[#0B1120] border border-slate-700/80 rounded p-3 shadow-sm">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center">
+          <div className="p-2 bg-slate-900/90 border border-slate-800 rounded">
+            <span className="text-[10px] text-slate-400 uppercase tracking-wider block">MONITORED SECTORS</span>
+            <span className="text-base font-bold text-white mt-0.5 block">{locations.length} SECTORS</span>
           </div>
 
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-black/50 border border-red-500/40 rounded-lg text-xs font-mono text-red-300">
-            <Radio className="w-4 h-4 text-red-400 animate-pulse" />
-            <span>DISPATCH CHANNELS ACTIVE</span>
-          </div>
-        </div>
-
-        {/* Command Center KPIs */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-          <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl text-center">
-            <span className="text-[10px] font-mono uppercase text-slate-400 block">Monitored Sectors</span>
-            <span className="text-xl font-bold font-mono text-white">{locations.length}</span>
+          <div className="p-2 bg-slate-900/90 border border-red-500/40 rounded">
+            <span className="text-[10px] text-red-400 uppercase tracking-wider block">CRITICAL ZONES</span>
+            <span className="text-base font-bold text-red-400 mt-0.5 block">{criticalCount} CRITICAL</span>
           </div>
 
-          <div className="bg-slate-900/90 border border-red-500/40 p-3 rounded-xl text-center">
-            <span className="text-[10px] font-mono uppercase text-red-400 block">Critical Risk Zones</span>
-            <span className="text-xl font-bold font-mono text-red-400">{systemRisk?.stats?.critical_zones || 0}</span>
+          <div className="p-2 bg-slate-900/90 border border-amber-500/40 rounded">
+            <span className="text-[10px] text-amber-400 uppercase tracking-wider block">ACTIVE ALERTS</span>
+            <span className="text-base font-bold text-amber-300 mt-0.5 block">{alerts.length} ISSUED</span>
           </div>
 
-          <div className="bg-slate-900/90 border border-amber-500/40 p-3 rounded-xl text-center">
-            <span className="text-[10px] font-mono uppercase text-amber-400 block">Citizen SOS Queue</span>
-            <span className="text-xl font-bold font-mono text-amber-400">{pendingSosCount} Urgent</span>
+          <div className="p-2 bg-slate-900/90 border border-rose-500/40 rounded">
+            <span className="text-[10px] text-rose-400 uppercase tracking-wider block">URGENT SOS QUEUE</span>
+            <span className="text-base font-bold text-rose-300 mt-0.5 block">{pendingSosCount} PENDING</span>
           </div>
 
-          <div className="bg-slate-900/90 border border-emerald-500/40 p-3 rounded-xl text-center">
-            <span className="text-[10px] font-mono uppercase text-emerald-400 block">Active Safe Shelters</span>
-            <span className="text-xl font-bold font-mono text-emerald-400">{safeLocations.length} Shelters</span>
+          <div className="p-2 bg-slate-900/90 border border-emerald-500/40 rounded">
+            <span className="text-[10px] text-emerald-400 uppercase tracking-wider block">RESPONSE UNITS</span>
+            <span className="text-base font-bold text-emerald-400 mt-0.5 block">8 PLATOONS READY</span>
           </div>
         </div>
       </div>
 
-      {/* SIH Live Disaster Simulation Layer Controller */}
-      <SimulationTimelineBar />
-
-      {/* Authority Control Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-700 pb-2 overflow-x-auto text-xs font-mono">
-        {[
-          { id: 'dispatch', label: '🚨 Issue Emergency Broadcast' },
-          { id: 'sos', label: `🆘 Citizen SOS Rescue Queue (${pendingSosCount})` },
-          { id: 'shelters', label: '🏢 Safe Shelter Logistics Manager' },
-          { id: 'map', label: '🗺️ Tactical Threat GIS Matrix' }
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-lg font-bold transition-all whitespace-nowrap ${
-              activeTab === tab.id
-                ? 'bg-red-600 text-white shadow-md'
-                : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab 1: Issue Emergency Broadcast Form & Map */}
-      {activeTab === 'dispatch' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Issue Alert Form Panel */}
-          <div className="lg:col-span-5 bg-[#1E293B] border border-slate-700 rounded-2xl p-6 shadow-xl space-y-5">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-700">
-              <Send className="w-5 h-5 text-red-400" />
-              <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-slate-200">
-                Broadcast Official Warning to Citizens
-              </h3>
-            </div>
-
-            {successMsg && (
-              <div className="p-3 bg-emerald-950/80 border border-emerald-500 rounded-lg text-emerald-300 text-xs font-mono flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>{successMsg}</span>
-              </div>
-            )}
-
-            <form onSubmit={handleIssueAlert} className="space-y-4 text-xs font-mono">
-              {/* Target Location */}
-              <div>
-                <label className="block text-slate-400 mb-1 font-semibold">Target Sector / Location</label>
-                <select
-                  name="location_id"
-                  value={formData.location_id}
-                  onChange={handleInputChange}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-red-500"
-                >
-                  {locations.map(loc => (
-                    <option key={loc.id} value={loc.id}>
-                      {loc.name} ({loc.state}, {loc.country})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Hazard Type & Severity */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-400 mb-1 font-semibold">Hazard Category</label>
-                  <select
-                    name="hazard_type"
-                    value={formData.hazard_type}
-                    onChange={handleInputChange}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-red-500"
-                  >
-                    <option value="Flash Flood">Flash Flood</option>
-                    <option value="Riverine Flood">Riverine Flood</option>
-                    <option value="Landslide">Landslide / Land Risk</option>
-                    <option value="Heavy Rainfall">Heavy Rainfall / Cloudburst</option>
-                    <option value="Multi-Hazard (Flood + Landslide)">Multi-Hazard Combined</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-slate-400 mb-1 font-semibold">Threat Severity</label>
-                  <select
-                    name="severity"
-                    value={formData.severity}
-                    onChange={handleInputChange}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white font-bold focus:outline-none focus:border-red-500"
-                  >
-                    <option value="CRITICAL">CRITICAL (Red Alert)</option>
-                    <option value="HIGH">HIGH (Orange Alert)</option>
-                    <option value="MODERATE">MODERATE (Yellow Watch)</option>
-                    <option value="LOW">LOW (Advisory)</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Alert Title */}
-              <div>
-                <label className="block text-slate-400 mb-1 font-semibold">Broadcast Alert Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  placeholder="e.g. FLASH FLOOD EVACUATION ORDER: Rispana Basin"
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-red-500 placeholder-slate-600"
-                />
-              </div>
-
-              {/* Alert Message */}
-              <div>
-                <label className="block text-slate-400 mb-1 font-semibold">Emergency Directive Message</label>
-                <textarea
-                  name="message"
-                  rows={3}
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  placeholder="Detailed guidance for citizens in affected sectors..."
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-red-500 placeholder-slate-600"
-                />
-              </div>
-
-              {/* Radius & Lead Time */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-400 mb-1 font-semibold">Affected Radius (km)</label>
-                  <input
-                    type="number"
-                    name="radius_km"
-                    value={formData.radius_km}
-                    onChange={handleInputChange}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-red-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-slate-400 mb-1 font-semibold">Lead Time (mins)</label>
-                  <input
-                    type="number"
-                    name="lead_time_min"
-                    value={formData.lead_time_min}
-                    onChange={handleInputChange}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-red-500"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full py-3.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-mono font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all"
-              >
-                <Send className="w-4 h-4" />
-                <span>{isSubmitting ? 'Broadcasting...' : 'Issue Emergency Alert to Citizens'}</span>
-              </button>
-            </form>
+      {successMsg && (
+        <div className="p-3 bg-emerald-950 border border-emerald-500 text-emerald-300 rounded flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <span>{successMsg}</span>
           </div>
-
-          {/* Tactical GIS Map Preview */}
-          <div className="lg:col-span-7 bg-[#1E293B] border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4 flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-slate-200">
-                Active Tactical Threat GIS
-              </h3>
-              <span className="text-xs font-mono text-slate-400">SEOC Live GIS Stream</span>
-            </div>
-
-            <div className="flex-1 min-h-[420px]">
-              <RiskMap height="450px" showRoute={true} />
-            </div>
-          </div>
+          <button onClick={() => setSuccessMsg('')} className="text-slate-400 hover:text-white">✕</button>
         </div>
       )}
 
-      {/* Tab 2: Citizen SOS Rescue Queue */}
-      {activeTab === 'sos' && (
-        <div className="bg-[#1E293B] border border-slate-700 rounded-2xl p-6 shadow-xl space-y-5">
-          <div className="flex items-center justify-between border-b border-slate-700 pb-3">
-            <div className="flex items-center gap-2.5">
-              <div className="p-2 bg-red-600/20 text-red-400 border border-red-500/30 rounded-lg">
-                <HeartPulse className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-white uppercase tracking-wide">
-                  Incoming Citizen Distress Signals & SOS Queue
-                </h3>
-                <p className="text-xs text-slate-400 font-mono">
-                  Live distress signals transmitted by citizens requiring immediate NDRF / SDRF team dispatch
-                </p>
-              </div>
-            </div>
+      {/* ========================================================================= */}
+      {/* 2. CENTRAL GIS COMMAND CANVAS                                             */}
+      {/* ========================================================================= */}
+      <section className="bg-[#0B1120] border border-slate-700/80 rounded p-4 shadow-sm space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-800">
+          <div className="flex items-center gap-2">
+            <Layers className="w-4 h-4 text-red-400" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-white">
+              REGIONAL MULTI-HAZARD RISK MAP — TACTICAL GIS COMMAND
+            </h2>
           </div>
 
-          <div className="grid grid-cols-1 gap-4">
-            {sosRequests.map((sos) => (
-              <div
-                key={sos.id}
-                className={`p-5 rounded-xl border transition-all ${
-                  sos.status === 'PENDING'
-                    ? 'bg-red-950/30 border-red-500/80 shadow-md'
-                    : 'bg-slate-900 border-slate-800'
-                }`}
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
-                  <div className="flex items-center gap-3">
-                    <span className="px-2.5 py-1 bg-red-600 text-white font-mono font-bold text-xs rounded">
-                      {sos.id}
-                    </span>
-                    <div>
-                      <h4 className="text-base font-bold text-white">{sos.citizen_name}</h4>
-                      <div className="text-xs font-mono text-slate-400 flex items-center gap-2">
-                        <span>📞 {sos.phone}</span>
-                        <span>•</span>
-                        <span>📍 {sos.location_name}</span>
-                        <span>•</span>
-                        <span>👥 {sos.people_count} Persons Trapped</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className={`px-2.5 py-0.5 rounded text-xs font-mono font-bold ${
-                      sos.status === 'PENDING' ? 'bg-red-500 text-white animate-pulse' : 'bg-emerald-600 text-white'
-                    }`}>
-                      {sos.status}
-                    </span>
-                    <span className="text-xs font-mono text-slate-500">{sos.timestamp}</span>
-                  </div>
-                </div>
-
-                <p className="text-sm text-slate-200 mt-3 font-sans leading-relaxed">
-                  "{sos.message}"
-                </p>
-
-                {/* Dispatch Controls */}
-                <div className="flex flex-wrap items-center justify-between gap-3 mt-4 pt-3 border-t border-slate-800/80 text-xs font-mono">
-                  <div className="text-amber-400 flex items-center gap-1 font-bold">
-                    <span>Priority: {sos.urgency}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    {sos.status === 'PENDING' ? (
-                      <>
-                        <button
-                          onClick={() => updateSosStatus(sos.id, 'DISPATCHED')}
-                          className="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold flex items-center gap-1.5 shadow-md"
-                        >
-                          <Truck className="w-3.5 h-3.5" />
-                          <span>Dispatch NDRF Boat / Team</span>
-                        </button>
-                        <button
-                          onClick={() => updateSosStatus(sos.id, 'RESCUED')}
-                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold"
-                        >
-                          Mark Rescued
-                        </button>
-                      </>
-                    ) : (
-                      <span className="text-emerald-400 flex items-center gap-1">
-                        <CheckCircle2 className="w-4 h-4" /> Rescue Mission Active / Completed
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
+          {/* Quick Action to Issue Warning */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsBroadcastModalOpen(true)}
+              className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded font-bold flex items-center gap-1.5 shadow-sm transition-all text-xs"
+            >
+              <Send className="w-3.5 h-3.5" />
+              <span>Issue Official Warning</span>
+            </button>
           </div>
         </div>
-      )}
 
-      {/* Tab 3: Safe Shelter Logistics Manager */}
-      {activeTab === 'shelters' && (
-        <div className="bg-[#1E293B] border border-slate-700 rounded-2xl p-6 shadow-xl space-y-5">
-          <div className="flex items-center justify-between border-b border-slate-700 pb-3">
-            <div>
-              <h3 className="text-base font-bold text-white uppercase tracking-wide">
-                Shelter Resource & Capacity Management
-              </h3>
-              <p className="text-xs text-slate-400 font-mono">
-                Real-time shelter capacity allocation, medical supplies, and relief inventory
-              </p>
-            </div>
+        {/* Tactical Map */}
+        <RiskMap height="480px" showRoute={true} />
+
+        {/* Professional Legend */}
+        <div className="bg-slate-900 p-2.5 rounded border border-slate-800 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-slate-400 font-bold uppercase">SECTOR THREAT INDEX:</span>
+            <span className="flex items-center gap-1.5 text-red-400 font-bold"><span className="w-2.5 h-2.5 bg-red-500 rounded-full" /> CRITICAL (76-100)</span>
+            <span className="flex items-center gap-1.5 text-orange-400 font-bold"><span className="w-2.5 h-2.5 bg-orange-500 rounded-full" /> HIGH (51-75)</span>
+            <span className="flex items-center gap-1.5 text-amber-300 font-bold"><span className="w-2.5 h-2.5 bg-amber-400 rounded-full" /> MODERATE (26-50)</span>
+            <span className="flex items-center gap-1.5 text-emerald-400 font-bold"><span className="w-2.5 h-2.5 bg-emerald-500 rounded-full" /> LOW (0-25)</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {safeLocations.map((s) => (
-              <div key={s.id} className="p-4 bg-slate-900 rounded-xl border border-slate-800 space-y-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-white text-sm">{s.name}</h4>
-                  <span className="px-2 py-0.5 rounded text-xs font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
-                    {s.status}
-                  </span>
-                </div>
-
-                <div className="space-y-1 text-xs font-mono text-slate-300">
-                  <div className="flex justify-between">
-                    <span>Occupancy:</span>
-                    <span>{s.current_occupancy} / {s.capacity} ({s.occupancy_pct}%)</span>
-                  </div>
-                  <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700">
-                    <div
-                      className={`h-full ${s.occupancy_pct > 80 ? 'bg-amber-500' : 'bg-emerald-500'}`}
-                      style={{ width: `${s.occupancy_pct}%` }}
-                    />
-                  </div>
-                </div>
-
-                <div className="text-[11px] font-mono text-slate-400 pt-2 border-t border-slate-800">
-                  Amenities: {s.facilities}
-                </div>
-              </div>
-            ))}
+          <div className="flex items-center gap-2 text-slate-400">
+            <span>Projection: <strong>WGS84 / EPSG:4326</strong></span>
+            <span>•</span>
+            <span>Update Interval: <strong>Real-time Telemetry</strong></span>
           </div>
         </div>
-      )}
+      </section>
 
-      {/* Tab 4: Tactical Threat GIS Matrix */}
-      {activeTab === 'map' && (
-        <div className="bg-[#1E293B] border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-          <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-slate-200">
-            Full-Spectrum GIS Threat Matrix
-          </h3>
-          <RiskMap height="550px" showRoute={true} />
+      {/* ========================================================================= */}
+      {/* 3. PRIORITY CRITICAL INCIDENTS TABLE                                      */}
+      {/* ========================================================================= */}
+      <section className="bg-[#0B1120] border border-slate-700/80 rounded p-4 shadow-sm space-y-3">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+          <div className="flex items-center gap-2">
+            <ShieldAlert className="w-4 h-4 text-red-400" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-white">
+              PRIORITY INCIDENTS & CRITICAL RESPONSE QUEUE
+            </h2>
+          </div>
+          <span className="text-slate-400 text-[11px]">Ranked by Composite Risk & Population Exposure</span>
         </div>
-      )}
-
-      {/* Broadcast History Log Table */}
-      <div className="bg-[#1E293B] border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-        <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
-          <Clock className="w-4 h-4 text-blue-400" />
-          <span>Official Alert Broadcast Logs ({alerts.length})</span>
-        </h3>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-slate-900 text-slate-400 uppercase border-b border-slate-700">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-slate-900 text-slate-400 uppercase text-[10px] border-b border-slate-700">
               <tr>
-                <th className="p-3">Time</th>
-                <th className="p-3">Location</th>
-                <th className="p-3">Hazard</th>
-                <th className="p-3">Severity</th>
-                <th className="p-3">Status</th>
-                <th className="p-3 text-right">Action</th>
+                <th className="p-2.5">SECTOR / LOCATION</th>
+                <th className="p-2.5">PRIMARY HAZARD</th>
+                <th className="p-2.5 text-center">RISK SCORE</th>
+                <th className="p-2.5">SEVERITY</th>
+                <th className="p-2.5 text-right">POP. AT RISK</th>
+                <th className="p-2.5 text-center">STATUS</th>
+                <th className="p-2.5 text-right">OPERATIONAL ACTION</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800 text-slate-300">
-              {alerts.map((a) => (
-                <tr key={a.id} className="hover:bg-slate-900/50 transition-colors">
-                  <td className="p-3 font-semibold text-slate-400">{a.created_at}</td>
-                  <td className="p-3 font-bold text-white">{a.location_name}</td>
-                  <td className="p-3">{a.hazard_type}</td>
-                  <td className="p-3">
+            <tbody className="divide-y divide-slate-800 text-[11px]">
+              {priorityIncidents.map((inc) => (
+                <tr key={inc.id} className="hover:bg-slate-900/60 transition-colors">
+                  <td className="p-2.5 font-bold text-white flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-red-500" />
+                    <span>{inc.location}</span>
+                  </td>
+                  <td className="p-2.5 text-slate-300">{inc.hazard}</td>
+                  <td className="p-2.5 text-center font-bold font-mono">
+                    <span className={inc.riskScore >= 76 ? 'text-red-400' : 'text-orange-400'}>
+                      {inc.riskScore} / 100
+                    </span>
+                  </td>
+                  <td className="p-2.5">
                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                      a.severity === 'CRITICAL' ? 'bg-red-600 text-white' : 'bg-orange-600 text-white'
+                      inc.severity === 'CRITICAL' ? 'bg-red-950 text-red-300 border border-red-500/50' : 'bg-orange-950 text-orange-300 border border-orange-500/50'
                     }`}>
-                      {a.severity}
+                      {inc.severity}
                     </span>
                   </td>
-                  <td className="p-3">
-                    <span className={`px-2 py-0.5 rounded text-[10px] border ${
-                      a.status === 'Active' ? 'text-red-400 border-red-500/40' : 'text-slate-400 border-slate-700'
-                    }`}>
-                      {a.status}
+                  <td className="p-2.5 text-right font-bold text-white">{inc.populationAtRisk}</td>
+                  <td className="p-2.5 text-center">
+                    <span className="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 border border-slate-700">
+                      {inc.status}
                     </span>
                   </td>
-                  <td className="p-3 text-right">
-                    {a.status === 'Active' && (
+                  <td className="p-2.5 text-right">
+                    <button
+                      onClick={() => selectLocation(inc.locationId)}
+                      className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-white rounded border border-slate-600 text-[10px] font-bold"
+                    >
+                      INSPECT SECTOR
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 4. TWO-COLUMN SPLIT: ACTIVE WARNINGS QUEUE & RESPONSE UNITS STATUS         */}
+      {/* ========================================================================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* Active Alerts Queue Table (7 cols) */}
+        <section className="lg:col-span-7 bg-[#0B1120] border border-slate-700/80 rounded p-4 shadow-sm space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+            <div className="flex items-center gap-2">
+              <Radio className="w-4 h-4 text-amber-400" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-white">
+                ACTIVE OPERATIONAL WARNINGS QUEUE ({alerts.length})
+              </h2>
+            </div>
+            <button
+              onClick={() => setActivePage('alerts')}
+              className="text-[11px] text-blue-400 hover:underline"
+            >
+              Full Archive
+            </button>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-slate-900 text-slate-400 uppercase text-[10px] border-b border-slate-700">
+                <tr>
+                  <th className="p-2">SECTOR</th>
+                  <th className="p-2">HAZARD</th>
+                  <th className="p-2">SEVERITY</th>
+                  <th className="p-2">ISSUED</th>
+                  <th className="p-2 text-right">ACTION</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800 text-[11px]">
+                {alerts.slice(0, 5).map((a) => (
+                  <tr key={a.id} className="hover:bg-slate-900/50">
+                    <td className="p-2 font-bold text-white truncate max-w-[120px]">{a.location_name || 'Chamoli'}</td>
+                    <td className="p-2 text-slate-300">{a.hazard_type || 'Flash Flood'}</td>
+                    <td className="p-2">
+                      <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${
+                        a.severity === 'CRITICAL' ? 'bg-red-950 text-red-300 border border-red-500/50' : 'bg-amber-950 text-amber-300 border border-amber-500/50'
+                      }`}>
+                        {a.severity}
+                      </span>
+                    </td>
+                    <td className="p-2 text-slate-400 font-mono text-[10px]">{a.created_at ? new Date(a.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Active'}</td>
+                    <td className="p-2 text-right">
+                      {a.status === 'Active' || a.status === 'ACTIVE' ? (
+                        <button
+                          onClick={() => resolveAlert(a.id)}
+                          className="px-2 py-0.5 bg-emerald-800 hover:bg-emerald-700 text-white rounded text-[10px]"
+                        >
+                          Mark Resolved
+                        </button>
+                      ) : (
+                        <span className="text-slate-500 text-[10px]">Resolved</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* Field Response Units Allocation (5 cols) */}
+        <section className="lg:col-span-5 bg-[#0B1120] border border-slate-700/80 rounded p-4 shadow-sm space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+            <div className="flex items-center gap-2">
+              <Truck className="w-4 h-4 text-emerald-400" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-white">
+                FIELD RESPONSE UNITS ALLOCATION
+              </h2>
+            </div>
+            <span className="text-emerald-400 text-[10px] font-bold">4 TEAMS ACTIVE</span>
+          </div>
+
+          <div className="space-y-2">
+            {responseUnits.map((u) => (
+              <div key={u.id} className="p-2 bg-slate-900/90 border border-slate-800 rounded flex items-center justify-between text-[11px]">
+                <div>
+                  <strong className="text-white block">{u.name}</strong>
+                  <span className="text-slate-400 text-[10px]">Assigned: {u.location} • Task: {u.tasks}</span>
+                </div>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                  u.status === 'DEPLOYED' ? 'bg-red-950 text-red-300 border border-red-500/40' : 'bg-emerald-950 text-emerald-300 border border-emerald-500/40'
+                }`}>
+                  {u.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 5. INCOMING CITIZEN SOS DISTRESS QUEUE TABLE                              */}
+      {/* ========================================================================= */}
+      <section className="bg-[#0B1120] border border-slate-700/80 rounded p-4 shadow-sm space-y-3">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+          <div className="flex items-center gap-2">
+            <HeartPulse className="w-4 h-4 text-rose-400" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-white">
+              INCOMING CITIZEN SOS DISTRESS QUEUE ({pendingSosCount} PENDING DISPATCH)
+            </h2>
+          </div>
+          <span className="text-slate-400 text-[11px]">Direct telemetry from Citizen Safety Portal</span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-slate-900 text-slate-400 uppercase text-[10px] border-b border-slate-700">
+              <tr>
+                <th className="p-2.5">SIGNAL ID</th>
+                <th className="p-2.5">CITIZEN</th>
+                <th className="p-2.5">SECTOR</th>
+                <th className="p-2.5">MESSAGE / DETAILS</th>
+                <th className="p-2.5 text-center">TRAPPED</th>
+                <th className="p-2.5 text-center">STATUS</th>
+                <th className="p-2.5 text-right">DISPATCH ACTION</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800 text-[11px]">
+              {sosRequests.map((s) => (
+                <tr key={s.id} className="hover:bg-slate-900/60">
+                  <td className="p-2.5 font-bold text-red-400 font-mono">{s.id}</td>
+                  <td className="p-2.5 text-white font-bold">{s.citizen_name} ({s.phone})</td>
+                  <td className="p-2.5 text-slate-300">{s.location_name}</td>
+                  <td className="p-2.5 text-slate-300 max-w-xs truncate">"{s.message}"</td>
+                  <td className="p-2.5 text-center font-bold text-white">{s.people_count || 1} Persons</td>
+                  <td className="p-2.5 text-center">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      s.status === 'PENDING' ? 'bg-red-600 text-white animate-pulse' : 'bg-emerald-700 text-white'
+                    }`}>
+                      {s.status}
+                    </span>
+                  </td>
+                  <td className="p-2.5 text-right">
+                    {s.status === 'PENDING' ? (
                       <button
-                        onClick={() => resolveAlert(a.id)}
-                        className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[11px] font-semibold"
+                        onClick={() => updateSosStatus(s.id, 'DISPATCHED')}
+                        className="px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-[10px] font-bold flex items-center gap-1 ml-auto"
                       >
-                        Resolve
+                        <Truck className="w-3 h-3" />
+                        <span>Dispatch Rescue</span>
                       </button>
+                    ) : (
+                      <span className="text-emerald-400 text-[10px] font-bold">Dispatched</span>
                     )}
                   </td>
                 </tr>
@@ -522,7 +460,126 @@ export default function AuthorityPage() {
             </tbody>
           </table>
         </div>
-      </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 6. ADMINISTRATIVE WARNING BROADCAST MODAL                                 */}
+      {/* ========================================================================= */}
+      {isBroadcastModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
+          <div className="bg-[#0B1120] border border-slate-700 rounded-lg max-w-xl w-full p-5 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-700">
+              <div className="flex items-center gap-2">
+                <Send className="w-4 h-4 text-red-400" />
+                <h3 className="text-sm font-bold text-white uppercase">
+                  ISSUE ADMINISTRATIVE EMERGENCY BROADCAST (CAP v1.2)
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsBroadcastModalOpen(false)}
+                className="text-slate-400 hover:text-white font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleIssueAlert} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-400 mb-1">Target Sector</label>
+                <select
+                  name="location_id"
+                  value={formData.location_id}
+                  onChange={handleInputChange}
+                  className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white"
+                >
+                  {locations.map(loc => (
+                    <option key={loc.id} value={loc.id}>
+                      {loc.name} ({loc.state})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-slate-400 mb-1">Hazard Type</label>
+                  <select
+                    name="hazard_type"
+                    value={formData.hazard_type}
+                    onChange={handleInputChange}
+                    className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white"
+                  >
+                    <option value="Flash Flood">Flash Flood</option>
+                    <option value="Landslide">Landslide</option>
+                    <option value="Heavy Rainfall">Heavy Rainfall</option>
+                    <option value="Riverine Flood">Riverine Flood</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-slate-400 mb-1">Severity Tier</label>
+                  <select
+                    name="severity"
+                    value={formData.severity}
+                    onChange={handleInputChange}
+                    className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white font-bold text-red-400"
+                  >
+                    <option value="CRITICAL">CRITICAL (Emergency Warning)</option>
+                    <option value="HIGH">HIGH (Warning)</option>
+                    <option value="MODERATE">MODERATE (Advisory)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-400 mb-1">Official Directive Title</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  placeholder="e.g. 🚨 CRITICAL FLASH FLOOD WARNING: Alaknanda Basin"
+                  className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-400 mb-1">Directive Message</label>
+                <textarea
+                  name="message"
+                  rows={3}
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  placeholder="Official instructions for citizen evacuation and emergency teams..."
+                  className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white"
+                />
+              </div>
+
+              <div className="p-2 bg-amber-950/60 border border-amber-500/40 rounded text-amber-300 text-[10px]">
+                Notice: Dispatches via prototype notification dispatcher to simulated SMS and In-App citizen HUD.
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-700">
+                <button
+                  type="button"
+                  onClick={() => setIsBroadcastModalOpen(false)}
+                  className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded font-bold flex items-center gap-1.5"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>{isSubmitting ? 'Broadcasting...' : 'Broadcast Warning'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

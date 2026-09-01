@@ -2,7 +2,8 @@ import React from 'react';
 import { useApp } from './context/AppContext';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import EmergencyBanner from './components/EmergencyBanner';
+import AuthorityHeader from './components/AuthorityHeader';
+import AuthoritySidebar from './components/AuthoritySidebar';
 import NotificationModal from './components/NotificationModal';
 import EarlyWarningAlertModal from './components/EarlyWarningAlertModal';
 import AlertHistoryModal from './components/AlertHistoryModal';
@@ -28,9 +29,11 @@ import DashboardPage from './pages/DashboardPage';
 export default function App() {
   const { activePage, userRole, isAlertHistoryOpen, setIsAlertHistoryOpen } = useApp();
 
+  const isAuthority = userRole === 'authority';
+
   const renderActivePage = () => {
     // 1. Citizen Experience (Simple, Actionable, High-Contrast)
-    if (userRole === 'citizen') {
+    if (!isAuthority) {
       switch (activePage) {
         case 'map':
           return <CitizenDangerMapPage />;
@@ -77,18 +80,22 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F172A] text-slate-100 flex flex-col selection:bg-blue-600 selection:text-white">
-      {/* Top Navbar */}
-      <Navbar />
+    <div className={`min-h-screen flex flex-col selection:bg-red-600 selection:text-white ${
+      isAuthority ? 'bg-[#070B14] text-slate-200' : 'bg-[#0F172A] text-slate-100'
+    }`}>
+      {/* Dynamic Header: Institutional AuthorityHeader vs Citizen Navbar */}
+      {isAuthority ? <AuthorityHeader /> : <Navbar />}
 
       {/* Main Layout Container */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Fixed Side Navigation */}
-        <Sidebar />
+        {/* Dynamic Navigation: Institutional AuthoritySidebar vs Citizen Sidebar */}
+        {isAuthority ? <AuthoritySidebar /> : <Sidebar />}
 
-        {/* Scrollable Page Content Canvas */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8 bg-[#0F172A]">
-          <div className="max-w-7xl mx-auto">
+        {/* Scrollable Workspace Canvas */}
+        <main className={`flex-1 overflow-y-auto ${
+          isAuthority ? 'p-3 lg:p-5 bg-[#070B14]' : 'p-4 lg:p-8 bg-[#0F172A]'
+        }`}>
+          <div className={isAuthority ? 'max-w-full mx-auto' : 'max-w-7xl mx-auto'}>
             {renderActivePage()}
           </div>
         </main>
