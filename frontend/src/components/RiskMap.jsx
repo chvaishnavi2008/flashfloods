@@ -481,11 +481,62 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
 
   const activeColor = getRiskColor(activeLoc?.current_risk?.overall_level || 'LOW');
 
-  // Filtered Locations based on active selectedLayer
+  // Layer Visibility Booleans (Strict Layer Isolation)
+  const isAll = selectedLayer === 'all' || !selectedLayer;
+  const isFlood = selectedLayer === 'flood' || selectedLayer === 'flash_flood';
+  const isLandslide = selectedLayer === 'landslide';
+  const isRainfall = selectedLayer === 'rainfall' || selectedLayer === 'heavy_rainfall';
+  const isSafeShelters = selectedLayer === 'safe_locations';
+
+  // 1. Filtered Hazard Polygons / Corridors
+  const visibleCorridors = useMemo(() => {
+    if (isSafeShelters || isRainfall) return [];
+    if (isFlood) return HAZARD_CORRIDORS.filter(c => c.type === 'flood');
+    if (isLandslide) return HAZARD_CORRIDORS.filter(c => c.type === 'landslide');
+    return HAZARD_CORRIDORS; // 'all'
+  }, [isAll, isFlood, isLandslide, isRainfall, isSafeShelters]);
+
+  // 2. Filtered Road Checkpoint Markers
+  const visibleRoadBlocks = useMemo(() => {
+    if (!showRoadBlocks || isSafeShelters || isRainfall) return [];
+    if (isFlood) return ROAD_CHECKPOINTS.filter(cp => cp.hazard.toLowerCase().includes('inundat') || cp.hazard.toLowerCase().includes('flood') || cp.hazard.toLowerCase().includes('water'));
+    if (isLandslide) return ROAD_CHECKPOINTS.filter(cp => cp.hazard.toLowerCase().includes('rockfall') || cp.hazard.toLowerCase().includes('debris') || cp.hazard.toLowerCase().includes('slope'));
+    return ROAD_CHECKPOINTS; // 'all'
+  }, [showRoadBlocks, isAll, isFlood, isLandslide, isRainfall, isSafeShelters]);
+
+  // 3. Filtered Sector Locations
   const filteredLocations = useMemo(() => {
-    if (selectedLayer === 'safe_locations') return [];
+    if (isSafeShelters) return [];
+    if (isFlood) {
+      return locations.filter(loc => {
+        const dom = loc.current_risk?.dominant_hazard;
+        const ffLevel = loc.current_risk?.flash_flood_level;
+        return dom === 'flash_flood' || dom === 'flood' || (ffLevel && ffLevel !== 'LOW') || (loc.river_proximity_km && loc.river_proximity_km <= 6);
+      });
+    }
+    if (isLandslide) {
+      return locations.filter(loc => {
+        const dom = loc.current_risk?.dominant_hazard;
+        const lsLevel = loc.current_risk?.landslide_level;
+        return dom === 'landslide' || (lsLevel && lsLevel !== 'LOW') || (loc.slope_deg && loc.slope_deg >= 18);
+      });
+    }
+    if (isRainfall) {
+      return locations.filter(loc => {
+        const dom = loc.current_risk?.dominant_hazard;
+        const hrLevel = loc.current_risk?.heavy_rainfall_level;
+        return dom === 'heavy_rainfall' || (hrLevel && hrLevel !== 'LOW') || (loc.current_risk?.overall_level !== 'LOW');
+      });
+    }
     return locations;
-  }, [locations, selectedLayer]);
+  }, [locations, isAll, isFlood, isLandslide, isRainfall, isSafeShelters]);
+
+  // 4. Radar Sweep Visibility
+  const isRadarVisible = showRadarSweep && (isAll || isRainfall);
+
+  // 5. Shelter & Evacuation Visibility
+  const isSheltersVisible = isAll || isSafeShelters;
+  const isRouteVisible = showRoute && (isAll || isSafeShelters);
 
   return (
     <div 
@@ -778,8 +829,8 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
             maxZoom={18}
           />
 
-          {/* Render Hazard Polygons & Spatial Corridors */}
-          {selectedLayer !== 'safe_locations' && HAZARD_CORRIDORS.map((corridor) => {
+          {/* 1. Render Filtered Hazard Polygons / Corridors */}
+          {visibleCorridors.map((corridor) => {
             const isFlood = corridor.type === 'flood';
             const polyColor = corridor.severity === 'CRITICAL' ? '#EF4444' : '#F97316';
 
@@ -790,7 +841,7 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
                 pathOptions={{
                   color: polyColor,
                   fillColor: isFlood ? '#0284C7' : '#D97706',
-                  fillOpacity: 0.28,
+                  fillOpacity: 0.35,
                   weight: 2,
                   dashArray: '6, 6'
                 }}
@@ -818,8 +869,8 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
             );
           })}
 
-          {/* Doppler Precipitation Radar Overlay (Simulated Radar Heat Rings) */}
-          {showRadarSweep && selectedLayer !== 'safe_locations' && (
+          {/* 2. Doppler Precipitation Radar Overlay (Simulated Radar Heat Rings) */}
+          {isRadarVisible && (
             <>
               {/* Rain Sweep around active location */}
               <Circle
@@ -828,7 +879,7 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
                 pathOptions={{
                   color: '#38BDF8',
                   fillColor: '#0284C7',
-                  fillOpacity: 0.12,
+                  fillOpacity: 0.15,
                   weight: 1.5,
                   dashArray: '4, 4'
                 }}
@@ -839,15 +890,15 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
                 pathOptions={{
                   color: '#0284C7',
                   fillColor: '#0369A1',
-                  fillOpacity: 0.06,
+                  fillOpacity: 0.08,
                   weight: 1
                 }}
               />
             </>
           )}
 
-          {/* Safe Walking Isochrone Buffers around Target Shelter (500m, 1000m, 1500m) */}
-          {showIsochrones && targetShelter && (
+          {/* 3. Safe Walking Isochrone Buffers around Target Shelter */}
+          {showIsochrones && isSheltersVisible && targetShelter && (
             <>
               <Circle
                 center={[targetShelter.lat, targetShelter.lng]}
@@ -877,8 +928,8 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
             </>
           )}
 
-          {/* Road Blockade / Checkpoint Markers */}
-          {showRoadBlocks && ROAD_CHECKPOINTS.map((cp) => (
+          {/* 4. Road Blockade / Checkpoint Markers */}
+          {visibleRoadBlocks.map((cp) => (
             <Marker
               key={cp.id}
               position={[cp.lat, cp.lng]}
@@ -898,7 +949,7 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
             </Marker>
           ))}
 
-          {/* Multi-Hazard Risk Nodes (All 31 Monitored Locations) */}
+          {/* 5. Multi-Hazard Risk Nodes (Filtered by Active Layer) */}
           {filteredLocations.map((loc) => {
             const level = getLocationHazardLevel(loc);
             const color = getRiskColor(level);
@@ -976,16 +1027,16 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
             );
           })}
 
-          {/* Active Target Reticle Overlay */}
-          {activeLoc && (
+          {/* 6. Active Target Reticle Overlay */}
+          {activeLoc && !isSafeShelters && (
             <Marker 
               position={[activeLoc.lat, activeLoc.lng]} 
               icon={createActiveReticleIcon(activeColor)}
             />
           )}
 
-          {/* Safe Relief Shelters */}
-          {safeLocations.map((shelter) => {
+          {/* 7. Safe Relief Shelters (Visible when All or Safe Shelters selected) */}
+          {isSheltersVisible && safeLocations.map((shelter) => {
             const isSelected = selectedShelter?.id === shelter.id;
 
             return (
@@ -1042,8 +1093,8 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
             );
           })}
 
-          {/* Animated Evacuation Route Polyline */}
-          {showRoute && routeCoords.length > 0 && (
+          {/* 8. Animated Evacuation Route Polyline (Visible when All or Safe Shelters selected) */}
+          {isRouteVisible && routeCoords.length > 0 && (
             <>
               {/* Outer Glow Halo */}
               <Polyline
