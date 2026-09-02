@@ -104,106 +104,67 @@ def seed_database():
         db.session.flush()
         location_objs[loc.name] = loc
 
-    # 3. Seed Environmental Telemetry
-    # Baseline: Chamoli, Joshimath, Wayanad, Cherrapunji configured with rich active metrics
+    # 3. Seed Environmental Telemetry across All 4 Threat Categories
+    critical_sectors = {"Wayanad (Meppadi)", "Joshimath", "Kedarnath", "Chungthang", "Munnar"}
+    high_sectors = {"Chamoli", "Cherrapunji (Sohra)", "Uttarkashi", "Kullu - Manali", "Dharamshala", "Mawsynram", "Ramban (NH-44)", "Darjeeling - Kalimpong", "Melamchi"}
+    moderate_sectors = {"Dehradun", "Shimla (Ward 4)", "Mandi", "Gangtok", "Silchar", "Kaziranga", "Tawang", "Pasighat", "Idukki", "Jalpaiguri", "Supaul (Kosi)", "Darchula Border"}
+    low_sectors = {"Guwahati (Brahmaputra)", "Srinagar (Jhelum)", "Poonch", "Patna (Ganges)", "Pokhara (Seti River)"}
+
     for loc in location_objs.values():
-        if loc.name == "Chamoli":
+        if loc.name in critical_sectors:
             env = EnvironmentalData(
                 location_id=loc.id,
-                rainfall_mm=110.0,
-                rainfall_rate=84.0,
-                rainfall_intensity="Torrential",
-                rainfall_forecast_trend="Rising",
-                river_level_m=5.8,
-                river_capacity_pct=88.0,
+                rainfall_mm=135.0,
+                rainfall_rate=92.0,
+                rainfall_intensity="Torrential Cloudburst",
+                rainfall_forecast_trend="Rising Rapidly",
+                river_level_m=6.4,
+                river_capacity_pct=94.0,
                 river_trend="Rising Rapidly",
-                soil_saturation_pct=82.0,
-                slope_deg=35.0,
-                slope_stability="Critical / Imminent Slip"
-            )
-        elif loc.name == "Joshimath":
-            env = EnvironmentalData(
-                location_id=loc.id,
-                rainfall_mm=95.0,
-                rainfall_rate=50.0,
-                rainfall_intensity="Heavy",
-                rainfall_forecast_trend="Stable",
-                river_level_m=4.1,
-                river_capacity_pct=65.0,
-                river_trend="Rising",
-                soil_saturation_pct=85.0,
-                slope_deg=36.0,
-                slope_stability="Moderate Risk"
-            )
-        elif loc.name == "Wayanad (Meppadi)":
-            env = EnvironmentalData(
-                location_id=loc.id,
-                rainfall_mm=125.0,
-                rainfall_rate=68.0,
-                rainfall_intensity="Heavy",
-                rainfall_forecast_trend="Peaking",
-                river_level_m=4.6,
-                river_capacity_pct=72.0,
-                river_trend="Rising",
                 soil_saturation_pct=92.0,
-                slope_deg=38.0,
+                slope_deg=max(34.0, loc.lat % 10 + 28),
                 slope_stability="Critical / Imminent Slip"
             )
-        elif loc.name == "Cherrapunji (Sohra)":
+        elif loc.name in high_sectors:
             env = EnvironmentalData(
                 location_id=loc.id,
-                rainfall_mm=180.0,
-                rainfall_rate=115.0,
-                rainfall_intensity="Cloudburst / Torrential",
-                rainfall_forecast_trend="Peaking",
-                river_level_m=5.2,
-                river_capacity_pct=80.0,
-                river_trend="Rising Rapidly",
-                soil_saturation_pct=88.0,
-                slope_deg=28.0,
-                slope_stability="Moderate Risk"
-            )
-        elif loc.name == "Chungthang":
-            env = EnvironmentalData(
-                location_id=loc.id,
-                rainfall_mm=90.0,
-                rainfall_rate=65.0,
-                rainfall_intensity="Heavy",
+                rainfall_mm=78.0,
+                rainfall_rate=52.0,
+                rainfall_intensity="Heavy Downpour",
                 rainfall_forecast_trend="Rising",
-                river_level_m=5.5,
-                river_capacity_pct=85.0,
-                river_trend="Rising Rapidly",
-                soil_saturation_pct=75.0,
-                slope_deg=34.0,
-                slope_stability="Moderate Risk"
-            )
-        elif loc.name == "Guwahati (Brahmaputra)":
-            env = EnvironmentalData(
-                location_id=loc.id,
-                rainfall_mm=120.0,
-                rainfall_rate=42.0,
-                rainfall_intensity="Heavy",
-                rainfall_forecast_trend="Rising",
-                river_level_m=6.8,
-                river_capacity_pct=91.0,
+                river_level_m=4.9,
+                river_capacity_pct=76.0,
                 river_trend="Rising",
-                soil_saturation_pct=80.0,
-                slope_deg=8.0,
-                slope_stability="Stable"
+                soil_saturation_pct=78.0,
+                slope_deg=max(28.0, loc.lat % 10 + 22),
+                slope_stability="High Shear Stress"
             )
-        else:
-            # Nominal baseline watch conditions for other sectors
+        elif loc.name in moderate_sectors:
             env = EnvironmentalData(
                 location_id=loc.id,
-                rainfall_mm=32.0,
-                rainfall_rate=6.5,
-                rainfall_intensity="Moderate",
+                rainfall_mm=38.0,
+                rainfall_rate=22.0,
+                rainfall_intensity="Moderate Showers",
                 rainfall_forecast_trend="Stable",
-                river_level_m=2.4,
-                river_capacity_pct=38.0,
+                river_level_m=3.2,
+                river_capacity_pct=52.0,
                 river_trend="Normal",
-                soil_saturation_pct=45.0,
-                slope_deg=24.0,
+                soil_saturation_pct=54.0,
+                slope_deg=22.0,
+                slope_stability="Moderate Watch"
+            )
+        else: # low_sectors
+            env = EnvironmentalData(
+                location_id=loc.id,
+                rainfall_mm=6.0,
+                rainfall_rate=1.8,
+                rainfall_intensity="Light / Nominal",
+                rainfall_forecast_trend="Receding",
+                river_level_m=1.6,
+                river_capacity_pct=26.0,
+                river_trend="Normal",
+                soil_saturation_pct=30.0,
+                slope_deg=10.0,
                 slope_stability="Stable"
             )
         db.session.add(env)
