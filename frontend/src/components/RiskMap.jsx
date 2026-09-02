@@ -66,13 +66,13 @@ function MapController({ center, zoom, bounds }) {
   return null;
 }
 
-// Available High-Definition Basemap Providers
+// Available High-Definition Keyless Basemap Providers (100% Free, Zero Watermark, No API Key Required)
 const BASEMAP_PROVIDERS = {
   dark: {
     name: 'Tactical Dark',
     icon: '🌒',
-    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-    attribution: '&copy; CARTO, OpenStreetMap contributors'
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+    attribution: 'Tiles &copy; Esri, HERE, Garmin, OpenStreetMap contributors'
   },
   satellite: {
     name: 'Satellite',
@@ -89,8 +89,8 @@ const BASEMAP_PROVIDERS = {
   streets: {
     name: 'Civil Streets',
     icon: '🗺️',
-    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-    attribution: '&copy; CARTO, OpenStreetMap contributors'
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+    attribution: 'Tiles &copy; Esri, HERE, Garmin, OpenStreetMap contributors'
   }
 };
 
