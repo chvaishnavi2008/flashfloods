@@ -18,6 +18,28 @@ export const api = {
   },
 
   // 2. Risk Assessments
+  async createRiskAssessment(assessmentData) {
+    const res = await fetch(`${API_BASE_URL}/risk-assessment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(assessmentData)
+    });
+    if (!res.ok) throw new Error('Failed to calculate risk assessment');
+    return res.json();
+  },
+
+  async getRiskAssessments() {
+    const res = await fetch(`${API_BASE_URL}/risk-assessments`);
+    if (!res.ok) throw new Error('Failed to fetch risk assessments history');
+    return res.json();
+  },
+
+  async getRiskAssessmentById(id) {
+    const res = await fetch(`${API_BASE_URL}/risk-assessments/${id}`);
+    if (!res.ok) throw new Error('Failed to fetch risk assessment');
+    return res.json();
+  },
+
   async getSystemRisk() {
     const res = await fetch(`${API_BASE_URL}/risk`);
     if (!res.ok) throw new Error('Failed to fetch system risk');

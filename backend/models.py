@@ -313,3 +313,45 @@ class Notification(db.Model):
             "status": self.status,
             "sent_at": self.sent_at.strftime("%H:%M:%S IST") if self.sent_at else ""
         }
+
+class AssessmentRecord(db.Model):
+    __tablename__ = 'assessment_records'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    location = db.Column(db.String(150), nullable=False, default="Sector")
+    latitude = db.Column(db.Float, default=0.0)
+    longitude = db.Column(db.Float, default=0.0)
+    rainfall = db.Column(db.Float, default=0.0)
+    soil_moisture = db.Column(db.Float, default=0.0)
+    slope = db.Column(db.Float, default=0.0)
+    historical_risk = db.Column(db.Float, default=0.0)
+    flash_flood_score = db.Column(db.Float, default=0.0)
+    landslide_score = db.Column(db.Float, default=0.0)
+    overall_score = db.Column(db.Float, default=0.0)
+    risk_level = db.Column(db.String(30), default="LOW")
+    dominant_hazard = db.Column(db.String(50), default="flash_flood")
+    lead_time_minutes = db.Column(db.Integer, default=60)
+    recommended_action = db.Column(db.Text, default="")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "risk_id": self.id,
+            "location": self.location,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
+            "rainfall": self.rainfall,
+            "soil_moisture": self.soil_moisture,
+            "slope": self.slope,
+            "historical_risk": self.historical_risk,
+            "flash_flood_score": round(self.flash_flood_score, 2),
+            "landslide_score": round(self.landslide_score, 2),
+            "overall_score": round(self.overall_score, 2),
+            "risk_level": self.risk_level,
+            "dominant_hazard": self.dominant_hazard,
+            "lead_time_minutes": self.lead_time_minutes,
+            "recommended_action": self.recommended_action,
+            "created_at": self.created_at.isoformat() if self.created_at else None
+        }
+

@@ -30,6 +30,8 @@ def get_locations():
                 "flood_level": "LOW",
                 "heavy_rainfall_level": "LOW"
             }
+        loc_dict["latitude"] = loc.lat
+        loc_dict["longitude"] = loc.lng
         results.append(loc_dict)
         
     return jsonify({

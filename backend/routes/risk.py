@@ -262,3 +262,168 @@ def get_pipeline_trace(location_id):
         
     pipeline_result = DisasterIntelligencePipeline.execute_pipeline(env_data, location)
     return jsonify(pipeline_result), 200
+
+# =============================================================================
+# STANDALONE RISK ASSESSMENT REST APIS (RESTful Full-Stack Contract)
+# =============================================================================
+
+@risk_bp.route('/api/risk-assessment', methods=['POST'])
+def calculate_risk_assessment_endpoint():
+    """
+    Processes environmental & location inputs through the centralized Risk Engine,
+    persists the calculation to SQLite, and returns structured hazard risk payload.
+    
+    Expected Request Payload:
+    {
+      "location": {
+        "name": "Chamoli",
+        "latitude": 30.4124,
+        "longitude": 79.3198
+      },
+      "rainfall": 120.0,
+      "soil_moisture": 78.0,
+      "slope": 35.0,
+      "historical_risk": 70.0
+    }
+    """
+    from services.risk_engine import (
+        calculate_flash_flood_risk,
+        calculate_landslide_risk,
+        calculate_overall_risk,
+        determine_risk_level,
+        determine_dominant_hazard,
+        estimate_lead_time,
+        generate_recommended_action
+    )
+    from models import AssessmentRecord
+
+    try:
+        data = request.get_json() or {}
+    except Exception:
+        return jsonify({
+            "success": False,
+            "error": "Invalid environmental parameters"
+        }), 400
+
+    # Parse and validate location
+    loc_input = data.get("location", {})
+    if isinstance(loc_input, dict):
+        loc_name = loc_input.get("name", "Custom Location")
+        latitude = float(loc_input.get("latitude", loc_input.get("lat", 0.0)))
+        longitude = float(loc_input.get("longitude", loc_input.get("lng", 0.0)))
+    elif isinstance(loc_input, str):
+        loc_name = loc_input
+        latitude = float(data.get("latitude", data.get("lat", 0.0)))
+        longitude = float(data.get("longitude", data.get("lng", 0.0)))
+    else:
+        loc_name = "Custom Location"
+        latitude = 0.0
+        longitude = 0.0
+
+    # Parse environmental parameters with safe numerical conversion
+    try:
+        rainfall = float(data.get("rainfall", data.get("rainfall_rate", data.get("rainfall_mm", 25.0))))
+        soil_moisture = float(data.get("soil_moisture", data.get("soil_saturation_pct", 50.0)))
+        slope = float(data.get("slope", data.get("slope_deg", 30.0)))
+        historical_risk = float(data.get("historical_risk", 50.0))
+        river_level = float(data.get("river_level", data.get("river_capacity_pct", 50.0)))
+    except (ValueError, TypeError):
+        return jsonify({
+            "success": False,
+            "error": "Invalid environmental parameters"
+        }), 400
+
+    # Execute centralized modular risk calculations
+    flash_flood_score = calculate_flash_flood_risk(
+        rainfall=rainfall,
+        soil_moisture=soil_moisture,
+        river_level=river_level,
+        historical_risk=historical_risk
+    )
+
+    landslide_score = calculate_landslide_risk(
+        rainfall=rainfall,
+        soil_moisture=soil_moisture,
+        slope=slope,
+        historical_risk=historical_risk
+    )
+
+    overall_score = calculate_overall_risk(
+        flash_flood_score=flash_flood_score,
+        landslide_score=landslide_score
+    )
+
+    risk_level = determine_risk_level(overall_score)
+    dominant_hazard = determine_dominant_hazard(flash_flood_score, landslide_score)
+    lead_time_minutes = estimate_lead_time(overall_score, rainfall=rainfall, river_level=river_level)
+    recommended_action = generate_recommended_action(risk_level, dominant_hazard)
+
+    # Persist assessment into SQLite
+    try:
+        record = AssessmentRecord(
+            location=loc_name,
+            latitude=latitude,
+            longitude=longitude,
+            rainfall=rainfall,
+            soil_moisture=soil_moisture,
+            slope=slope,
+            historical_risk=historical_risk,
+            flash_flood_score=flash_flood_score,
+            landslide_score=landslide_score,
+            overall_score=overall_score,
+            risk_level=risk_level,
+            dominant_hazard=dominant_hazard,
+            lead_time_minutes=lead_time_minutes,
+            recommended_action=recommended_action
+        )
+        db.session.add(record)
+        db.session.commit()
+        risk_id = record.id
+    except Exception as err:
+        db.session.rollback()
+        risk_id = 1
+
+    return jsonify({
+        "success": True,
+        "risk_assessment": {
+            "risk_id": risk_id,
+            "overall_score": round(overall_score, 2),
+            "risk_level": risk_level,
+            "dominant_hazard": dominant_hazard,
+            "flash_flood_score": round(flash_flood_score, 2),
+            "landslide_score": round(landslide_score, 2),
+            "lead_time_minutes": lead_time_minutes,
+            "recommended_action": recommended_action
+        }
+    }), 200
+
+@risk_bp.route('/api/risk-assessments', methods=['GET'])
+def get_risk_assessments_history():
+    """
+    Returns stored history of previous risk assessments from SQLite.
+    """
+    from models import AssessmentRecord
+    records = AssessmentRecord.query.order_by(AssessmentRecord.created_at.desc()).limit(50).all()
+    return jsonify({
+        "success": True,
+        "count": len(records),
+        "risk_assessments": [r.to_dict() for r in records]
+    }), 200
+
+@risk_bp.route('/api/risk-assessments/<int:assessment_id>', methods=['GET'])
+def get_single_risk_assessment_history(assessment_id):
+    """
+    Retrieves a single historical risk assessment by ID from SQLite.
+    """
+    from models import AssessmentRecord
+    record = AssessmentRecord.query.get(assessment_id)
+    if not record:
+        return jsonify({
+            "success": False,
+            "error": "Risk assessment not found"
+        }), 404
+    return jsonify({
+        "success": True,
+        "risk_assessment": record.to_dict()
+    }), 200
+

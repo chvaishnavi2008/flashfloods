@@ -34,23 +34,34 @@ def create_alert():
     data = request.get_json() or {}
     
     location_id = data.get('location_id')
-    hazard_type = data.get('hazard_type', 'Flash Flood')
-    severity = data.get('severity', 'CRITICAL')
-    title = data.get('title')
-    message = data.get('message')
+    location_input = data.get('location')
+    hazard_type = data.get('hazard_type', data.get('hazard', 'Flash Flood'))
+    severity = data.get('severity', data.get('alert_level', 'CRITICAL'))
+    title = data.get('title', f"🚨 {severity} {hazard_type} WARNING")
+    message = data.get('message', data.get('recommended_action', 'Evacuate low-lying areas and seek safe shelter.'))
     radius_km = float(data.get('radius_km', 15.0))
-    lead_time_min = int(data.get('lead_time_min', 35))
+    lead_time_min = int(data.get('lead_time_min', data.get('lead_time_minutes', 35)))
     issued_by = data.get('issued_by', 'State Disaster Management Authority')
-    risk_score = float(data.get('risk_score', 80.0))
-    reason = data.get('reason')
-    immediate_action = data.get('immediate_action')
+    risk_score = float(data.get('risk_score', data.get('overall_score', 80.0)))
+    reason = data.get('reason', f"Triggered from risk assessment: {severity} {hazard_type}")
+    immediate_action = data.get('immediate_action', data.get('recommended_action', 'Evacuate to nearest shelter.'))
     affected_population = data.get('affected_population')
     recommended_next_step = data.get('recommended_next_step')
     
-    if not location_id:
-        return jsonify({"success": False, "error": "location_id is required"}), 400
+    # Resolve location
+    location = None
+    if location_id:
+        location = Location.query.get(location_id)
+    elif location_input:
+        loc_str = location_input.get('name') if isinstance(location_input, dict) else str(location_input)
+        location = Location.query.filter(Location.name.ilike(f"%{loc_str}%")).first()
+        if not location:
+            location = Location.query.first()
+        location_id = location.id if location else 1
+    else:
+        location = Location.query.first()
+        location_id = location.id if location else 1
         
-    location = Location.query.get(location_id)
     if not location:
         return jsonify({"success": False, "error": "Location not found"}), 404
         

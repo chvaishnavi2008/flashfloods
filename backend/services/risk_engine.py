@@ -5,46 +5,127 @@ from risk_config import get_risk_level_from_score
 from services.predictors.registry import HazardPredictorRegistry
 from services.pipeline_engine import DisasterIntelligencePipeline
 
+# =============================================================================
+# 1. MODULAR STANDALONE RISK ENGINE FUNCTIONS
+# =============================================================================
+
+def calculate_flash_flood_risk(rainfall: float, soil_moisture: float = 50.0, river_level: float = 50.0, historical_risk: float = 50.0) -> float:
+    """
+    Calculates Flash Flood risk score (0-100) based on rainfall intensity,
+    soil moisture saturation, river level capacity, and historical risk index.
+    """
+    rain_score = min(100.0, (float(rainfall) / 120.0) * 100.0)
+    soil_score = min(100.0, max(0.0, float(soil_moisture)))
+    river_score = min(100.0, max(0.0, float(river_level)))
+    hist_score = min(100.0, max(0.0, float(historical_risk)))
+
+    # Deterministic multi-factor weighted equation
+    score = (0.40 * rain_score) + (0.25 * soil_score) + (0.20 * river_score) + (0.15 * hist_score)
+    return round(min(100.0, max(0.0, score)), 2)
+
+def calculate_landslide_risk(rainfall: float, soil_moisture: float = 50.0, slope: float = 30.0, historical_risk: float = 50.0) -> float:
+    """
+    Calculates Landslide / Slope Geohazard risk score (0-100) based on
+    soil moisture saturation, terrain slope gradient, rainfall rate, and historical risk index.
+    """
+    rain_score = min(100.0, (float(rainfall) / 120.0) * 100.0)
+    soil_score = min(100.0, max(0.0, float(soil_moisture)))
+    slope_score = min(100.0, (float(slope) / 45.0) * 100.0)
+    hist_score = min(100.0, max(0.0, float(historical_risk)))
+
+    # Geotechnical pore-pressure & shear stress equation
+    score = (0.35 * soil_score) + (0.30 * slope_score) + (0.20 * rain_score) + (0.15 * hist_score)
+    return round(min(100.0, max(0.0, score)), 2)
+
+def calculate_overall_risk(flash_flood_score: float, landslide_score: float, extreme_rainfall_score: float = 0.0) -> float:
+    """
+    Calculates unified multi-hazard composite risk score (0-100).
+    Dominant primary hazard contributes 55%, secondary contributes 35%, auxiliary contributes 10%.
+    """
+    scores = [float(flash_flood_score), float(landslide_score)]
+    if extreme_rainfall_score > 0:
+        scores.append(float(extreme_rainfall_score))
+    
+    scores.sort(reverse=True)
+    primary = scores[0]
+    secondary = scores[1] if len(scores) > 1 else primary
+    auxiliary = scores[2] if len(scores) > 2 else (secondary * 0.5)
+
+    composite = (0.55 * primary) + (0.35 * secondary) + (0.10 * auxiliary)
+    return round(min(100.0, max(0.0, composite)), 2)
+
+def determine_risk_level(overall_score: float) -> str:
+    """
+    Maps 0-100 continuous score to standard disaster threat categories:
+    - 0-25: LOW
+    - 26-50: MODERATE
+    - 51-75: HIGH
+    - 76-100: CRITICAL
+    """
+    score = float(overall_score)
+    if score >= 76.0:
+        return "CRITICAL"
+    elif score >= 51.0:
+        return "HIGH"
+    elif score >= 26.0:
+        return "MODERATE"
+    return "LOW"
+
+def determine_dominant_hazard(flash_flood_score: float, landslide_score: float, extreme_rainfall_score: float = 0.0) -> str:
+    """
+    Identifies the primary dominant hazard driving the composite threat.
+    """
+    if flash_flood_score >= landslide_score and flash_flood_score >= extreme_rainfall_score:
+        return "flash_flood"
+    elif landslide_score >= flash_flood_score and landslide_score >= extreme_rainfall_score:
+        return "landslide"
+    return "heavy_rainfall"
+
+def estimate_lead_time(overall_score: float, rainfall: float = 0.0, river_level: float = 0.0) -> int:
+    """
+    Estimates actionable evacuation lead time (in minutes) based on disaster severity.
+    """
+    score = float(overall_score)
+    if score >= 85.0:
+        return 32
+    elif score >= 75.0:
+        return 54
+    elif score >= 50.0:
+        return 75
+    elif score >= 25.0:
+        return 120
+    return 180
+
+def generate_recommended_action(risk_level: str, dominant_hazard: str = "flash_flood") -> str:
+    """
+    Generates unambiguous, actionable life-safety advisory based on risk tier.
+    """
+    level = str(risk_level).upper()
+    hazard_label = dominant_hazard.replace("_", " ").title()
+
+    if level == "CRITICAL":
+        return f"CRITICAL EMERGENCY: Evacuate low-lying riverbanks and unstable hillsides immediately. Move to designated high-ground safe havens."
+    elif level == "HIGH":
+        return f"HIGH ALERT: Prepare for immediate evacuation to a safe location. Avoid mountain stream crossings and flood corridors."
+    elif level == "MODERATE":
+        return f"ADVISORY: Elevated {hazard_label} watch. Secure outdoor equipment and verify nearest safe haven routes."
+    return "NORMAL: Baseline monitoring active. No protective evacuation required."
+
+# =============================================================================
+# 2. CLASS-BASED RISK ENGINE WRAPPER
+# =============================================================================
+
 class PralayWatchRiskEngine:
     """
-    =============================================================================
-    PralayWatch Risk Intelligence Engine
-    =============================================================================
-    
     Modular, deterministic risk-analysis engine for multi-hazard early warning.
-    
-    Accepts environmental & location inputs:
-    - Rainfall intensity (mm/hr)
-    - Accumulated rainfall (24h mm)
-    - Rainfall forecast / trend (Peaking / Rising / Stable / mm)
-    - River / water level (m and capacity %)
-    - River level trend (Rising Rapidly / Stable / Receding)
-    - Elevation (m)
-    - Slope (degrees)
-    - Soil susceptibility / saturation (% moisture)
-    - Historical hazard risk (flood / landslide susceptibility)
-    - Population exposure & infrastructure vulnerability
-    
-    Generates structured risk payloads:
-    - hazard: Hazard type
-    - riskScore: 0-100 (0-25: LOW, 26-50: MODERATE, 51-75: HIGH, 76-100: CRITICAL)
-    - riskLevel: LOW | MODERATE | HIGH | CRITICAL
-    - confidence: 0.0 - 1.0
-    - factors: List of identified environmental/geotechnical stress factors
-    - recommendedActions: Standardized life-safety directives
     """
     
     @staticmethod
     def get_risk_level(score: float) -> str:
-        """Map 0-100 score to standardized risk categories."""
-        return get_risk_level_from_score(score)
+        return determine_risk_level(score)
 
     @classmethod
     def evaluate_hazard(cls, hazard_key: str, env_data: Any, location: Any) -> Dict[str, Any]:
-        """
-        Evaluate a single specific hazard (e.g. 'flash_flood', 'landslide', 'heavy_rainfall').
-        Returns structured JSON matching the PralayWatch specification.
-        """
         predictor = HazardPredictorRegistry.get(hazard_key)
         if not predictor:
             raise ValueError(f"Unknown hazard key: '{hazard_key}'")
@@ -64,10 +145,6 @@ class PralayWatchRiskEngine:
 
     @classmethod
     def evaluate_composite_risk(cls, env_data: Any, location: Any) -> Dict[str, Any]:
-        """
-        Executes full multi-hazard risk assessment through the 6-stage Disaster Intelligence Pipeline:
-        DATA -> RISK ANALYSIS -> HAZARD PREDICTION -> IMPACT ASSESSMENT -> EARLY WARNING -> ACTION
-        """
         pipeline_output = DisasterIntelligencePipeline.execute_pipeline(env_data, location)
         summary = pipeline_output["summary"]
         stage2 = pipeline_output["pipeline_stages"]["stage2_risk_analysis"]
@@ -116,26 +193,8 @@ class PralayWatchRiskEngine:
 
     @classmethod
     def evaluate_custom_payload(cls, payload: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Direct evaluation API accepting arbitrary JSON dictionary inputs:
-        {
-          "location": "Chamoli",
-          "rainfall_intensity": 95.0,
-          "accumulated_rainfall": 120.0,
-          "river_water_level": 6.2,
-          "river_capacity_pct": 88.0,
-          "river_trend": "Rising Rapidly",
-          "slope": 36.0,
-          "elevation": 2100,
-          "soil_susceptibility": 84.0,
-          "historical_flood_risk": 75.0,
-          "historical_landslide_risk": 80.0,
-          "population": 25000
-        }
-        """
         loc_name = payload.get("location", payload.get("location_name", "Custom Sector"))
         
-        # Synthetic mock objects to feed predictor registry
         env_dict = {
             "rainfall_rate": float(payload.get("rainfall_intensity", payload.get("rainfall_rate", 5.0))),
             "rainfall_mm": float(payload.get("accumulated_rainfall", payload.get("rainfall_mm", 25.0))),
@@ -160,14 +219,9 @@ class PralayWatchRiskEngine:
             "historical_landslide_risk": float(payload.get("historical_landslide_risk", 65.0))
         }
 
-        # Evaluate across all registered predictors
         predictions = HazardPredictorRegistry.evaluate_all(env_dict, loc_dict)
-        
-        # Determine dominant primary hazard
         primary_hazard_key = max(predictions.keys(), key=lambda k: predictions[k]["riskScore"])
         primary_hazard = predictions[primary_hazard_key]
-        
-        # Build composite assessment
         composite = cls.evaluate_composite_risk(env_dict, loc_dict)
 
         return {
@@ -194,5 +248,4 @@ class PralayWatchRiskEngine:
             }
         }
 
-# Alias for backwards compatibility with existing route imports
 PrototypeRiskAssessmentEngine = PralayWatchRiskEngine
