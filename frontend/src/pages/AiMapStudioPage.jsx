@@ -658,7 +658,9 @@ export default function AiMapStudioPage() {
 
               <div className="p-2.5 bg-slate-950/70 border border-slate-800 rounded-xl space-y-0.5">
                 <span className="text-[10px] text-slate-400 uppercase block">🌧️ Live Rain</span>
-                <span className="text-base font-black text-white">{analysisResult?.weather?.precipitation_mm_hr || 0} mm/h</span>
+                <span className="text-base font-black text-white">
+                  {analysisResult?.weather?.precipitation_display || (analysisResult?.weather?.precipitation_mm_hr !== null && analysisResult?.weather?.precipitation_mm_hr !== undefined ? `${analysisResult.weather.precipitation_mm_hr} mm/hr` : 'Unavailable')}
+                </span>
                 <span className="text-[9px] text-cyan-400 block truncate">Open-Meteo Live</span>
               </div>
 

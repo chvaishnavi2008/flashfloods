@@ -308,11 +308,11 @@ export default function LiveWeatherRiskCard() {
               <span>🌧️ Rainfall Telemetry</span>
             </span>
             <div className="text-lg font-black text-white">
-              {liveWeather ? `${liveWeather.precipitation_mm_hr} mm/hr` : '--'}
+              {liveWeather ? (liveWeather.precipitation_mm_hr !== null && liveWeather.precipitation_mm_hr !== undefined ? `${liveWeather.precipitation_mm_hr} mm/hr` : 'Unavailable') : '--'}
             </div>
             <div className="text-[10px] text-slate-400 flex justify-between">
               <span>24h Forecast:</span>
-              <strong className="text-slate-200">{liveWeather ? `${liveWeather.forecast_24h_precipitation_mm} mm` : '--'}</strong>
+              <strong className="text-slate-200">{liveWeather ? (liveWeather.forecast_24h_precipitation_mm !== null && liveWeather.forecast_24h_precipitation_mm !== undefined ? `${liveWeather.forecast_24h_precipitation_mm} mm` : 'Unavailable') : '--'}</strong>
             </div>
           </div>
 
