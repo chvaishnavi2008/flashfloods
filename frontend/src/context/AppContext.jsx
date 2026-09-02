@@ -15,6 +15,9 @@ export function AppProvider({ children }) {
 
   // Live Open-Meteo & Real Risk Engine States (Step 1-6 + Phase 2A/2B)
   const [userCoords, setUserCoords] = useState({ lat: 30.3165, lng: 78.0322 }); // Default: Dehradun
+  const [userGpsLocation, setUserGpsLocation] = useState(null); // { lat, lng, accuracy, active: boolean, timestamp }
+  const [isGpsLoading, setIsGpsLoading] = useState(false);
+  const [gpsError, setGpsError] = useState(null);
   const [locationName, setLocationName] = useState('Dehradun (Doon Valley)');
   const [locationInputMode, setLocationInputMode] = useState('default'); // 'default' | 'gps' | 'manual' | 'preset'
   const [liveWeather, setLiveWeather] = useState(null);
@@ -203,31 +206,57 @@ export function AppProvider({ children }) {
     }
   }, [locationName]);
 
-  // 4. Request Browser Geolocation (Step 3)
+  // 4. Request Browser Geolocation (Live GPS)
   const requestUserLocation = useCallback(() => {
     if (typeof window === 'undefined' || !navigator.geolocation) {
-      setLiveWeatherError('Browser Geolocation is not supported by your device.');
+      const err = 'Browser Geolocation is not supported by your device.';
+      console.error('GPS error:', err);
+      setGpsError(err);
+      setLiveWeatherError(err);
       return;
     }
 
-    setIsLiveWeatherLoading(true);
+    setIsGpsLoading(true);
+    setGpsError(null);
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        setUserCoords({ lat, lng });
+        const { latitude, longitude, accuracy } = position.coords;
+        console.log("GPS coordinates:", latitude, longitude);
+
+        setUserCoords({ lat: latitude, lng: longitude });
+        setUserGpsLocation({
+          lat: latitude,
+          lng: longitude,
+          accuracy: accuracy || null,
+          active: true,
+          timestamp: Date.now()
+        });
         setLocationInputMode('gps');
         setLocationName('Live GPS Location');
-        fetchLiveWeatherData(lat, lng, null, true);
+        setIsGpsLoading(false);
+        setGpsError(null);
+
+        // Fetch live weather & risk without overwriting/destroying selectedLocation
+        fetchLiveWeatherData(latitude, longitude, selectedLocation, true);
       },
       (err) => {
-        console.warn('[AppContext] Geolocation permission denied or unavailable:', err.message);
-        setLiveWeatherError('Location access was not granted. You can enter coordinates manually.');
-        setIsLiveWeatherLoading(false);
+        console.error("GPS error:", err);
+        let errorMsg = "Unable to determine your location. Please try again.";
+        if (err.code === 1) { // PERMISSION_DENIED
+          errorMsg = "Location permission was denied. Please allow location access in your browser.";
+        } else if (err.code === 2) { // POSITION_UNAVAILABLE
+          errorMsg = "Unable to determine your location. Please try again.";
+        } else if (err.code === 3) { // TIMEOUT
+          errorMsg = "Location request timed out. Please try again.";
+        }
+        setGpsError(errorMsg);
+        setLiveWeatherError(errorMsg);
+        setIsGpsLoading(false);
       },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
-  }, [fetchLiveWeatherData]);
+  }, [fetchLiveWeatherData, selectedLocation]);
 
   // 5. Set Manual Coordinates (Step 3)
   const setManualCoordinates = useCallback((lat, lng, name = 'Custom Coordinates') => {
@@ -620,6 +649,10 @@ export function AppProvider({ children }) {
         statusMessage,
         selectLocation,
         userCoords,
+        userGpsLocation,
+        setUserGpsLocation,
+        isGpsLoading,
+        gpsError,
         locationName,
         locationInputMode,
         liveWeather,

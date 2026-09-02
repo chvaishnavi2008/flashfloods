@@ -36,7 +36,10 @@ export default function LiveWeatherRiskCard() {
     liveWeatherError, 
     lastWeatherUpdated, 
     refreshRisk, 
-    userCoords, 
+    userCoords,
+    userGpsLocation,
+    isGpsLoading,
+    gpsError, 
     locationName, 
     locationInputMode, 
     requestUserLocation, 
@@ -140,12 +143,19 @@ export default function LiveWeatherRiskCard() {
               <MapPin className="w-4 h-4 text-red-400 shrink-0" />
               <span>📍 {locationName}</span>
             </h2>
-            <span className="text-xs text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800 font-mono">
-              ({userCoords.lat.toFixed(4)}°N, {userCoords.lng.toFixed(4)}°E)
+            <span className="text-xs text-slate-300 bg-slate-900 px-2 py-0.5 rounded border border-slate-800 font-mono font-bold">
+              Your Location: {userCoords.lat.toFixed(4)}, {userCoords.lng.toFixed(4)}
             </span>
             {locationInputMode === 'gps' && (
-              <span className="px-1.5 py-0.2 rounded text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-500/40 font-bold">
-                GPS Live
+              <span className="px-2 py-0.5 rounded text-[10px] bg-cyan-950 text-cyan-300 border border-cyan-500 font-bold flex items-center gap-1 animate-pulse">
+                <Navigation className="w-3 h-3 text-cyan-400" />
+                Live GPS Active
+              </span>
+            )}
+            {isGpsLoading && (
+              <span className="px-2 py-0.5 rounded text-[10px] bg-amber-950/80 text-amber-300 border border-amber-500 font-bold flex items-center gap-1 animate-pulse">
+                <RefreshCw className="w-3 h-3 text-amber-400 animate-spin" />
+                Getting your location...
               </span>
             )}
           </div>
@@ -155,12 +165,16 @@ export default function LiveWeatherRiskCard() {
         <div className="flex flex-wrap items-center gap-2 shrink-0">
           <button
             onClick={requestUserLocation}
-            disabled={isLiveWeatherLoading}
-            title="Use browser Geolocation API"
-            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-bold flex items-center gap-1.5 border border-slate-700 transition-all"
+            disabled={isGpsLoading || isLiveWeatherLoading}
+            title="Request real-time browser GPS location"
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 border transition-all ${
+              locationInputMode === 'gps'
+                ? 'bg-cyan-950 text-cyan-300 border-cyan-500 ring-1 ring-cyan-400'
+                : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+            }`}
           >
-            <Crosshair className="w-3.5 h-3.5 text-blue-400" />
-            <span>Use GPS</span>
+            <Crosshair className={`w-3.5 h-3.5 ${isGpsLoading ? 'animate-spin text-amber-400' : 'text-cyan-400'}`} />
+            <span>{isGpsLoading ? 'Getting your location...' : 'Live GPS'}</span>
           </button>
 
           <button
@@ -181,6 +195,14 @@ export default function LiveWeatherRiskCard() {
           </button>
         </div>
       </div>
+
+      {/* GPS ERROR BANNER */}
+      {gpsError && (
+        <div className="p-3 bg-red-950/80 border border-red-500/80 rounded-xl text-red-200 text-xs flex items-center gap-2 shadow-lg">
+          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+          <span>{gpsError}</span>
+        </div>
+      )}
 
       {/* QUICK PRESET SELECTOR BAR (Step 8 Required Testing Locations) */}
       <div className="flex flex-wrap items-center gap-2 p-2.5 bg-slate-950/70 border border-slate-800/80 rounded-xl text-xs">

@@ -209,6 +209,12 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
     selectedLocationId,
     selectedLocation,
     selectLocation,
+    userCoords,
+    userGpsLocation,
+    isGpsLoading,
+    gpsError,
+    locationInputMode,
+    requestUserLocation,
     safeLocations,
     selectedShelter,
     setSelectedShelter,
@@ -233,8 +239,11 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
   const containerRef = useRef(null);
 
   const activeLoc = selectedLocation || locations.find(l => l.id === selectedLocationId) || locations[0];
-  const centerLat = activeLoc ? activeLoc.lat : 30.4124;
-  const centerLng = activeLoc ? activeLoc.lng : 79.3198;
+  const isGpsMode = locationInputMode === 'gps' && userGpsLocation?.lat && userGpsLocation?.lng;
+  const effectiveCenterLat = isGpsMode ? userGpsLocation.lat : (activeLoc ? activeLoc.lat : 30.4124);
+  const effectiveCenterLng = isGpsMode ? userGpsLocation.lng : (activeLoc ? activeLoc.lng : 79.3198);
+  const centerLat = effectiveCenterLat;
+  const centerLng = effectiveCenterLng;
 
   // Toggle Fullscreen View
   const toggleFullscreen = () => {
@@ -453,6 +462,23 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
     iconAnchor: [25, 25]
   });
 
+  const createUserGpsIcon = () => new L.DivIcon({
+    className: 'custom-gps-user-marker',
+    html: `
+      <div style="position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+        <div style="position: absolute; width: 44px; height: 44px; border-radius: 50%; background: rgba(6, 182, 212, 0.35); border: 2px solid #06B6D4; animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+        <div style="position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #06B6D4; border: 3px solid #FFFFFF; box-shadow: 0 0 16px rgba(6, 182, 212, 0.95); display: flex; align-items: center; justify-content: center;">
+          <div style="width: 6px; height: 6px; border-radius: 50%; background: #FFFFFF;"></div>
+        </div>
+        <div style="position: absolute; bottom: -20px; background: #0284C7; color: white; font-size: 9px; font-weight: 900; font-family: monospace; padding: 2px 6px; border-radius: 6px; border: 1px solid white; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.6);">
+          YOU ARE HERE
+        </div>
+      </div>
+    `,
+    iconSize: [44, 44],
+    iconAnchor: [22, 22]
+  });
+
   const createRoadCheckpointIcon = (cp) => new L.DivIcon({
     className: 'custom-checkpoint-marker',
     html: `
@@ -635,6 +661,23 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
           >
             <Globe className="w-4 h-4 text-blue-400" />
             <span className="hidden sm:inline">All India</span>
+          </button>
+
+          {/* Live GPS Button */}
+          <button
+            onClick={requestUserLocation}
+            disabled={isGpsLoading}
+            title="Locate my real-time position via browser GPS"
+            className={`p-2 bg-slate-950/90 backdrop-blur-md border rounded-xl shadow-2xl transition-all flex items-center gap-1.5 text-xs font-mono font-bold ${
+              locationInputMode === 'gps' && userGpsLocation
+                ? 'border-cyan-400 bg-cyan-950/80 text-cyan-300 ring-1 ring-cyan-400'
+                : 'border-slate-700/80 text-cyan-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <Navigation className={`w-4 h-4 ${isGpsLoading ? 'animate-spin text-amber-400' : 'text-cyan-400'}`} />
+            <span className="hidden sm:inline">
+              {isGpsLoading ? 'Getting location...' : (locationInputMode === 'gps' && userGpsLocation ? 'GPS Active' : 'Live GPS')}
+            </span>
           </button>
 
           {/* Recenter Button */}
@@ -1123,6 +1166,44 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
                 </Tooltip>
               </Polyline>
             </>
+          )}
+
+          {/* 9. User Live GPS Marker ("YOU ARE HERE") */}
+          {userGpsLocation && userGpsLocation.lat && userGpsLocation.lng && (
+            <Marker
+              position={[userGpsLocation.lat, userGpsLocation.lng]}
+              icon={createUserGpsIcon()}
+              zIndexOffset={10000}
+            >
+              <Tooltip direction="top" offset={[0, -22]} opacity={0.95} permanent>
+                <span className="font-mono font-bold text-[10px] bg-cyan-950 text-cyan-300 px-1.5 py-0.5 rounded border border-cyan-500 shadow-lg">
+                  📍 YOU ARE HERE
+                </span>
+              </Tooltip>
+              <Popup>
+                <div className="p-2.5 min-w-[220px] font-mono text-xs text-slate-100 bg-slate-950 rounded-xl border border-cyan-500">
+                  <div className="flex items-center gap-1.5 text-cyan-400 font-bold text-sm mb-1.5 border-b border-slate-800 pb-1">
+                    <Navigation className="w-4 h-4 text-cyan-400 animate-pulse" />
+                    <span>Your Current Position</span>
+                  </div>
+                  <div className="space-y-1 text-slate-300 text-[11px] mb-2">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Coordinates:</span>
+                      <span className="text-white font-bold">{userGpsLocation.lat.toFixed(4)}°N, {userGpsLocation.lng.toFixed(4)}°E</span>
+                    </div>
+                    {userGpsLocation.accuracy && (
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">GPS Accuracy:</span>
+                        <span className="text-emerald-400 font-bold">±{Math.round(userGpsLocation.accuracy)} m</span>
+                      </div>
+                    )}
+                  </div>
+                  <span className="block text-center py-1 bg-cyan-950/80 border border-cyan-500 text-cyan-300 rounded text-[10px] font-bold uppercase">
+                    Live Geolocation Node
+                  </span>
+                </div>
+              </Popup>
+            </Marker>
           )}
         </MapContainer>
       </div>
