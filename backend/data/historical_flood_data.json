@@ -1,0 +1,196 @@
+{
+  "source": "India Flood Inventory with Impacts (IFI-Impacts) [1967-2023]",
+  "doi": "10.5281/zenodo.16994648",
+  "citation": "HydroSense Lab, IIT Delhi & India Meteorological Department (IMD) Disastrous Weather Events",
+  "version": "4.0",
+  "temporal_coverage": "1967-2023",
+  "records": [
+    {
+      "district": "Dehradun",
+      "state": "Uttarakhand",
+      "lat": 30.3165,
+      "lng": 78.0322,
+      "total_historical_events": 14,
+      "flood_exposure_tier": "HIGH",
+      "exposure_score": 68.0,
+      "major_basins": ["Song River", "Rispana", "Bindal", "Ganga Basin"],
+      "events": [
+        { "year": 2022, "type": "Flash Flood & Cloudburst", "description": "Maldevta / Raipur cloudburst deluge and Song river bank breach", "severity": "SEVERE" },
+        { "year": 2021, "type": "Urban & Flash Flood", "description": "Torrential monsoon inundation across Rispana river basin", "severity": "HIGH" },
+        { "year": 2018, "type": "Flash Flood", "description": "Premnagar and Sahastradhara road inundation with high sediment load", "severity": "MODERATE" },
+        { "year": 2014, "type": "Flash Flood", "description": "Monsoon cloudburst causing localized river swelling", "severity": "HIGH" },
+        { "year": 2013, "type": "Regional Flood Deluge", "description": "Uttarakhand Himalayan multi-river deluge impact", "severity": "SEVERE" }
+      ]
+    },
+    {
+      "district": "Chamoli",
+      "state": "Uttarakhand",
+      "lat": 30.4137,
+      "lng": 79.3242,
+      "total_historical_events": 22,
+      "flood_exposure_tier": "HIGH",
+      "exposure_score": 85.0,
+      "major_basins": ["Alaknanda River", "Rishiganga", "Dhauliganga", "Birahi Ganga"],
+      "events": [
+        { "year": 2021, "type": "Glacial / Flash Flood Surge", "description": "Rishiganga & Dhauliganga flash flood and surge disaster at Raini / Tapovan", "severity": "CRITICAL" },
+        { "year": 2023, "type": "Flash Flood & Torrential Runoff", "description": "Alaknanda water level surge inundating low-lying ghats", "severity": "HIGH" },
+        { "year": 2013, "type": "Flash Flood & Cloudburst", "description": "Historic June 2013 Kedarnath-Chamoli Alaknanda deluge", "severity": "CRITICAL" },
+        { "year": 2005, "type": "Flash Flood", "description": "Birahi Ganga valley flash flooding", "severity": "HIGH" },
+        { "year": 1970, "type": "Historic Flood", "description": "Historic 1970 Alaknanda catastrophic flood", "severity": "CRITICAL" }
+      ]
+    },
+    {
+      "district": "Wayanad",
+      "state": "Kerala",
+      "lat": 11.6854,
+      "lng": 76.1320,
+      "total_historical_events": 16,
+      "flood_exposure_tier": "HIGH",
+      "exposure_score": 75.0,
+      "major_basins": ["Kabini River", "Chaliyar River Basin", "Panamaram River"],
+      "events": [
+        { "year": 2024, "type": "Flash Flood & Debris Torrent", "description": "Meppadi / Chooralmala extreme rainfall deluge and flood surge", "severity": "CRITICAL" },
+        { "year": 2019, "type": "Flash Flood & Inundation", "description": "Puthumala heavy deluge and Kabini river overflow", "severity": "SEVERE" },
+        { "year": 2018, "type": "Severe Riverine & Flash Flood", "description": "2018 Kerala Mega Floods severe inundation across Wayanad plateau", "severity": "CRITICAL" },
+        { "year": 2020, "type": "Monsoon Flood", "description": "Widespread inundation along Panamaram and Mananthavady rivers", "severity": "HIGH" }
+      ]
+    },
+    {
+      "district": "East Sikkim (Gangtok)",
+      "state": "Sikkim",
+      "lat": 27.3389,
+      "lng": 88.6065,
+      "total_historical_events": 12,
+      "flood_exposure_tier": "HIGH",
+      "exposure_score": 72.0,
+      "major_basins": ["Teesta River Basin", "Rani Khola", "Dikchu"],
+      "events": [
+        { "year": 2023, "type": "GLOF & Flash Flood Surge", "description": "South Lhonak GLOF and Teesta river catastrophic flash surge downstream", "severity": "CRITICAL" },
+        { "year": 2020, "type": "Flash Flood", "description": "Dikchu river sudden swelling and bridge approaches damaged", "severity": "HIGH" },
+        { "year": 2016, "type": "Flash Flood", "description": "Torrential pre-monsoon cloudburst leading to stream overflows", "severity": "MODERATE" },
+        { "year": 2012, "type": "Flash Flood", "description": "Teesta valley high-velocity runoff", "severity": "HIGH" }
+      ]
+    },
+    {
+      "district": "Rudraprayag",
+      "state": "Uttarakhand",
+      "lat": 30.2854,
+      "lng": 78.9811,
+      "total_historical_events": 20,
+      "flood_exposure_tier": "HIGH",
+      "exposure_score": 82.0,
+      "major_basins": ["Mandakini River", "Alaknanda Confluence"],
+      "events": [
+        { "year": 2013, "type": "Catastrophic Flash Flood", "description": "Chorabari lake breach & Mandakini valley flash flood", "severity": "CRITICAL" },
+        { "year": 2023, "type": "Flash Flood", "description": "Gaurikund landslide-dammed stream surge", "severity": "SEVERE" }
+      ]
+    },
+    {
+      "district": "Uttarkashi",
+      "state": "Uttarakhand",
+      "lat": 30.7268,
+      "lng": 78.4354,
+      "total_historical_events": 18,
+      "flood_exposure_tier": "HIGH",
+      "exposure_score": 78.0,
+      "major_basins": ["Bhagirathi River", "Assi Ganga"],
+      "events": [
+        { "year": 2012, "type": "Flash Flood", "description": "Assi Ganga flash flood washing away hydel projects and bridges", "severity": "CRITICAL" },
+        { "year": 2013, "type": "Severe Flood", "description": "Bhagirathi river overflow and bank erosion", "severity": "SEVERE" }
+      ]
+    },
+    {
+      "district": "Kozhikode",
+      "state": "Kerala",
+      "lat": 11.2588,
+      "lng": 75.7804,
+      "total_historical_events": 15,
+      "flood_exposure_tier": "HIGH",
+      "exposure_score": 70.0,
+      "major_basins": ["Chaliyar River", "Kallai River"],
+      "events": [
+        { "year": 2018, "type": "Riverine & Coastal Flood", "description": "Chaliyar river widespread bank overtopping", "severity": "SEVERE" },
+        { "year": 2019, "type": "Flash Flood", "description": "Karinchola hills flash surge", "severity": "HIGH" }
+      ]
+    },
+    {
+      "district": "Idukki",
+      "state": "Kerala",
+      "lat": 9.8500,
+      "lng": 76.9667,
+      "total_historical_events": 17,
+      "flood_exposure_tier": "HIGH",
+      "exposure_score": 74.0,
+      "major_basins": ["Periyar River", "Cheruthoni"],
+      "events": [
+        { "year": 2018, "type": "Severe Flood", "description": "Opening of 5 shutter gates of Idukki arch dam and Periyar flooding", "severity": "CRITICAL" }
+      ]
+    },
+    {
+      "district": "Kullu",
+      "state": "Himachal Pradesh",
+      "lat": 31.9579,
+      "lng": 77.1095,
+      "total_historical_events": 19,
+      "flood_exposure_tier": "HIGH",
+      "exposure_score": 80.0,
+      "major_basins": ["Beas River", "Parbati River", "Sainj"],
+      "events": [
+        { "year": 2023, "type": "Flash Flood", "description": "Record Beas river flash surge washing away Chandigarh-Manali NH", "severity": "CRITICAL" },
+        { "year": 2018, "type": "Flash Flood", "description": "Cloudburst in Parbati valley with localized flash surges", "severity": "HIGH" }
+      ]
+    },
+    {
+      "district": "Mandi",
+      "state": "Himachal Pradesh",
+      "lat": 31.7087,
+      "lng": 76.9320,
+      "total_historical_events": 16,
+      "flood_exposure_tier": "HIGH",
+      "exposure_score": 72.0,
+      "major_basins": ["Beas River", "Suketi Khad"],
+      "events": [
+        { "year": 2023, "type": "Flash Flood", "description": "Suketi Khad & Beas river severe inundation of Pandoh and Mandi town", "severity": "SEVERE" }
+      ]
+    },
+    {
+      "district": "Shimla",
+      "state": "Himachal Pradesh",
+      "lat": 31.1048,
+      "lng": 77.1734,
+      "total_historical_events": 11,
+      "flood_exposure_tier": "MODERATE",
+      "exposure_score": 48.0,
+      "major_basins": ["Sutlej River Basin", "Giri River"],
+      "events": [
+        { "year": 2023, "type": "Torrential Inundation", "description": "Summer Hill and Rampur flash runoff", "severity": "SEVERE" }
+      ]
+    },
+    {
+      "district": "Darjeeling",
+      "state": "West Bengal",
+      "lat": 27.0360,
+      "lng": 88.2627,
+      "total_historical_events": 13,
+      "flood_exposure_tier": "MODERATE",
+      "exposure_score": 52.0,
+      "major_basins": ["Teesta River", "Balason River"],
+      "events": [
+        { "year": 2023, "type": "Flash Flood", "description": "Teesta river downstream inundation around Sevoke / Kalimpong", "severity": "HIGH" }
+      ]
+    },
+    {
+      "district": "North Sikkim (Mangan)",
+      "state": "Sikkim",
+      "lat": 27.5039,
+      "lng": 88.5333,
+      "total_historical_events": 15,
+      "flood_exposure_tier": "HIGH",
+      "exposure_score": 82.0,
+      "major_basins": ["Teesta River", "Lachen Chu", "Lachung Chu"],
+      "events": [
+        { "year": 2023, "type": "Catastrophic GLOF Surge", "description": "Chungthang dam washed away by massive flood surge", "severity": "CRITICAL" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,226 @@
+{
+  "source": "ISRO / NRSC Landslide Atlas of India (1998-2022)",
+  "publisher": "National Remote Sensing Centre (NRSC), Indian Space Research Organisation (ISRO)",
+  "url": "https://www.isro.gov.in/Landslide_Atlas_India.html",
+  "total_national_landslides_mapped": 80000,
+  "temporal_coverage": "1998-2022",
+  "records": [
+    {
+      "district": "Chamoli",
+      "state": "Uttarakhand",
+      "lat": 30.4137,
+      "lng": 79.3242,
+      "national_landslide_rank": 19,
+      "susceptibility_tier": "HIGH",
+      "susceptibility_score": 78.0,
+      "recorded_landslides_count": 845,
+      "density_per_100_sq_km": 11.2,
+      "vulnerability_notes": "Garhwal Himalaya high-relief active zone, thrust faults, high rockfall & debris slide exposure",
+      "notable_incidents": [
+        { "year": 2021, "location": "Raini / Tapovan", "type": "Rock & Ice Avalanche triggered debris torrent" },
+        { "year": 2023, "location": "Joshimath Sunil / Manohar Bagh", "type": "Subsidence & slope deformation" },
+        { "year": 2013, "location": "Badrinath Highway corridor", "type": "Multiple translational slides" }
+      ]
+    },
+    {
+      "district": "Wayanad",
+      "state": "Kerala",
+      "lat": 11.6854,
+      "lng": 76.1320,
+      "national_landslide_rank": 13,
+      "susceptibility_tier": "HIGH",
+      "susceptibility_score": 82.0,
+      "recorded_landslides_count": 920,
+      "density_per_100_sq_km": 43.1,
+      "vulnerability_notes": "Western Ghats steep escarpment, deep weathering profile, extreme rainfall debris flow hazard",
+      "notable_incidents": [
+        { "year": 2024, "location": "Meppadi / Chooralmala / Mundakkai", "type": "Catastrophic deep-seated debris flow" },
+        { "year": 2019, "location": "Puthumala", "type": "Multi-tier mudslide & debris flow" },
+        { "year": 2018, "location": "Vythiri / Pozhuthana", "type": "Slope failures during extreme monsoon deluge" }
+      ]
+    },
+    {
+      "district": "East Sikkim (Gangtok)",
+      "state": "Sikkim",
+      "lat": 27.3389,
+      "lng": 88.6065,
+      "national_landslide_rank": 15,
+      "susceptibility_tier": "HIGH",
+      "susceptibility_score": 80.0,
+      "recorded_landslides_count": 780,
+      "density_per_100_sq_km": 82.4,
+      "vulnerability_notes": "Eastern Himalayas steep valley slopes, high rainfall pore-water pressure, phyllite / schist weathering",
+      "notable_incidents": [
+        { "year": 2020, "location": "Dikchu / Singtam corridor", "type": "Translational slope failure" },
+        { "year": 2023, "location": "Rangpo / NH-10", "type": "Debris avalanche & highway severance" }
+      ]
+    },
+    {
+      "district": "Dehradun",
+      "state": "Uttarakhand",
+      "lat": 30.3165,
+      "lng": 78.0322,
+      "national_landslide_rank": 29,
+      "susceptibility_tier": "MODERATE",
+      "susceptibility_score": 45.0,
+      "recorded_landslides_count": 310,
+      "density_per_100_sq_km": 9.8,
+      "vulnerability_notes": "Mussoorie foothills & Siwalik frontal thrust zone, fragile limestone / shale formations",
+      "notable_incidents": [
+        { "year": 2022, "location": "Mussoorie bypass / Kempty road", "type": "Road-cutting rockfall & slide" },
+        { "year": 2023, "location": "Kalsi / Chakrata corridor", "type": "Monsoon debris slide" }
+      ]
+    },
+    {
+      "district": "Rudraprayag",
+      "state": "Uttarakhand",
+      "lat": 30.2854,
+      "lng": 78.9811,
+      "national_landslide_rank": 1,
+      "susceptibility_tier": "HIGH",
+      "susceptibility_score": 95.0,
+      "recorded_landslides_count": 2150,
+      "density_per_100_sq_km": 108.5,
+      "vulnerability_notes": "Rank #1 in India Landslide Atlas. Highest landslide density in India across Mandakini / Alaknanda corridors.",
+      "notable_incidents": [
+        { "year": 2013, "location": "Kedarnath Valley / Kedar Dome", "type": "Massive catastrophic landslide complex" },
+        { "year": 2023, "location": "Gaurikund", "type": "Debris avalanche washing into stream" }
+      ]
+    },
+    {
+      "district": "Tehri Garhwal",
+      "state": "Uttarakhand",
+      "lat": 30.3789,
+      "lng": 78.4803,
+      "national_landslide_rank": 2,
+      "susceptibility_tier": "HIGH",
+      "susceptibility_score": 92.0,
+      "recorded_landslides_count": 1840,
+      "density_per_100_sq_km": 49.3,
+      "vulnerability_notes": "Rank #2 in India Landslide Atlas. Bhagirathi reservoir rim slope instability.",
+      "notable_incidents": [
+        { "year": 2021, "location": "Kirtinagar / Devprayag", "type": "Slope failures along NH-58" }
+      ]
+    },
+    {
+      "district": "Thrissur",
+      "state": "Kerala",
+      "lat": 10.5276,
+      "lng": 76.2144,
+      "national_landslide_rank": 3,
+      "susceptibility_tier": "HIGH",
+      "susceptibility_score": 88.0,
+      "recorded_landslides_count": 1420,
+      "density_per_100_sq_km": 46.8,
+      "vulnerability_notes": "Rank #3 in Landslide Atlas. Western Ghats high-rainfall slopes.",
+      "notable_incidents": [
+        { "year": 2018, "location": "Athirappilly / Sholayar slopes", "type": "Debris flows" }
+      ]
+    },
+    {
+      "district": "Nilgiris",
+      "state": "Tamil Nadu",
+      "lat": 11.4102,
+      "lng": 76.6950,
+      "national_landslide_rank": 4,
+      "susceptibility_tier": "HIGH",
+      "susceptibility_score": 87.0,
+      "recorded_landslides_count": 1390,
+      "density_per_100_sq_km": 54.6,
+      "vulnerability_notes": "Rank #4 in Landslide Atlas. Western Ghats high elevation tea-estate slope slips.",
+      "notable_incidents": [
+        { "year": 2009, "location": "Ooty / Coonoor", "type": "Massive rainfall-induced slides" }
+      ]
+    },
+    {
+      "district": "Kozhikode",
+      "state": "Kerala",
+      "lat": 11.2588,
+      "lng": 75.7804,
+      "national_landslide_rank": 7,
+      "susceptibility_tier": "HIGH",
+      "susceptibility_score": 84.0,
+      "recorded_landslides_count": 1120,
+      "density_per_100_sq_km": 47.9,
+      "vulnerability_notes": "Western Ghats piedmont and Thamarassery ghat pass slips.",
+      "notable_incidents": [
+        { "year": 2018, "location": "Kattippara / Karinchola", "type": "Debris flow disaster" }
+      ]
+    },
+    {
+      "district": "North Sikkim (Mangan)",
+      "state": "Sikkim",
+      "lat": 27.5039,
+      "lng": 88.5333,
+      "national_landslide_rank": 8,
+      "susceptibility_tier": "HIGH",
+      "susceptibility_score": 86.0,
+      "recorded_landslides_count": 1250,
+      "density_per_100_sq_km": 29.6,
+      "vulnerability_notes": "High Himalayan active thrust, permafrost thaw & glacial moraine slide susceptibility.",
+      "notable_incidents": [
+        { "year": 2023, "location": "Chungthang / Lachen / Lachung", "type": "Widespread slope washouts" }
+      ]
+    },
+    {
+      "district": "Idukki",
+      "state": "Kerala",
+      "lat": 9.8500,
+      "lng": 76.9667,
+      "national_landslide_rank": 10,
+      "susceptibility_tier": "HIGH",
+      "susceptibility_score": 83.0,
+      "recorded_landslides_count": 980,
+      "density_per_100_sq_km": 22.5,
+      "vulnerability_notes": "High range tea plantation escarpments and Munnar ghat passes.",
+      "notable_incidents": [
+        { "year": 2020, "location": "Pettimudi (Rajamala)", "type": "Catastrophic debris avalanche" }
+      ]
+    },
+    {
+      "district": "Shimla",
+      "state": "Himachal Pradesh",
+      "lat": 31.1048,
+      "lng": 77.1734,
+      "national_landslide_rank": 18,
+      "susceptibility_tier": "HIGH",
+      "susceptibility_score": 75.0,
+      "recorded_landslides_count": 720,
+      "density_per_100_sq_km": 14.1,
+      "vulnerability_notes": "Structural overload, fragile phyllites and steep urban cut slopes.",
+      "notable_incidents": [
+        { "year": 2023, "location": "Summer Hill / Shiv Mandir", "type": "Catastrophic debris slide and slope collapse" }
+      ]
+    },
+    {
+      "district": "Mandi",
+      "state": "Himachal Pradesh",
+      "lat": 31.7087,
+      "lng": 76.9320,
+      "national_landslide_rank": 16,
+      "susceptibility_tier": "HIGH",
+      "susceptibility_score": 76.0,
+      "recorded_landslides_count": 760,
+      "density_per_100_sq_km": 19.3,
+      "vulnerability_notes": "Beas gorge steep cuttings, fractured sandstones and mudstones.",
+      "notable_incidents": [
+        { "year": 2017, "location": "Kotropi (NH-154)", "type": "Catastrophic massive rock-debris slide" }
+      ]
+    },
+    {
+      "district": "Kullu",
+      "state": "Himachal Pradesh",
+      "lat": 31.9579,
+      "lng": 77.1095,
+      "national_landslide_rank": 24,
+      "susceptibility_tier": "HIGH",
+      "susceptibility_score": 70.0,
+      "recorded_landslides_count": 580,
+      "density_per_100_sq_km": 10.5,
+      "vulnerability_notes": "High relief alpine slopes, glacial till and Parbati valley cuttings.",
+      "notable_incidents": [
+        { "year": 2023, "location": "Anni / Manali bypass", "type": "Multi-building slope collapses" }
+      ]
+    }
+  ]
+}

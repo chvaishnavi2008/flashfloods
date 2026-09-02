@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { api } from '../services/api';
 import { soundService } from '../services/soundService';
 import { weatherService } from '../services/weatherService';
+import { terrainService } from '../services/terrainService';
+import { historicalRiskService } from '../services/historicalRiskService';
 import { riskEngineService } from '../services/riskEngineService';
 
 const AppContext = createContext();
@@ -11,11 +13,13 @@ export function AppProvider({ children }) {
   const [activePage, setActivePage] = useState('dashboard');
   const [userRole, setUserRole] = useState('citizen'); // 'citizen' | 'authority'
 
-  // Live Open-Meteo & Real Risk Engine States (Step 1-6)
+  // Live Open-Meteo & Real Risk Engine States (Step 1-6 + Phase 2A/2B)
   const [userCoords, setUserCoords] = useState({ lat: 30.3165, lng: 78.0322 }); // Default: Dehradun
   const [locationName, setLocationName] = useState('Dehradun (Doon Valley)');
   const [locationInputMode, setLocationInputMode] = useState('default'); // 'default' | 'gps' | 'manual' | 'preset'
   const [liveWeather, setLiveWeather] = useState(null);
+  const [liveTerrain, setLiveTerrain] = useState(null);
+  const [historicalRisk, setHistoricalRisk] = useState(null);
   const [liveRisk, setLiveRisk] = useState(null);
   const [isLiveWeatherLoading, setIsLiveWeatherLoading] = useState(false);
   const [liveWeatherError, setLiveWeatherError] = useState(null);
@@ -157,16 +161,34 @@ export function AppProvider({ children }) {
     }
   }, [isSirenMuted]);
 
-  // 3. Fetch Live Open-Meteo Weather Data & Evaluate Real Risk
+  // 3. Fetch Live Open-Meteo Weather Data, Real Terrain & Evaluate Multi-Source Risk
   const fetchLiveWeatherData = useCallback(async (lat, lng, locMetadata = null, forceRefresh = false) => {
     try {
       setIsLiveWeatherLoading(true);
       setLiveWeatherError(null);
 
-      const weatherRes = await weatherService.fetchLiveWeather(lat, lng, forceRefresh);
+      // Concurrent fetch for Live Weather and Real Terrain Elevation Profile
+      const [weatherRes, terrainRes] = await Promise.all([
+        weatherService.fetchLiveWeather(lat, lng, forceRefresh),
+        terrainService.fetchTerrainData(lat, lng, forceRefresh)
+      ]);
+
+      const currentLocName = locMetadata?.name || locationName;
+      const historicalRes = historicalRiskService.evaluateHistoricalRisk(lat, lng, currentLocName);
+      setHistoricalRisk(historicalRes);
+
+      if (terrainRes.success && terrainRes.data) {
+        setLiveTerrain(terrainRes.data);
+      }
+
       if (weatherRes.success && weatherRes.data) {
         setLiveWeather(weatherRes.data);
-        const evaluated = riskEngineService.evaluateLiveRisk(weatherRes.data, locMetadata || {});
+        const evaluated = riskEngineService.evaluateLiveRisk(
+          weatherRes.data,
+          terrainRes.success ? terrainRes.data : null,
+          historicalRes,
+          locMetadata || {}
+        );
         setLiveRisk(evaluated);
         setLastWeatherUpdated(new Date());
         setLiveWeatherError(null);
@@ -174,12 +196,12 @@ export function AppProvider({ children }) {
         setLiveWeatherError(weatherRes.error || 'Live weather data temporarily unavailable.');
       }
     } catch (err) {
-      console.error('[AppContext] Error fetching live Open-Meteo weather:', err);
+      console.error('[AppContext] Error fetching multi-source live telemetry:', err);
       setLiveWeatherError('Live weather data temporarily unavailable.');
     } finally {
       setIsLiveWeatherLoading(false);
     }
-  }, []);
+  }, [locationName]);
 
   // 4. Request Browser Geolocation (Step 3)
   const requestUserLocation = useCallback(() => {
@@ -601,6 +623,8 @@ export function AppProvider({ children }) {
         locationName,
         locationInputMode,
         liveWeather,
+        liveTerrain,
+        historicalRisk,
         liveRisk,
         isLiveWeatherLoading,
         liveWeatherError,
