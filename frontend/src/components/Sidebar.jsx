@@ -15,7 +15,8 @@ import {
   ShieldCheck, 
   Brain, 
   Zap, 
-  Settings 
+  Settings,
+  Sparkles 
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -40,6 +41,13 @@ export default function Sidebar() {
       label: 'Home', 
       tag: 'Am I safe?',
       icon: Home 
+    },
+    { 
+      id: 'ai-map-studio', 
+      label: 'AI Map Studio', 
+      tag: 'AI spatial map',
+      icon: Sparkles,
+      highlightCyan: true
     },
     { 
       id: 'map', 

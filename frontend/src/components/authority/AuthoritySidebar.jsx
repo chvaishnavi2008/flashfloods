@@ -14,7 +14,8 @@ import {
   FileText,
   Radio,
   Clock,
-  Building2
+  Building2,
+  Sparkles
 } from 'lucide-react';
 
 export default function AuthoritySidebar() {
@@ -30,6 +31,7 @@ export default function AuthoritySidebar() {
 
   const navItems = [
     { id: 'authority', label: 'Command Dashboard', icon: LayoutDashboard },
+    { id: 'ai-map-studio', label: 'AI Map Studio', icon: Sparkles },
     { id: 'risk-intelligence', label: 'Risk Intelligence', icon: Map },
     { id: 'alerts', label: 'Alerts & Warnings', icon: BellRing, badge: activeAlertsCount },
     { id: 'impact-assessment', label: 'Impact Assessment', icon: Users },

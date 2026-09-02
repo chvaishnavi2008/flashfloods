@@ -23,6 +23,7 @@ import EmergencyResponsePage from './pages/EmergencyResponsePage';
 import AiRiskEnginePage from './pages/AiRiskEnginePage';
 import SimulationStudioPage from './pages/SimulationStudioPage';
 import SettingsPage from './pages/SettingsPage';
+import AiMapStudioPage from './pages/AiMapStudioPage';
 
 // Modals
 import NotificationModal from './components/NotificationModal';
@@ -38,6 +39,8 @@ export default function App() {
     // 1. Citizen Safety Experience (100% Locked & Approved)
     if (!isAuthority) {
       switch (activePage) {
+        case 'ai-map-studio':
+          return <AiMapStudioPage />;
         case 'map':
           return <CitizenDangerMapPage />;
         case 'safe-locations':
@@ -58,6 +61,8 @@ export default function App() {
 
     // 2. Authority SEOC Command Experience (Dedicated Government Command Dashboard)
     switch (activePage) {
+      case 'ai-map-studio':
+        return <AiMapStudioPage />;
       case 'risk-intelligence':
       case 'map':
         return <RiskIntelligencePage />;
