@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import RiskMap from '../components/RiskMap';
+import LocationSearch from '../components/LocationSearch';
 import CitizenSosModal from '../components/CitizenSosModal';
 import LiveWeatherRiskCard from '../components/LiveWeatherRiskCard';
 import { 
@@ -20,7 +21,10 @@ import {
 
 export default function CitizenHomePage() {
   const { 
+    locations,
     selectedLocation, 
+    selectedLocationId,
+    selectedShelter,
     locationRisk, 
     environmentalData, 
     setActivePage,
@@ -29,7 +33,8 @@ export default function CitizenHomePage() {
 
   const [isSosOpen, setIsSosOpen] = useState(false);
 
-  const level = locationRisk?.overall_level || 'LOW';
+  const activeLoc = selectedLocation || locations.find(l => l.id === selectedLocationId) || locations[0];
+  const level = activeLoc?.current_risk?.overall_level || locationRisk?.overall_level || 'LOW';
   const isCritical = level === 'CRITICAL';
   const isHigh = level === 'HIGH';
   const isModerate = level === 'MODERATE';
@@ -85,7 +90,7 @@ export default function CitizenHomePage() {
         'Move to higher ground immediately',
         'Stay away from rivers and flooded low areas',
         'Do not attempt to cross moving water or bridges',
-        'Head directly to Chamoli Safe Shelter'
+        `Head directly to ${selectedShelter?.name || (activeLoc?.name ? `${activeLoc.name} Safe Shelter` : 'Nearest Safe Shelter')}`
       ]
     }
   };
@@ -95,12 +100,17 @@ export default function CitizenHomePage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6 pb-12">
       {/* ========================================================================= */}
-      {/* 0. LIVE WEATHER & PRALAYWATCH REAL RISK TELEMETRY CARD                     */}
+      {/* 0. SEARCH & SELECT YOUR LOCATION / SECTOR (Place Selection)               */}
+      {/* ========================================================================= */}
+      <LocationSearch />
+
+      {/* ========================================================================= */}
+      {/* 1. LIVE WEATHER & PRALAYWATCH REAL RISK TELEMETRY CARD                    */}
       {/* ========================================================================= */}
       <LiveWeatherRiskCard />
 
       {/* ========================================================================= */}
-      {/* 1. AM I SAFE? (Current Status Hero Banner)                                */}
+      {/* 2. AM I SAFE? (Current Status Hero Banner)                                */}
       {/* ========================================================================= */}
       <section className={`rounded-2xl p-6 sm:p-8 border shadow-2xl transition-all ${currentStatus.themeBg}`}>
         <div className="space-y-4">
@@ -112,7 +122,7 @@ export default function CitizenHomePage() {
 
             <div className="flex items-center gap-1.5 text-xs text-slate-300 font-semibold bg-slate-950/60 px-3 py-1.5 rounded-full border border-slate-700">
               <MapPin className="w-4 h-4 text-blue-400" />
-              <span>{selectedLocation?.name || 'Chamoli'}, {selectedLocation?.state || 'Uttarakhand'}</span>
+              <span>{activeLoc?.name || 'Selected Sector'}{activeLoc?.state ? `, ${activeLoc.state}` : ''}</span>
             </div>
           </div>
 
@@ -128,9 +138,11 @@ export default function CitizenHomePage() {
 
           {/* Hazard & Simple Risk Level */}
           <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-slate-400">
-            <span>Current Hazard: <strong className="text-white">{locationRisk?.primary_hazard || 'Flash Flood'}</strong></span>
+            <span>Dominant Hazard: <strong className="text-white">{activeLoc?.current_risk?.dominant_hazard ? activeLoc.current_risk.dominant_hazard.replace('_', ' ').toUpperCase() : (locationRisk?.dominant_hazard ? locationRisk.dominant_hazard.replace('_', ' ').toUpperCase() : 'FLASH FLOOD')}</strong></span>
             <span>•</span>
             <span>Risk Level: <strong className="text-white">{level}</strong></span>
+            <span>•</span>
+            <span>Score: <strong className="text-cyan-400">{activeLoc?.current_risk?.overall_score || locationRisk?.overall_score || 20}/100</strong></span>
           </div>
         </div>
       </section>

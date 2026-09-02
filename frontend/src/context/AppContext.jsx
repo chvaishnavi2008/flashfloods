@@ -101,7 +101,15 @@ export function AppProvider({ children }) {
         api.getNotifications()
       ]);
 
-      if (locRes.success) setLocations(locRes.locations);
+      if (locRes.success && locRes.locations && locRes.locations.length > 0) {
+        setLocations(locRes.locations);
+        const initialLoc = locRes.locations.find(l => l.id === selectedLocationId) || locRes.locations[0];
+        if (initialLoc) {
+          setSelectedLocation(initialLoc);
+          setUserCoords({ lat: initialLoc.lat, lng: initialLoc.lng });
+          setLocationName(`${initialLoc.name}, ${initialLoc.state}`);
+        }
+      }
       if (sysRiskRes.success) setSystemRisk(sysRiskRes);
       if (alertsRes.success) {
         setAlerts(alertsRes.alerts);
@@ -116,7 +124,7 @@ export function AppProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedLocationId]);
 
   // 2. Fetch specific location risk and safe locations
   const fetchLocationData = useCallback(async (locId) => {
