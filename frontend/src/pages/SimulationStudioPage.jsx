@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
+import { soundService } from '../services/soundService';
 import { 
   Play, 
   Pause, 
@@ -25,7 +26,10 @@ import {
   Flame,
   CheckCircle2,
   Sliders,
-  Compass
+  Compass,
+  Volume2,
+  VolumeX,
+  BellRing
 } from 'lucide-react';
 
 // 5 Regional Disaster Scenarios Catalog
@@ -524,6 +528,8 @@ export default function SimulationStudioPage() {
   const [currentStageIndex, setCurrentStageIndex] = useState(0); // 0 to 4 (Stages 1 to 5)
   const [isPlaying, setIsPlaying] = useState(false);
   const [isTechOpen, setIsTechOpen] = useState(false);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [isTestingSiren, setIsTestingSiren] = useState(false);
 
   const activeScenario = REGIONAL_SCENARIOS[selectedScenarioIndex];
   const activeStageData = activeScenario.stages[currentStageIndex];
@@ -548,26 +554,95 @@ export default function SimulationStudioPage() {
     };
   }, [isPlaying]);
 
+  // Stage-based Audio Alerts (Web Audio Dual-Tone Siren & Chimes)
+  useEffect(() => {
+    if (!isAudioEnabled) {
+      soundService.stopEmergencySiren();
+      return;
+    }
+
+    if (currentStageIndex === 0) {
+      // Stage 1: Normal -> Silent
+      soundService.stopEmergencySiren();
+    } else if (currentStageIndex === 1 || currentStageIndex === 2) {
+      // Stage 2 & 3: Heavy Rain & Risk Increasing -> Warning Chime
+      soundService.stopEmergencySiren();
+      soundService.playWarningChime();
+    } else if (currentStageIndex === 3 || currentStageIndex === 4) {
+      // Stage 4 & 5: High Risk & Warning & Action -> Emergency Alert Siren
+      soundService.playEmergencySiren(true);
+    }
+
+    return () => {
+      // Cleanup on unmount or stage change
+      if (currentStageIndex < 3) {
+        soundService.stopEmergencySiren();
+      }
+    };
+  }, [currentStageIndex, isAudioEnabled]);
+
+  // Stop siren on unmount
+  useEffect(() => {
+    return () => {
+      soundService.stopEmergencySiren();
+    };
+  }, []);
+
   const handleStartSimulation = () => {
+    soundService.initContext();
     if (currentStageIndex >= 4) {
       setCurrentStageIndex(0); // Restart from Stage 1 if at end
+      soundService.stopEmergencySiren();
     }
     setIsPlaying(true);
   };
 
   const handlePauseSimulation = () => {
     setIsPlaying(false);
+    soundService.stopEmergencySiren();
   };
 
   const handleResetSimulation = () => {
     setIsPlaying(false);
     setCurrentStageIndex(0);
+    soundService.stopEmergencySiren();
+    setIsTestingSiren(false);
   };
 
   const handleSelectScenario = (idx) => {
     setSelectedScenarioIndex(idx);
     setCurrentStageIndex(0);
     setIsPlaying(false);
+    soundService.stopEmergencySiren();
+    setIsTestingSiren(false);
+  };
+
+  const toggleAudio = () => {
+    soundService.initContext();
+    const next = !isAudioEnabled;
+    setIsAudioEnabled(next);
+    if (!next) {
+      soundService.stopEmergencySiren();
+    } else if (currentStageIndex >= 3) {
+      soundService.playEmergencySiren(true);
+    }
+  };
+
+  const handleTestSiren = () => {
+    soundService.initContext();
+    if (isTestingSiren) {
+      soundService.stopEmergencySiren();
+      setIsTestingSiren(false);
+    } else {
+      setIsTestingSiren(true);
+      soundService.playEmergencySiren(true);
+      setTimeout(() => {
+        if (currentStageIndex < 3) {
+          soundService.stopEmergencySiren();
+          setIsTestingSiren(false);
+        }
+      }, 4000);
+    }
   };
 
   // Safe haven nearest distance (real or scenario benchmark)
@@ -632,12 +707,49 @@ export default function SimulationStudioPage() {
               </div>
             </div>
 
-            {/* Playback Controls */}
+            {/* Playback & Audio Controls */}
             <div className="flex flex-wrap items-center gap-2 shrink-0">
+              {/* Audio Siren Toggle Button */}
+              <button
+                onClick={toggleAudio}
+                className={`px-3 py-2 rounded-xl font-mono text-xs font-bold border transition-all flex items-center gap-1.5 ${
+                  isAudioEnabled 
+                    ? 'bg-blue-950/80 border-cyan-500 text-cyan-300 hover:bg-blue-900' 
+                    : 'bg-slate-900 border-slate-700 text-slate-500 hover:text-slate-300'
+                }`}
+                title="Toggle Emergency Alert Siren Audio"
+              >
+                {isAudioEnabled ? (
+                  <>
+                    <Volume2 className="w-4 h-4 text-cyan-400 animate-pulse" />
+                    <span>Siren Audio: ON</span>
+                  </>
+                ) : (
+                  <>
+                    <VolumeX className="w-4 h-4 text-slate-500" />
+                    <span>Siren Audio: MUTED</span>
+                  </>
+                )}
+              </button>
+
+              {/* Siren Test Button */}
+              <button
+                onClick={handleTestSiren}
+                className={`px-3 py-2 rounded-xl font-mono text-xs font-bold border transition-all flex items-center gap-1.5 ${
+                  isTestingSiren
+                    ? 'bg-red-600 text-white border-red-400 animate-pulse shadow-lg shadow-red-600/40'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
+                }`}
+                title="Test synthesized emergency warning dual-tone siren"
+              >
+                <BellRing className={`w-3.5 h-3.5 ${isTestingSiren ? 'animate-bounce text-white' : 'text-amber-400'}`} />
+                <span>{isTestingSiren ? 'Playing Siren...' : 'Test Siren'}</span>
+              </button>
+
               {!isPlaying ? (
                 <button
                   onClick={handleStartSimulation}
-                  className="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl font-bold font-mono text-sm shadow-xl shadow-emerald-600/30 flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95"
+                  className="px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl font-bold font-mono text-xs sm:text-sm shadow-xl shadow-emerald-600/30 flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95"
                 >
                   <Play className="w-4 h-4 fill-white" />
                   <span>{currentStageIndex === 4 ? 'Replay Simulation' : 'Start Simulation'}</span>
@@ -645,7 +757,7 @@ export default function SimulationStudioPage() {
               ) : (
                 <button
                   onClick={handlePauseSimulation}
-                  className="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl font-bold font-mono text-sm shadow-xl shadow-amber-600/30 flex items-center gap-2 transition-all"
+                  className="px-5 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl font-bold font-mono text-xs sm:text-sm shadow-xl shadow-amber-600/30 flex items-center gap-2 transition-all"
                 >
                   <Pause className="w-4 h-4 fill-white" />
                   <span>Pause</span>
@@ -654,7 +766,7 @@ export default function SimulationStudioPage() {
 
               <button
                 onClick={handleResetSimulation}
-                className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl font-bold font-mono text-sm border border-slate-700 flex items-center gap-1.5 transition-all"
+                className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl font-bold font-mono text-xs sm:text-sm border border-slate-700 flex items-center gap-1.5 transition-all"
                 title="Reset to Stage 1 (Normal)"
               >
                 <RotateCcw className="w-4 h-4" />
