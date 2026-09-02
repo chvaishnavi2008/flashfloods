@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import RiskMap from '../components/RiskMap';
 import CitizenSosModal from '../components/CitizenSosModal';
+import LiveWeatherRiskCard from '../components/LiveWeatherRiskCard';
 import { 
   ShieldAlert, 
   AlertTriangle, 
@@ -57,6 +58,11 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 pb-12 font-mono">
+      {/* ========================================================================= */}
+      {/* A. LIVE OPEN-METEO WEATHER & PRALAYWATCH RISK TELEMETRY ENGINE            */}
+      {/* ========================================================================= */}
+      <LiveWeatherRiskCard />
+
       {/* ========================================================================= */}
       {/* B. ACTIVE EMERGENCY BANNER (Only displayed on HIGH / CRITICAL)             */}
       {/* ========================================================================= */}

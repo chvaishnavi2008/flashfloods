@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import RiskMap from '../components/RiskMap';
 import CitizenSosModal from '../components/CitizenSosModal';
+import LiveWeatherRiskCard from '../components/LiveWeatherRiskCard';
 import { 
   ShieldCheck, 
   AlertTriangle, 
@@ -93,6 +94,11 @@ export default function CitizenHomePage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 pb-12">
+      {/* ========================================================================= */}
+      {/* 0. LIVE WEATHER & PRALAYWATCH REAL RISK TELEMETRY CARD                     */}
+      {/* ========================================================================= */}
+      <LiveWeatherRiskCard />
+
       {/* ========================================================================= */}
       {/* 1. AM I SAFE? (Current Status Hero Banner)                                */}
       {/* ========================================================================= */}

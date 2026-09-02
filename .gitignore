@@ -3,13 +3,23 @@ node_modules/
 frontend/node_modules/
 __pycache__/
 backend/__pycache__/
+pralaywatch-backend/__pycache__/
 *.pyc
 *.pyo
 *.pyd
 
+# Databases & Instances
+instance/
+backend/instance/
+pralaywatch-backend/instance/
+*.db
+*.sqlite
+*.sqlite3
+
 # Environment
 .env
 backend/.env
+pralaywatch-backend/.env
 frontend/.env.local
 
 # Build output
@@ -23,3 +33,4 @@ Thumbs.db
 .vscode/
 .idea/
 .system_generated/
+

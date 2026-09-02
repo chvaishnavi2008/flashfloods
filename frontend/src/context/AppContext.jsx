@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { api } from '../services/api';
 import { soundService } from '../services/soundService';
+import { weatherService } from '../services/weatherService';
+import { riskEngineService } from '../services/riskEngineService';
 
 const AppContext = createContext();
 
@@ -8,6 +10,16 @@ export function AppProvider({ children }) {
   // Navigation & Role
   const [activePage, setActivePage] = useState('dashboard');
   const [userRole, setUserRole] = useState('citizen'); // 'citizen' | 'authority'
+
+  // Live Open-Meteo & Real Risk Engine States (Step 1-6)
+  const [userCoords, setUserCoords] = useState({ lat: 30.3165, lng: 78.0322 }); // Default: Dehradun
+  const [locationName, setLocationName] = useState('Dehradun (Doon Valley)');
+  const [locationInputMode, setLocationInputMode] = useState('default'); // 'default' | 'gps' | 'manual' | 'preset'
+  const [liveWeather, setLiveWeather] = useState(null);
+  const [liveRisk, setLiveRisk] = useState(null);
+  const [isLiveWeatherLoading, setIsLiveWeatherLoading] = useState(false);
+  const [liveWeatherError, setLiveWeatherError] = useState(null);
+  const [lastWeatherUpdated, setLastWeatherUpdated] = useState(null);
 
   // Data states
   const [locations, setLocations] = useState([]);
@@ -145,10 +157,82 @@ export function AppProvider({ children }) {
     }
   }, [isSirenMuted]);
 
-  // Initial Load
+  // 3. Fetch Live Open-Meteo Weather Data & Evaluate Real Risk
+  const fetchLiveWeatherData = useCallback(async (lat, lng, locMetadata = null, forceRefresh = false) => {
+    try {
+      setIsLiveWeatherLoading(true);
+      setLiveWeatherError(null);
+
+      const weatherRes = await weatherService.fetchLiveWeather(lat, lng, forceRefresh);
+      if (weatherRes.success && weatherRes.data) {
+        setLiveWeather(weatherRes.data);
+        const evaluated = riskEngineService.evaluateLiveRisk(weatherRes.data, locMetadata || {});
+        setLiveRisk(evaluated);
+        setLastWeatherUpdated(new Date());
+        setLiveWeatherError(null);
+      } else {
+        setLiveWeatherError(weatherRes.error || 'Live weather data temporarily unavailable.');
+      }
+    } catch (err) {
+      console.error('[AppContext] Error fetching live Open-Meteo weather:', err);
+      setLiveWeatherError('Live weather data temporarily unavailable.');
+    } finally {
+      setIsLiveWeatherLoading(false);
+    }
+  }, []);
+
+  // 4. Request Browser Geolocation (Step 3)
+  const requestUserLocation = useCallback(() => {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      setLiveWeatherError('Browser Geolocation is not supported by your device.');
+      return;
+    }
+
+    setIsLiveWeatherLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        setUserCoords({ lat, lng });
+        setLocationInputMode('gps');
+        setLocationName('Live GPS Location');
+        fetchLiveWeatherData(lat, lng, null, true);
+      },
+      (err) => {
+        console.warn('[AppContext] Geolocation permission denied or unavailable:', err.message);
+        setLiveWeatherError('Location access was not granted. You can enter coordinates manually.');
+        setIsLiveWeatherLoading(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+  }, [fetchLiveWeatherData]);
+
+  // 5. Set Manual Coordinates (Step 3)
+  const setManualCoordinates = useCallback((lat, lng, name = 'Custom Coordinates') => {
+    setUserCoords({ lat, lng });
+    setLocationName(name);
+    setLocationInputMode('manual');
+    fetchLiveWeatherData(lat, lng, null, true);
+  }, [fetchLiveWeatherData]);
+
+  // 6. Manual Risk Refresh (Step 5)
+  const refreshRisk = useCallback(() => {
+    fetchLiveWeatherData(userCoords.lat, userCoords.lng, selectedLocation, true);
+  }, [userCoords, selectedLocation, fetchLiveWeatherData]);
+
+  // Initial Load & Automatic 10-Minute Refresh Timer (Step 5)
   useEffect(() => {
     fetchSystemData();
+    fetchLiveWeatherData(userCoords.lat, userCoords.lng, selectedLocation);
   }, [fetchSystemData]);
+
+  useEffect(() => {
+    const TEN_MINUTES_MS = 10 * 60 * 1000;
+    const timer = setInterval(() => {
+      fetchLiveWeatherData(userCoords.lat, userCoords.lng, selectedLocation, true);
+    }, TEN_MINUTES_MS);
+    return () => clearInterval(timer);
+  }, [userCoords, selectedLocation, fetchLiveWeatherData]);
 
   // Location selection change
   useEffect(() => {
@@ -157,13 +241,19 @@ export function AppProvider({ children }) {
     }
   }, [selectedLocationId, fetchLocationData]);
 
-  // Select Location Handler
+  // Select Location Handler (re-fetches live weather for selected region if coordinates exist)
   const selectLocation = (id) => {
     const numId = Number(id);
     setSelectedLocationId(numId);
     const loc = locations.find(l => l.id === numId);
     if (loc) {
       setSelectedLocation(loc);
+      if (loc.lat && loc.lng) {
+        setUserCoords({ lat: loc.lat, lng: loc.lng });
+        setLocationName(`${loc.name}, ${loc.state}`);
+        setLocationInputMode('preset');
+        fetchLiveWeatherData(loc.lat, loc.lng, loc, false);
+      }
     }
     fetchLocationData(numId);
   };
@@ -507,7 +597,17 @@ export function AppProvider({ children }) {
         loading,
         statusMessage,
         selectLocation,
-        triggerSimulation,
+        userCoords,
+        locationName,
+        locationInputMode,
+        liveWeather,
+        liveRisk,
+        isLiveWeatherLoading,
+        liveWeatherError,
+        lastWeatherUpdated,
+        requestUserLocation,
+        setManualCoordinates,
+        refreshRisk,
         toggleSiren,
         stopSiren,
         issueAlert,
