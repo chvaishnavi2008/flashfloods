@@ -466,7 +466,7 @@ export default function AuthorityPage() {
       {/* 6. ADMINISTRATIVE WARNING BROADCAST MODAL                                 */}
       {/* ========================================================================= */}
       {isBroadcastModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
           <div className="bg-[#0B1120] border border-slate-700 rounded-lg max-w-xl w-full p-5 space-y-4 shadow-2xl">
             <div className="flex items-center justify-between pb-2 border-b border-slate-700">
               <div className="flex items-center gap-2">

@@ -29,7 +29,7 @@ export default function CitizenSosModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[99999] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
       <div className="bg-[#131315] border-2 border-red-500 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="bg-red-600 px-6 py-4 flex items-center justify-between text-white">

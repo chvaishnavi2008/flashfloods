@@ -8,7 +8,7 @@ export default function NotificationModal() {
   if (!showNotificationModal || !latestNotification) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-[950] max-w-md w-[calc(100%-48px)] animate-in slide-in-from-bottom-5 duration-300">
+    <div className="fixed bottom-6 right-6 z-[99999] max-w-md w-[calc(100%-48px)] animate-in slide-in-from-bottom-5 duration-300">
       <div className="bg-[#131315] border-2 border-blue-500 rounded-2xl shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="bg-blue-600 px-4 py-2.5 flex items-center justify-between text-white">

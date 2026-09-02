@@ -78,7 +78,7 @@ export default function EarlyWarningAlertModal() {
   const nearestShelter = safeLocations && safeLocations.length > 0 ? safeLocations[0] : null;
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
       <div className={`max-w-2xl w-full rounded-2xl border-2 shadow-2xl overflow-hidden relative flex flex-col max-h-[92vh] ${
         isCritical 
           ? 'bg-[#140b0e] border-red-500 shadow-red-950/60 ring-4 ring-red-500/20' 
