@@ -159,7 +159,7 @@ export default function AuthorityDashboardPage() {
       {/* 1. OPERATIONAL STATISTICS STRIP (Government-Dashboard KPIs)                */}
       {/* ========================================================================= */}
       <div className="bg-[#0B1120] border border-slate-700/80 rounded p-3 shadow-sm">
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 text-center">
           <div className="p-2 bg-slate-900/90 border border-slate-800 rounded">
             <span className="text-[10px] text-slate-400 uppercase tracking-wider block">MONITORED SECTORS</span>
             <span className="text-base font-bold text-white mt-0.5 block">31</span>
@@ -483,8 +483,8 @@ export default function AuthorityDashboardPage() {
       {/* 6. ADMINISTRATIVE WARNING WORKFLOW MODAL                                  */}
       {/* ========================================================================= */}
       {isBroadcastModalOpen && (
-        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="bg-[#0B1120] border border-slate-700 rounded-lg max-w-xl w-full p-5 space-y-4 shadow-2xl">
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md">
+          <div className="bg-[#0B1120] border border-slate-700 rounded-xl max-w-xl w-full max-h-[92vh] overflow-y-auto p-4 sm:p-5 space-y-4 shadow-2xl">
             <div className="flex items-center justify-between pb-2 border-b border-slate-700">
               <div className="flex items-center gap-2">
                 <Send className="w-4 h-4 text-red-400" />

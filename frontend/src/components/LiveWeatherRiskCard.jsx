@@ -322,7 +322,7 @@ export default function LiveWeatherRiskCard() {
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
           {/* Metric 1: Rainfall */}
           <div className="p-3.5 bg-slate-900/90 border border-slate-800 rounded-xl space-y-1">
             <span className="text-[10px] uppercase text-slate-400 flex items-center gap-1">
@@ -406,7 +406,7 @@ export default function LiveWeatherRiskCard() {
         </div>
 
         {/* 4 Core Required Metrics Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
           {/* Card 1: Elevation */}
           <div className="p-3.5 bg-slate-950/80 border border-slate-800 rounded-xl space-y-1.5">
             <div className="flex items-center justify-between">

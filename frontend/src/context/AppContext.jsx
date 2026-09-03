@@ -85,10 +85,20 @@ export function AppProvider({ children }) {
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [isAlertHistoryOpen, setIsAlertHistoryOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isGlobalSosOpen, setIsGlobalSosOpen] = useState(false);
   const [demoPhase, setDemoPhase] = useState(1);
   const [isScenarioRunning, setIsScenarioRunning] = useState(false);
   const [loading, setLoading] = useState(true);
   const [statusMessage, setStatusMessage] = useState('');
+
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev);
+  }, []);
+
+  const closeMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(false);
+  }, []);
 
   // 1. Fetch system-wide risk and locations list
   const fetchSystemData = useCallback(async () => {
@@ -646,6 +656,12 @@ export function AppProvider({ children }) {
         setShowNotificationModal,
         isAlertHistoryOpen,
         setIsAlertHistoryOpen,
+        isMobileMenuOpen,
+        setIsMobileMenuOpen,
+        toggleMobileMenu,
+        closeMobileMenu,
+        isGlobalSosOpen,
+        setIsGlobalSosOpen,
         demoPhase,
         setDemoPhase,
         isScenarioRunning,

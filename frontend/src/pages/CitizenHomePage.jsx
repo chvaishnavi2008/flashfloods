@@ -150,7 +150,7 @@ export default function CitizenHomePage() {
       {/* ========================================================================= */}
       {/* 2. WHAT SHOULD I DO? (Simple Checkbox Action Directives)                  */}
       {/* ========================================================================= */}
-      <section className="bg-[#1E293B] border border-slate-700 rounded-2xl p-6 shadow-xl space-y-5">
+      <section className="bg-[#1E293B] border border-slate-700 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 sm:space-y-5">
         <div className="flex items-center justify-between pb-3 border-b border-slate-800">
           <div className="flex items-center gap-2.5">
             <ShieldCheck className="w-5 h-5 text-emerald-400" />
@@ -174,10 +174,10 @@ export default function CitizenHomePage() {
         </div>
 
         {/* 3 Large Action Buttons (Unmissable Citizen CTAs) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 sm:pt-3">
           <button
             onClick={() => setActivePage('safe-locations')}
-            className="p-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:shadow-emerald-500/20 transition-all"
+            className="p-3.5 sm:p-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:shadow-emerald-500/20 transition-all"
           >
             <Building2 className="w-5 h-5" />
             <span>FIND SAFE PLACE</span>
@@ -185,7 +185,7 @@ export default function CitizenHomePage() {
 
           <button
             onClick={() => setActivePage('evacuation')}
-            className="p-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/20 transition-all"
+            className="p-3.5 sm:p-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/20 transition-all"
           >
             <Navigation className="w-5 h-5" />
             <span>EVACUATION ROUTE</span>
@@ -193,7 +193,7 @@ export default function CitizenHomePage() {
 
           <button
             onClick={() => setIsSosOpen(true)}
-            className="p-4 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:shadow-red-500/20 transition-all"
+            className="p-3.5 sm:p-4 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:shadow-red-500/20 transition-all"
           >
             <HeartPulse className="w-5 h-5 animate-pulse" />
             <span>EMERGENCY HELP (SOS)</span>
@@ -204,7 +204,7 @@ export default function CitizenHomePage() {
       {/* ========================================================================= */}
       {/* 3. WHERE IS THE DANGER? (Simple Danger Map with Clean Legend)              */}
       {/* ========================================================================= */}
-      <section className="bg-[#1E293B] border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+      <section className="bg-[#1E293B] border border-slate-700 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
           <div>
             <h2 className="text-base font-bold text-white uppercase tracking-wider">
@@ -216,7 +216,7 @@ export default function CitizenHomePage() {
           </div>
 
           {/* Simple Legend */}
-          <div className="flex items-center gap-3 text-xs bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs bg-slate-900 p-2 sm:px-3 sm:py-1.5 rounded-lg border border-slate-800">
             <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Safe</span>
             <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-amber-400" /> Watch</span>
             <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-orange-500" /> High Risk</span>
@@ -225,7 +225,7 @@ export default function CitizenHomePage() {
         </div>
 
         {/* Map View */}
-        <RiskMap height="400px" showRoute={isCritical || isHigh} />
+        <RiskMap height="360px" showRoute={isCritical || isHigh} />
 
         <div className="flex items-center justify-between pt-2 text-xs text-slate-400">
           <span>Tap on any colored area to see simple safety instructions.</span>

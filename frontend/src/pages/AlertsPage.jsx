@@ -96,7 +96,7 @@ export default function AlertsPage() {
         </div>
 
         {/* Multi-Channel Dispatcher Channels Status Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-800 text-xs font-mono">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3 border-t border-slate-800 text-xs font-mono">
           <div className="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
             <div className="flex items-center justify-between text-slate-400 mb-1">
               <span className="text-[10px] uppercase font-bold">In-App Alerts</span>

@@ -87,7 +87,7 @@ export default function LocationSearch({ onSearchComplete = null }) {
           </span>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
             <input
@@ -105,7 +105,7 @@ export default function LocationSearch({ onSearchComplete = null }) {
                 setActivePage('location-risk');
               }
             }}
-            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-mono text-xs font-bold uppercase tracking-wider shadow-md transition-all shrink-0"
+            className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-mono text-xs font-bold uppercase tracking-wider shadow-md transition-all shrink-0 text-center"
           >
             Check Risk
           </button>

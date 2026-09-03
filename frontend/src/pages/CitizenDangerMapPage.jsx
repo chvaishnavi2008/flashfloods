@@ -87,26 +87,26 @@ export default function CitizenDangerMapPage() {
         <RiskMap height="500px" showRoute={true} />
 
         {/* Simple Plain-English Legend */}
-        <div className="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
+        <div className="bg-slate-900/90 p-3 sm:p-4 rounded-xl border border-slate-800 space-y-2">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
             Map Colors Meaning:
           </span>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-emerald-500 shrink-0" />
               <span className="text-slate-300"><strong>Safe Area:</strong> Normal conditions</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-amber-400 shrink-0" />
-              <span className="text-slate-300"><strong>Watch:</strong> Light water increase</span>
+              <span className="text-slate-300"><strong>Watch:</strong> Rising water</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-orange-500 shrink-0" />
-              <span className="text-slate-300"><strong>High Risk:</strong> Overflow possible</span>
+              <span className="text-slate-300"><strong>High Risk:</strong> Evacuation likely</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-red-500 shrink-0" />
-              <span className="text-slate-300"><strong>Danger Zone:</strong> Evacuate immediately</span>
+              <span className="text-slate-300"><strong>Danger:</strong> Stay away</span>
             </div>
           </div>
         </div>

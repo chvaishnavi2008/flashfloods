@@ -573,11 +573,10 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
       style={{ height: isFullscreen ? '100vh' : height }}
     >
       {/* ========================================================================= */}
-      {/* 1. TOP FLOATING COMMAND CONTROL BAR                                       */}
-      {/* ========================================================================= */}
-      <div className="absolute top-3 left-3 right-3 z-[400] flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+      {/* 1. TOP FLOATING COMMAND CONTROL BAR */}
+      <div className="absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 z-[400] flex flex-col sm:flex-row sm:items-center justify-between gap-2 pointer-events-none">
         {/* Left: Hazard Layer Filters */}
-        <div className="bg-slate-950/90 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 flex flex-wrap items-center gap-1 shadow-2xl pointer-events-auto">
+        <div className="bg-slate-950/90 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 flex items-center gap-1 shadow-2xl pointer-events-auto overflow-x-auto whitespace-nowrap scrollbar-none max-w-full">
           {[
             { id: 'all', label: 'All Hazards', icon: Flame },
             { id: 'flood', label: '🌊 Flash Flood', icon: Droplets },
@@ -590,7 +589,7 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
               <button
                 key={layer.id}
                 onClick={() => setSelectedLayer(layer.id)}
-                className={`px-3 py-1.5 text-xs font-mono font-bold rounded-lg transition-all flex items-center gap-1.5 ${
+                className={`px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs font-mono font-bold rounded-lg transition-all flex items-center gap-1 shrink-0 ${
                   isActive
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 ring-1 ring-blue-400'
                     : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
@@ -603,9 +602,9 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
         </div>
 
         {/* Right: Quick Sector Jump, Basemap Selector, Fullscreen & Tactical Tools */}
-        <div className="flex flex-wrap items-center gap-1.5 pointer-events-auto">
+        <div className="flex items-center gap-1 sm:gap-1.5 pointer-events-auto overflow-x-auto whitespace-nowrap scrollbar-none max-w-full">
           {/* Quick Sector Finder Dropdown */}
-          <div className="relative">
+          <div className="relative shrink-0">
             <select
               value={selectedLocationId}
               onChange={(e) => selectLocation(Number(e.target.value))}

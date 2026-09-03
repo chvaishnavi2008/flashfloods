@@ -4,6 +4,7 @@ import { useApp } from './context/AppContext';
 // 1. Citizen Portal Components (LOCKED & APPROVED)
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
+import MobileBottomNav from './components/MobileBottomNav';
 import CitizenHomePage from './pages/CitizenHomePage';
 import CitizenDangerMapPage from './pages/CitizenDangerMapPage';
 import CitizenSafePlacesPage from './pages/CitizenSafePlacesPage';
@@ -29,9 +30,17 @@ import AiMapStudioPage from './pages/AiMapStudioPage';
 import NotificationModal from './components/NotificationModal';
 import EarlyWarningAlertModal from './components/EarlyWarningAlertModal';
 import AlertHistoryModal from './components/AlertHistoryModal';
+import CitizenSosModal from './components/CitizenSosModal';
 
 export default function App() {
-  const { activePage, userRole, isAlertHistoryOpen, setIsAlertHistoryOpen } = useApp();
+  const { 
+    activePage, 
+    userRole, 
+    isAlertHistoryOpen, 
+    setIsAlertHistoryOpen,
+    isGlobalSosOpen,
+    setIsGlobalSosOpen 
+  } = useApp();
 
   const isAuthority = userRole === 'authority';
 
@@ -96,14 +105,17 @@ export default function App() {
         {isAuthority ? <AuthoritySidebar /> : <Sidebar />}
 
         {/* Scrollable Workspace Canvas */}
-        <main className={`flex-1 overflow-y-auto ${
-          isAuthority ? 'p-3 lg:p-4 bg-[#070B14]' : 'p-4 lg:p-8 bg-[#0F172A]'
-        }`}>
+        <main className={`flex-1 overflow-y-auto overflow-x-hidden ${
+          isAuthority ? 'p-3 sm:p-4 lg:p-4 bg-[#070B14]' : 'p-3 sm:p-4 lg:p-8 bg-[#0F172A]'
+        } pb-24 lg:pb-8`}>
           <div className={isAuthority ? 'max-w-full mx-auto' : 'max-w-7xl mx-auto'}>
             {renderActivePage()}
           </div>
         </main>
       </div>
+
+      {/* Mobile Sticky Bottom Navigation Bar */}
+      <MobileBottomNav />
 
       {/* Official Early Warning Broadcast Modal */}
       <EarlyWarningAlertModal />
@@ -113,6 +125,9 @@ export default function App() {
 
       {/* Alert History & Archive Management Drawer */}
       <AlertHistoryModal isOpen={isAlertHistoryOpen} onClose={() => setIsAlertHistoryOpen(false)} />
+
+      {/* Global Citizen SOS Modal Triggered by Bottom Nav or Any Header */}
+      <CitizenSosModal isOpen={isGlobalSosOpen} onClose={() => setIsGlobalSosOpen(false)} />
     </div>
   );
 }

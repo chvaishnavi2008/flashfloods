@@ -29,28 +29,28 @@ export default function CitizenSosModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[99999] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="bg-[#131315] border-2 border-red-500 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-[99999] bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+      <div className="bg-[#131315] border-2 border-red-500 rounded-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto shadow-2xl animate-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="bg-red-600 px-6 py-4 flex items-center justify-between text-white">
+        <div className="bg-red-600 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between text-white sticky top-0 z-10">
           <div className="flex items-center gap-2.5">
-            <AlertOctagon className="w-6 h-6 animate-pulse" />
+            <AlertOctagon className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse shrink-0" />
             <div>
-              <h3 className="font-bold text-lg leading-tight uppercase">
+              <h3 className="font-bold text-base sm:text-lg leading-tight uppercase">
                 EMERGENCY SOS RESCUE REQUEST
               </h3>
-              <p className="text-xs text-red-100 font-mono">
-                Direct transmission to NDRF / SDRF Emergency Operation Center
+              <p className="text-[10px] sm:text-xs text-red-100 font-mono">
+                Direct transmission to NDRF / SDRF Command Queue
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="text-white/80 hover:text-white">
+          <button onClick={onClose} className="p-1 rounded-lg text-white/80 hover:text-white hover:bg-red-700/50">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-4">
+        <div className="p-4 sm:p-6 space-y-4">
           {isSubmitted ? (
             <div className="p-6 bg-emerald-950/80 border border-emerald-500 rounded-xl text-center space-y-3">
               <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto animate-bounce" />
@@ -62,10 +62,10 @@ export default function CitizenSosModal({ isOpen, onClose }) {
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4 text-xs font-mono">
-              <div className="p-3 bg-red-950/40 border border-red-500/30 rounded-xl flex items-center gap-2 text-red-300">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 text-xs font-mono">
+              <div className="p-2.5 sm:p-3 bg-red-950/40 border border-red-500/30 rounded-xl flex items-center gap-2 text-red-300">
                 <MapPin className="w-4 h-4 text-red-400 shrink-0" />
-                <span>Sector: <strong>{selectedLocation?.name}, {selectedLocation?.state}</strong></span>
+                <span className="truncate">Sector: <strong>{selectedLocation?.name}, {selectedLocation?.state}</strong></span>
               </div>
 
               <div>
@@ -80,7 +80,7 @@ export default function CitizenSosModal({ isOpen, onClose }) {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-slate-400 mb-1 font-semibold">Contact Mobile</label>
                   <input
