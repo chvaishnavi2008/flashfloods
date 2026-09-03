@@ -7,13 +7,36 @@
  *    ensuring full operational fidelity in both local and static deployments (Vercel).
  */
 
-const SOS_STORAGE_KEY = 'pralaywatch_sos_requests_v3';
+const SOS_STORAGE_KEY = 'pralaywatch_sos_requests_v4';
+
+/**
+ * Universal UTC Date Parser
+ * Guarantees accurate parsing whether backend returns ISO string with or without 'Z'
+ */
+export const parseUtcDate = (isoString) => {
+  if (!isoString) return new Date();
+  if (isoString instanceof Date) return isoString;
+  let str = String(isoString).trim();
+  if (!isNaN(str) && !isNaN(parseFloat(str))) {
+    return new Date(Number(str));
+  }
+  // If ISO format with T but missing Z and timezone offset, treat as UTC
+  if (str.includes('T')) {
+    const timePart = str.split('T')[1] || '';
+    if (!timePart.endsWith('Z') && !timePart.includes('+') && !timePart.includes('-')) {
+      str += 'Z';
+    }
+  } else if (!str.includes('T') && !str.endsWith('Z') && !str.includes('+')) {
+    str = str.replace(' ', 'T') + 'Z';
+  }
+  const d = new Date(str);
+  return isNaN(d.getTime()) ? new Date() : d;
+};
 
 export const formatSosTime = (isoString) => {
   if (!isoString) return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   try {
-    const d = new Date(isoString);
-    if (isNaN(d.getTime())) return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const d = parseUtcDate(isoString);
     return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   } catch (e) {
     return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -23,8 +46,7 @@ export const formatSosTime = (isoString) => {
 export const formatSosDateTime = (isoString) => {
   if (!isoString) return new Date().toLocaleString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', day: '2-digit', month: 'short' });
   try {
-    const d = new Date(isoString);
-    if (isNaN(d.getTime())) return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const d = parseUtcDate(isoString);
     const timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     const dateStr = d.toLocaleDateString([], { day: '2-digit', month: 'short' });
     return `${timeStr} (${dateStr})`;
@@ -33,7 +55,7 @@ export const formatSosDateTime = (isoString) => {
   }
 };
 
-const INITIAL_DEMO_SOS = [
+const getInitialDemoSos = () => [
   {
     id: 801,
     sos_id: 'SOS-801',
@@ -42,8 +64,8 @@ const INITIAL_DEMO_SOS = [
     lat: 30.4124,
     lng: 79.3198,
     location_name: 'Chamoli (Alaknanda Basin), Uttarakhand',
-    timestamp: new Date(Date.now() - 6 * 60 * 1000).toISOString(),
-    time_ago: '6 mins ago',
+    timestamp: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
+    time_ago: '4 mins ago',
     status: 'NEW',
     risk_level: 'CRITICAL',
     urgency: 'CRITICAL',
@@ -67,8 +89,8 @@ const INITIAL_DEMO_SOS = [
     lat: 30.5539,
     lng: 79.5658,
     location_name: 'Joshimath (Sunil Ward), Uttarakhand',
-    timestamp: new Date(Date.now() - 18 * 60 * 1000).toISOString(),
-    time_ago: '18 mins ago',
+    timestamp: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
+    time_ago: '12 mins ago',
     status: 'ACKNOWLEDGED',
     risk_level: 'HIGH',
     urgency: 'HIGH',
@@ -79,7 +101,7 @@ const INITIAL_DEMO_SOS = [
     phone: '+91 97110 56789',
     assigned_team_id: null,
     assigned_team_name: null,
-    acknowledged_at: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+    acknowledged_at: new Date(Date.now() - 8 * 60 * 1000).toISOString(),
     dispatched_at: null,
     resolved_at: null,
     is_demo: false
@@ -101,8 +123,9 @@ class SosService {
     } catch (e) {
       console.warn('[SosService] Failed to parse local SOS storage:', e);
     }
-    this.saveLocalRequests(INITIAL_DEMO_SOS);
-    return INITIAL_DEMO_SOS;
+    const initial = getInitialDemoSos();
+    this.saveLocalRequests(initial);
+    return initial;
   }
 
   saveLocalRequests(list) {
@@ -116,7 +139,8 @@ class SosService {
 
   formatTimeAgo(isoString) {
     if (!isoString) return 'Just now';
-    const diff = Date.now() - new Date(isoString).getTime();
+    const date = parseUtcDate(isoString);
+    const diff = Date.now() - date.getTime();
     const sec = Math.floor(diff / 1000);
     if (sec < 60) return 'Just now';
     const min = Math.floor(sec / 60);

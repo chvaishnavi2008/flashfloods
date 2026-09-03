@@ -402,6 +402,9 @@ class SOSRequest(db.Model):
         return f"{days} day{'s' if days > 1 else ''} ago"
 
     def to_dict(self):
+        ts_iso = (self.timestamp.isoformat() + "Z") if self.timestamp else (datetime.utcnow().isoformat() + "Z")
+        if "ZZ" in ts_iso:
+            ts_iso = ts_iso.replace("ZZ", "Z")
         return {
             "id": self.id,
             "sos_id": self.sos_id,
@@ -410,7 +413,7 @@ class SOSRequest(db.Model):
             "lat": self.location_latitude,
             "lng": self.location_longitude,
             "location_name": self.location_name,
-            "timestamp": self.timestamp.isoformat() if self.timestamp else datetime.utcnow().isoformat(),
+            "timestamp": ts_iso,
             "time_ago": self.time_ago(),
             "status": self.status,
             "risk_level": self.risk_level,
@@ -422,9 +425,9 @@ class SOSRequest(db.Model):
             "phone": self.phone,
             "assigned_team_id": self.assigned_team_id,
             "assigned_team_name": self.assigned_team_name,
-            "acknowledged_at": self.acknowledged_at.isoformat() if self.acknowledged_at else None,
-            "dispatched_at": self.dispatched_at.isoformat() if self.dispatched_at else None,
-            "resolved_at": self.resolved_at.isoformat() if self.resolved_at else None,
+            "acknowledged_at": (self.acknowledged_at.isoformat() + "Z") if self.acknowledged_at else None,
+            "dispatched_at": (self.dispatched_at.isoformat() + "Z") if self.dispatched_at else None,
+            "resolved_at": (self.resolved_at.isoformat() + "Z") if self.resolved_at else None,
             "is_demo": self.is_demo
         }
 
