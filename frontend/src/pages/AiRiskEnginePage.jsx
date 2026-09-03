@@ -2,6 +2,7 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 import AiExplanationPanel from '../components/AiExplanationPanel';
 import PipelineTraceViewer from '../components/PipelineTraceViewer';
+import { FALLBACK_LOCATIONS } from '../data/fallbackData';
 import { 
   Sparkles, 
   Brain, 
@@ -25,16 +26,20 @@ export default function AiRiskEnginePage() {
     pipelineData 
   } = useApp();
 
-  const isCritical = locationRisk?.overall_level === 'CRITICAL';
-  const isHigh = locationRisk?.overall_level === 'HIGH';
+  const activeLoc = selectedLocation || FALLBACK_LOCATIONS[0];
+  const activeRisk = locationRisk || activeLoc?.current_risk || FALLBACK_LOCATIONS[0].current_risk;
+  const activeEnv = environmentalData || activeLoc?.environmental_data || FALLBACK_LOCATIONS[0].environmental_data;
+
+  const isCritical = activeRisk?.overall_level === 'CRITICAL';
+  const isHigh = activeRisk?.overall_level === 'HIGH';
 
   const weights = [
-    { name: 'Rainfall Intensity (Rate mm/hr)', weight: '25%', contribution: `${Math.round((environmentalData?.rainfall_rate || 5) * 0.25 * 10) / 10} pts` },
-    { name: 'Accumulated 24h Rainfall (mm)', weight: '15%', contribution: `${Math.round((environmentalData?.rainfall_mm || 25) * 0.06 * 10) / 10} pts` },
-    { name: 'River Water Level (% Capacity)', weight: '20%', contribution: `${Math.round((environmentalData?.river_capacity_pct || 35) * 0.20 * 10) / 10} pts` },
-    { name: 'River Level Trend (Rising / Surge)', weight: '15%', contribution: environmentalData?.river_trend === 'Rising Rapidly' ? '15.0 pts' : '3.8 pts' },
-    { name: 'Catchment Slope & Elevation Factor', weight: '15%', contribution: `${Math.round((environmentalData?.slope_deg || 32) * 0.33 * 10) / 10} pts` },
-    { name: 'Historical Basin Susceptibility', weight: '10%', contribution: `${selectedLocation?.is_vulnerable ? '7.5' : '2.0'} pts` }
+    { name: 'Rainfall Intensity (Rate mm/hr)', weight: '25%', contribution: `${Math.round((activeEnv?.rainfall_rate || 5) * 0.25 * 10) / 10} pts` },
+    { name: 'Accumulated 24h Rainfall (mm)', weight: '15%', contribution: `${Math.round((activeEnv?.rainfall_mm || 25) * 0.06 * 10) / 10} pts` },
+    { name: 'River Water Level (% Capacity)', weight: '20%', contribution: `${Math.round((activeEnv?.river_capacity_pct || 35) * 0.20 * 10) / 10} pts` },
+    { name: 'River Level Trend (Rising / Surge)', weight: '15%', contribution: activeEnv?.river_trend === 'Rising Rapidly' ? '15.0 pts' : '3.8 pts' },
+    { name: 'Catchment Slope & Elevation Factor', weight: '15%', contribution: `${Math.round((activeEnv?.slope_deg || 32) * 0.33 * 10) / 10} pts` },
+    { name: 'Historical Basin Susceptibility', weight: '10%', contribution: `${activeLoc?.is_vulnerable ? '7.5' : '2.0'} pts` }
   ];
 
   return (
@@ -81,7 +86,7 @@ export default function AiRiskEnginePage() {
             <span>Mathematical Risk Composition Formula</span>
           </div>
           <span className="text-[11px] text-slate-400">
-            Sector: <strong className="text-white">{selectedLocation?.name || 'Chamoli'}</strong>
+            Sector: <strong className="text-white">{activeLoc?.name || 'Chamoli'}</strong>
           </span>
         </div>
 
@@ -89,7 +94,7 @@ export default function AiRiskEnginePage() {
           {/* Box 1: Rainfall */}
           <div className="p-3 bg-slate-950 border border-blue-500/40 rounded-xl space-y-1">
             <span className="text-[10px] text-blue-400 uppercase font-bold block">1. Rainfall</span>
-            <div className="text-sm font-bold text-white">{environmentalData?.rainfall_rate || 5} mm/hr</div>
+            <div className="text-sm font-bold text-white">{activeEnv?.rainfall_rate || 5} mm/hr</div>
             <span className="text-[10px] text-slate-500">Weight: 40%</span>
           </div>
 
@@ -98,7 +103,7 @@ export default function AiRiskEnginePage() {
           {/* Box 2: River Level */}
           <div className="p-3 bg-slate-950 border border-cyan-500/40 rounded-xl space-y-1">
             <span className="text-[10px] text-cyan-400 uppercase font-bold block">2. River Surge</span>
-            <div className="text-sm font-bold text-white">{environmentalData?.river_capacity_pct || 35}% Cap</div>
+            <div className="text-sm font-bold text-white">{activeEnv?.river_capacity_pct || 35}% Cap</div>
             <span className="text-[10px] text-slate-500">Weight: 35%</span>
           </div>
 
@@ -107,7 +112,7 @@ export default function AiRiskEnginePage() {
           {/* Box 3: Terrain */}
           <div className="p-3 bg-slate-950 border border-amber-500/40 rounded-xl space-y-1">
             <span className="text-[10px] text-amber-400 uppercase font-bold block">3. Terrain Slope</span>
-            <div className="text-sm font-bold text-white">{environmentalData?.slope_deg || 32}° Slope</div>
+            <div className="text-sm font-bold text-white">{activeEnv?.slope_deg || 32}° Slope</div>
             <span className="text-[10px] text-slate-500">Weight: 15%</span>
           </div>
 
@@ -116,7 +121,7 @@ export default function AiRiskEnginePage() {
           {/* Box 4: Vulnerability */}
           <div className="p-3 bg-slate-950 border border-orange-500/40 rounded-xl space-y-1">
             <span className="text-[10px] text-orange-400 uppercase font-bold block">4. Vulnerability</span>
-            <div className="text-sm font-bold text-white">{selectedLocation?.is_vulnerable ? 'High' : 'Nominal'}</div>
+            <div className="text-sm font-bold text-white">{activeLoc?.is_vulnerable ? 'High' : 'Nominal'}</div>
             <span className="text-[10px] text-slate-500">Weight: 10%</span>
           </div>
         </div>
@@ -140,12 +145,12 @@ export default function AiRiskEnginePage() {
               Evaluated Output Classification
             </span>
             <strong className="text-base font-black">
-              {locationRisk?.overall_score || 45}/100 — {locationRisk?.overall_level || 'MODERATE'} RISK
+              {activeRisk?.overall_score || 45}/100 — {activeRisk?.overall_level || 'MODERATE'} RISK
             </strong>
           </div>
 
           <span className="text-xs px-3 py-1 bg-black/40 rounded-lg border border-current">
-            Lead Time: ~{locationRisk?.lead_time_minutes || 35} mins • Confidence: 91.4%
+            Lead Time: ~{activeRisk?.lead_time_minutes || 35} mins • Confidence: 91.4%
           </span>
         </div>
       </section>

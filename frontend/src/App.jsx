@@ -22,6 +22,7 @@ import AlertsPage from './pages/AlertsPage';
 import ImpactAssessmentPage from './pages/ImpactAssessmentPage';
 import EmergencyResponsePage from './pages/EmergencyResponsePage';
 import AiRiskEnginePage from './pages/AiRiskEnginePage';
+import LocationRiskPage from './pages/LocationRiskPage';
 import SimulationStudioPage from './pages/SimulationStudioPage';
 import SettingsPage from './pages/SettingsPage';
 import AiMapStudioPage from './pages/AiMapStudioPage';
@@ -50,6 +51,10 @@ export default function App() {
       switch (activePage) {
         case 'ai-map-studio':
           return <AiMapStudioPage />;
+        case 'ai-risk-engine':
+          return <AiRiskEnginePage />;
+        case 'location-risk':
+          return <LocationRiskPage />;
         case 'map':
           return <CitizenDangerMapPage />;
         case 'safe-locations':
@@ -75,6 +80,8 @@ export default function App() {
       case 'risk-intelligence':
       case 'map':
         return <RiskIntelligencePage />;
+      case 'location-risk':
+        return <LocationRiskPage />;
       case 'alerts':
         return <AlertsPage />;
       case 'impact-assessment':
