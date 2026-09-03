@@ -197,49 +197,29 @@ export default function AuthorityDashboardPage() {
         </div>
       )}
 
-      {/* ========================================================================= */}
-      {/* 2. MAIN REGIONAL MULTI-HAZARD RISK MAP (Central Operational Workspace)    */}
-      {/* ========================================================================= */}
-      <section className="bg-[#0B1120] border border-slate-700/80 rounded p-4 shadow-sm space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-800">
-          <div className="flex items-center gap-2">
-            <Layers className="w-4 h-4 text-red-400" />
-            <h2 className="text-xs font-bold uppercase tracking-wider text-white">
-              REGIONAL MULTI-HAZARD RISK MAP
-            </h2>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setIsBroadcastModalOpen(true)}
-              className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded font-bold flex items-center gap-1.5 shadow-sm transition-all text-xs"
-            >
-              <Send className="w-3.5 h-3.5" />
-              <span>Issue Official Warning</span>
-            </button>
-          </div>
+      {/* Command Actions Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-900/90 border border-slate-700/80 rounded-xl">
+        <div className="flex items-center gap-2">
+          <ShieldAlert className="w-4 h-4 text-red-400" />
+          <span className="text-xs font-bold text-white uppercase tracking-wider">STATE EMERGENCY OPERATION CENTER ACTIONS</span>
         </div>
-
-        {/* Tactical Map */}
-        <RiskMap height="460px" showRoute={true} />
-
-        {/* Clear Professional Legend */}
-        <div className="bg-slate-900 p-2.5 rounded border border-slate-800 flex flex-wrap items-center justify-between gap-2 text-[11px]">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="text-slate-400 font-bold uppercase">SECTOR THREAT INDEX:</span>
-            <span className="flex items-center gap-1.5 text-red-400 font-bold"><span className="w-2.5 h-2.5 bg-red-500 rounded-full" /> Critical</span>
-            <span className="flex items-center gap-1.5 text-orange-400 font-bold"><span className="w-2.5 h-2.5 bg-orange-500 rounded-full" /> High</span>
-            <span className="flex items-center gap-1.5 text-amber-300 font-bold"><span className="w-2.5 h-2.5 bg-amber-400 rounded-full" /> Moderate</span>
-            <span className="flex items-center gap-1.5 text-emerald-400 font-bold"><span className="w-2.5 h-2.5 bg-emerald-500 rounded-full" /> Normal</span>
-          </div>
-
-          <div className="flex items-center gap-2 text-slate-400">
-            <span>Projection: <strong>WGS84 / EPSG:4326</strong></span>
-            <span>•</span>
-            <span>Update Interval: <strong>Real-time Telemetry</strong></span>
-          </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setActivePage('risk-intelligence')}
+            className="px-3 py-1.5 bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-500/50 text-cyan-300 rounded font-bold flex items-center gap-1.5 shadow-sm transition-all text-xs"
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>Open Risk Intelligence Map</span>
+          </button>
+          <button
+            onClick={() => setIsBroadcastModalOpen(true)}
+            className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded font-bold flex items-center gap-1.5 shadow-sm transition-all text-xs"
+          >
+            <Send className="w-3.5 h-3.5" />
+            <span>Issue Official Warning</span>
+          </button>
         </div>
-      </section>
+      </div>
 
       {/* ========================================================================= */}
       {/* 3. PRIORITY INCIDENTS TABLE (Government-Style Operational Grid)            */}

@@ -54,7 +54,6 @@ export default function Navbar() {
 
   const citizenNavItems = [
     { id: 'dashboard', label: 'Home', tag: 'Am I safe?', icon: Home },
-    { id: 'ai-map-studio', label: 'AI Map Studio', tag: 'AI spatial map', icon: Sparkles, highlightCyan: true },
     { id: 'map', label: 'Danger Map', tag: 'Floods & slopes', icon: Map },
     { id: 'alerts', label: 'My Alerts', tag: 'Local warnings', icon: BellRing, badge: activeAlertsCount },
     { id: 'safe-locations', label: 'Safe Places', tag: 'Relief shelters', icon: Building2 },
@@ -65,10 +64,9 @@ export default function Navbar() {
   const authorityNavItems = [
     { id: 'authority', label: 'Command Dashboard', icon: LayoutDashboard },
     { id: 'ai-map-studio', label: 'AI Map Studio', icon: Sparkles },
-    { id: 'risk-intelligence', label: 'Risk Intelligence', icon: Map },
+    { id: 'risk-intelligence', label: 'Risk Intelligence Map', icon: Map },
     { id: 'alerts', label: 'Alerts & Warnings', icon: BellRing, badge: activeAlertsCount },
     { id: 'impact-assessment', label: 'Impact Assessment', icon: Users },
-    { id: 'ai-risk-engine', label: 'AI Risk Engine', icon: ShieldAlert },
     { id: 'simulation-studio', label: 'Simulation Studio', icon: Zap, highlightIndigo: true },
     { id: 'settings', label: 'System Settings', icon: Settings }
   ];

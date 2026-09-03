@@ -45,13 +45,6 @@ export default function Sidebar() {
       icon: Home 
     },
     { 
-      id: 'ai-map-studio', 
-      label: 'AI Map Studio', 
-      tag: 'AI spatial map',
-      icon: Sparkles,
-      highlightCyan: true
-    },
-    { 
       id: 'map', 
       label: 'Danger Map', 
       tag: 'Floods & slopes',
@@ -99,7 +92,7 @@ export default function Sidebar() {
     },
     { 
       id: 'risk-intelligence', 
-      label: 'Risk Intelligence', 
+      label: 'Risk Intelligence Map', 
       icon: Map 
     },
     { 
@@ -112,11 +105,6 @@ export default function Sidebar() {
       id: 'impact-assessment', 
       label: 'Impact Assessment', 
       icon: Users 
-    },
-    { 
-      id: 'ai-risk-engine', 
-      label: 'AI Risk Engine', 
-      icon: Brain 
     },
     { 
       id: 'simulation-studio', 

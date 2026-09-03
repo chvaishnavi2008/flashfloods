@@ -46,15 +46,9 @@ export default function App() {
   const isAuthority = userRole === 'authority';
 
   const renderActivePage = () => {
-    // 1. Citizen Safety Experience (100% Locked & Approved)
+    // 1. Citizen Safety Experience (100% Focused & Simplified)
     if (!isAuthority) {
       switch (activePage) {
-        case 'ai-map-studio':
-          return <AiMapStudioPage />;
-        case 'ai-risk-engine':
-          return <AiRiskEnginePage />;
-        case 'location-risk':
-          return <LocationRiskPage />;
         case 'map':
           return <CitizenDangerMapPage />;
         case 'safe-locations':
@@ -65,6 +59,8 @@ export default function App() {
           return <CitizenEmergencyHelpPage />;
         case 'alerts':
           return <AlertsPage />;
+        case 'location-risk':
+          return <LocationRiskPage />;
         case 'settings':
           return <SettingsPage />;
         case 'dashboard':
@@ -86,8 +82,8 @@ export default function App() {
         return <AlertsPage />;
       case 'impact-assessment':
         return <ImpactAssessmentPage />;
-      case 'ai-risk-engine':
-        return <AiRiskEnginePage />;
+      case 'emergency-response':
+        return <EmergencyResponsePage />;
       case 'simulation-studio':
         return <SimulationStudioPage />;
       case 'settings':
