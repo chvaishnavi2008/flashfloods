@@ -5,6 +5,12 @@ import { weatherService } from '../services/weatherService';
 import { terrainService } from '../services/terrainService';
 import { historicalRiskService } from '../services/historicalRiskService';
 import { riskEngineService } from '../services/riskEngineService';
+import { 
+  FALLBACK_LOCATIONS, 
+  FALLBACK_SYSTEM_RISK, 
+  FALLBACK_ALERTS, 
+  getFallbackSafeLocations 
+} from '../data/fallbackData';
 
 const AppContext = createContext();
 
@@ -14,11 +20,11 @@ export function AppProvider({ children }) {
   const [userRole, setUserRole] = useState('citizen'); // 'citizen' | 'authority'
 
   // Live Open-Meteo & Real Risk Engine States (Step 1-6 + Phase 2A/2B)
-  const [userCoords, setUserCoords] = useState({ lat: 30.3165, lng: 78.0322 }); // Default: Dehradun
+  const [userCoords, setUserCoords] = useState({ lat: 30.4124, lng: 79.3198 }); // Default: Chamoli
   const [userGpsLocation, setUserGpsLocation] = useState(null); // { lat, lng, accuracy, active: boolean, timestamp }
   const [isGpsLoading, setIsGpsLoading] = useState(false);
   const [gpsError, setGpsError] = useState(null);
-  const [locationName, setLocationName] = useState('Dehradun (Doon Valley)');
+  const [locationName, setLocationName] = useState('Chamoli, Uttarakhand');
   const [locationInputMode, setLocationInputMode] = useState('default'); // 'default' | 'gps' | 'manual' | 'preset'
   const [liveWeather, setLiveWeather] = useState(null);
   const [liveTerrain, setLiveTerrain] = useState(null);
@@ -28,17 +34,17 @@ export function AppProvider({ children }) {
   const [liveWeatherError, setLiveWeatherError] = useState(null);
   const [lastWeatherUpdated, setLastWeatherUpdated] = useState(null);
 
-  // Data states
-  const [locations, setLocations] = useState([]);
-  const [selectedLocationId, setSelectedLocationId] = useState(1); // Default to Dehradun
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [locationRisk, setLocationRisk] = useState(null);
-  const [environmentalData, setEnvironmentalData] = useState(null);
-  const [systemRisk, setSystemRisk] = useState(null);
-  const [alerts, setAlerts] = useState([]);
-  const [activeAlert, setActiveAlert] = useState(null);
-  const [safeLocations, setSafeLocations] = useState([]);
-  const [selectedShelter, setSelectedShelter] = useState(null);
+  // Data states - initialized with reliable 31-sector dataset
+  const [locations, setLocations] = useState(FALLBACK_LOCATIONS);
+  const [selectedLocationId, setSelectedLocationId] = useState(1); // Default to Chamoli
+  const [selectedLocation, setSelectedLocation] = useState(FALLBACK_LOCATIONS[0]);
+  const [locationRisk, setLocationRisk] = useState(FALLBACK_LOCATIONS[0].current_risk);
+  const [environmentalData, setEnvironmentalData] = useState(FALLBACK_LOCATIONS[0].environmental_data);
+  const [systemRisk, setSystemRisk] = useState(FALLBACK_SYSTEM_RISK);
+  const [alerts, setAlerts] = useState(FALLBACK_ALERTS);
+  const [activeAlert, setActiveAlert] = useState(FALLBACK_ALERTS[0]);
+  const [safeLocations, setSafeLocations] = useState(getFallbackSafeLocations(1));
+  const [selectedShelter, setSelectedShelter] = useState(getFallbackSafeLocations(1)[0]);
   const [notifications, setNotifications] = useState([]);
   const [latestNotification, setLatestNotification] = useState(null);
   const [pipelineData, setPipelineData] = useState(null);
@@ -89,7 +95,7 @@ export function AppProvider({ children }) {
   const [isGlobalSosOpen, setIsGlobalSosOpen] = useState(false);
   const [demoPhase, setDemoPhase] = useState(1);
   const [isScenarioRunning, setIsScenarioRunning] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
 
   const toggleMobileMenu = useCallback(() => {
@@ -100,85 +106,120 @@ export function AppProvider({ children }) {
     setIsMobileMenuOpen(false);
   }, []);
 
-  // 1. Fetch system-wide risk and locations list
+  // 1. Fetch system-wide risk and locations list with robust fallback
   const fetchSystemData = useCallback(async () => {
     try {
       setLoading(true);
-      const [locRes, sysRiskRes, alertsRes, notifsRes] = await Promise.all([
+      const [locRes, sysRiskRes, alertsRes, notifsRes] = await Promise.allSettled([
         api.getLocations(),
         api.getSystemRisk(),
         api.getAlerts(),
         api.getNotifications()
       ]);
 
-      if (locRes.success && locRes.locations && locRes.locations.length > 0) {
-        setLocations(locRes.locations);
-        const initialLoc = locRes.locations.find(l => l.id === selectedLocationId) || locRes.locations[0];
+      if (locRes.status === 'fulfilled' && locRes.value?.success && locRes.value.locations?.length > 0) {
+        setLocations(locRes.value.locations);
+        const initialLoc = locRes.value.locations.find(l => l.id === selectedLocationId) || locRes.value.locations[0];
+        if (initialLoc) {
+          setSelectedLocation(initialLoc);
+          setUserCoords({ lat: initialLoc.lat, lng: initialLoc.lng });
+          setLocationName(`${initialLoc.name}, ${initialLoc.state}`);
+        }
+      } else {
+        setLocations(FALLBACK_LOCATIONS);
+        const initialLoc = FALLBACK_LOCATIONS.find(l => l.id === selectedLocationId) || FALLBACK_LOCATIONS[0];
         if (initialLoc) {
           setSelectedLocation(initialLoc);
           setUserCoords({ lat: initialLoc.lat, lng: initialLoc.lng });
           setLocationName(`${initialLoc.name}, ${initialLoc.state}`);
         }
       }
-      if (sysRiskRes.success) setSystemRisk(sysRiskRes);
-      if (alertsRes.success) {
-        setAlerts(alertsRes.alerts);
-        const criticalOrHigh = alertsRes.alerts.find(a => a.status === 'Active' && (a.severity === 'CRITICAL' || a.severity === 'HIGH'));
+
+      if (sysRiskRes.status === 'fulfilled' && sysRiskRes.value?.success) {
+        setSystemRisk(sysRiskRes.value);
+      } else {
+        setSystemRisk(FALLBACK_SYSTEM_RISK);
+      }
+
+      if (alertsRes.status === 'fulfilled' && alertsRes.value?.success && alertsRes.value.alerts?.length > 0) {
+        setAlerts(alertsRes.value.alerts);
+        const criticalOrHigh = alertsRes.value.alerts.find(a => a.status === 'Active' && (a.severity === 'CRITICAL' || a.severity === 'HIGH'));
         if (criticalOrHigh) {
           setActiveAlert(criticalOrHigh);
         }
+      } else {
+        setAlerts(FALLBACK_ALERTS);
+        setActiveAlert(FALLBACK_ALERTS[0]);
       }
-      if (notifsRes.success) setNotifications(notifsRes.notifications);
+
+      if (notifsRes.status === 'fulfilled' && notifsRes.value?.success) {
+        setNotifications(notifsRes.value.notifications);
+      }
     } catch (err) {
-      console.error('[AppContext] Error fetching initial system data:', err);
+      console.warn('[AppContext] Network offline or static host, using 31-sector fallback data:', err);
+      setLocations(FALLBACK_LOCATIONS);
+      setSystemRisk(FALLBACK_SYSTEM_RISK);
+      setAlerts(FALLBACK_ALERTS);
     } finally {
       setLoading(false);
     }
   }, [selectedLocationId]);
 
-  // 2. Fetch specific location risk and safe locations
+  // 2. Fetch specific location risk and safe locations with robust fallback
   const fetchLocationData = useCallback(async (locId) => {
     try {
-      const [riskRes, safeLocRes] = await Promise.all([
+      const [riskRes, safeLocRes] = await Promise.allSettled([
         api.getLocationRisk(locId),
         api.getSafeLocations(locId)
       ]);
 
-      if (riskRes.success) {
-        setSelectedLocation(riskRes.location);
-        setLocationRisk(riskRes.risk_assessment);
-        setEnvironmentalData(riskRes.environmental_data);
-        if (riskRes.pipeline_stages) {
+      if (riskRes.status === 'fulfilled' && riskRes.value?.success) {
+        const val = riskRes.value;
+        setSelectedLocation(val.location);
+        setLocationRisk(val.risk_assessment);
+        setEnvironmentalData(val.environmental_data);
+        if (val.pipeline_stages) {
           setPipelineData({
-            stages: riskRes.pipeline_stages,
-            impact: riskRes.impact_assessment
+            stages: val.pipeline_stages,
+            impact: val.impact_assessment
           });
         }
 
-        // Check if critical/high risk triggers emergency alert state
-        if (riskRes.risk_assessment.overall_level === 'CRITICAL') {
+        if (val.risk_assessment?.overall_level === 'CRITICAL') {
           if (!isSirenMuted) {
             soundService.playEmergencySiren();
             setIsSirenActive(true);
           }
         } else {
-          // If the newly selected location is safe / not critical, turn off siren and close modal
           soundService.stopEmergencySiren();
           setIsSirenActive(false);
           setShowEmergencyModal(false);
         }
+      } else {
+        // Resolve using fallback 31-location database
+        const fallbackLoc = FALLBACK_LOCATIONS.find(l => l.id === Number(locId)) || FALLBACK_LOCATIONS[0];
+        setSelectedLocation(fallbackLoc);
+        setLocationRisk(fallbackLoc.current_risk);
+        setEnvironmentalData(fallbackLoc.environmental_data);
       }
 
-      if (safeLocRes.success) {
-        setSafeLocations(safeLocRes.safe_locations);
-        if (safeLocRes.safe_locations.length > 0) {
-          setSelectedShelter(safeLocRes.safe_locations[0]);
-        } else {
-          setSelectedShelter(null);
-        }
+      if (safeLocRes.status === 'fulfilled' && safeLocRes.value?.success && safeLocRes.value.safe_locations?.length > 0) {
+        setSafeLocations(safeLocRes.value.safe_locations);
+        setSelectedShelter(safeLocRes.value.safe_locations[0]);
+      } else {
+        const fallbackShelters = getFallbackSafeLocations(locId);
+        setSafeLocations(fallbackShelters);
+        setSelectedShelter(fallbackShelters[0]);
       }
     } catch (err) {
-      console.error('[AppContext] Error fetching location data:', err);
+      console.warn('[AppContext] Using fallback location data for locId', locId, err);
+      const fallbackLoc = FALLBACK_LOCATIONS.find(l => l.id === Number(locId)) || FALLBACK_LOCATIONS[0];
+      setSelectedLocation(fallbackLoc);
+      setLocationRisk(fallbackLoc.current_risk);
+      setEnvironmentalData(fallbackLoc.environmental_data);
+      const fallbackShelters = getFallbackSafeLocations(locId);
+      setSafeLocations(fallbackShelters);
+      setSelectedShelter(fallbackShelters[0]);
     }
   }, [isSirenMuted]);
 

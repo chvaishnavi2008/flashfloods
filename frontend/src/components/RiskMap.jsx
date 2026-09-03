@@ -574,9 +574,9 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
     >
       {/* ========================================================================= */}
       {/* 1. TOP FLOATING COMMAND CONTROL BAR */}
-      <div className="absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 z-[400] flex flex-col sm:flex-row sm:items-center justify-between gap-2 pointer-events-none">
-        {/* Left: Hazard Layer Filters */}
-        <div className="bg-slate-950/90 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 flex items-center gap-1 shadow-2xl pointer-events-auto overflow-x-auto whitespace-nowrap scrollbar-none max-w-full">
+      <div className="absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 z-[400] flex flex-col xl:flex-row xl:items-center justify-between gap-2 pointer-events-none">
+        {/* Left / Row 1: Hazard Layer Filters */}
+        <div className="bg-slate-950/95 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 flex items-center gap-1 shadow-2xl pointer-events-auto overflow-x-auto whitespace-nowrap scrollbar-none max-w-full">
           {[
             { id: 'all', label: 'All Hazards', icon: Flame },
             { id: 'flood', label: '🌊 Flash Flood', icon: Droplets },
@@ -601,14 +601,14 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
           })}
         </div>
 
-        {/* Right: Quick Sector Jump, Basemap Selector, Fullscreen & Tactical Tools */}
+        {/* Right / Row 2: Quick Sector Jump, Basemap Selector, Fullscreen & Tactical Tools */}
         <div className="flex items-center gap-1 sm:gap-1.5 pointer-events-auto overflow-x-auto whitespace-nowrap scrollbar-none max-w-full">
           {/* Quick Sector Finder Dropdown */}
           <div className="relative shrink-0">
             <select
               value={selectedLocationId}
               onChange={(e) => selectLocation(Number(e.target.value))}
-              className="bg-slate-950/90 backdrop-blur-md text-xs font-mono font-bold text-blue-400 border border-slate-700/80 rounded-xl px-3 py-1.5 shadow-2xl focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+              className="bg-slate-950/95 backdrop-blur-md text-xs font-mono font-bold text-cyan-300 border border-slate-700/80 rounded-xl px-3 py-1.5 shadow-2xl focus:outline-none focus:ring-1 focus:ring-cyan-400 cursor-pointer min-w-[170px]"
             >
               <option value="" disabled>Jump to Sector...</option>
               {locations.map((loc) => (

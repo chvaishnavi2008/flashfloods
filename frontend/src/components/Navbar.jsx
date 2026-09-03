@@ -125,7 +125,7 @@ export default function Navbar() {
           <span className="text-slate-400 font-mono text-[11px]">Sector:</span>
           <select
             value={selectedLocationId}
-            onChange={(e) => selectLocation(e.target.value)}
+            onChange={(e) => selectLocation(Number(e.target.value))}
             className="bg-transparent text-white font-mono font-bold focus:outline-none cursor-pointer pr-1 max-w-[180px] truncate"
           >
             {locations.map(loc => (
@@ -281,7 +281,7 @@ export default function Navbar() {
                 <select
                   value={selectedLocationId}
                   onChange={(e) => {
-                    selectLocation(e.target.value);
+                    selectLocation(Number(e.target.value));
                   }}
                   className="w-full bg-slate-950 text-white font-mono font-bold text-xs p-2 rounded-lg border border-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer"
                 >

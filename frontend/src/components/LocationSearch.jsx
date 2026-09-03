@@ -77,8 +77,8 @@ export default function LocationSearch({ onSearchComplete = null }) {
   return (
     <div className="bg-[#1E293B] rounded-xl border border-[#334155] p-5 shadow-lg space-y-4 font-sans">
       {/* Search Input Bar */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
+      <div className="space-y-2">
+        <div className="flex items-center justify-between mb-1">
           <label className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
             SEARCH YOUR LOCATION / SECTOR ({filteredLocations.length} Matched)
           </label>
@@ -94,7 +94,7 @@ export default function LocationSearch({ onSearchComplete = null }) {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search vulnerable towns (e.g. Dehradun, Joshimath, Wayanad, Shimla, Gangtok, Chungthang...)"
+              placeholder="Search vulnerable towns (e.g. Dehradun, Chamoli, Joshimath, Wayanad, Shimla, Gangtok...)"
               className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 font-mono"
             />
           </div>
@@ -109,6 +109,36 @@ export default function LocationSearch({ onSearchComplete = null }) {
           >
             Check Risk
           </button>
+        </div>
+
+        {/* Quick Select Place Dropdown ("Downbar") */}
+        <div className="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2.5 space-y-1">
+          <div className="flex items-center justify-between text-[11px] font-mono text-slate-300">
+            <span className="flex items-center gap-1.5 font-bold uppercase text-cyan-300">
+              <MapPin className="w-3.5 h-3.5 text-red-400" />
+              <span>SELECT PLACE / SECTOR DROPDOWN (DOWNBAR):</span>
+            </span>
+            <span className="text-[10px] text-slate-400">Jump directly to any sector</span>
+          </div>
+          <select
+            value={selectedLocationId}
+            onChange={(e) => {
+              const val = Number(e.target.value);
+              handleSelect(val);
+            }}
+            className="w-full bg-slate-950 border border-cyan-500/50 rounded-lg px-3 py-2 text-sm text-cyan-300 font-mono font-bold focus:outline-none focus:ring-1 focus:ring-cyan-400 cursor-pointer shadow-inner"
+          >
+            <option value="" disabled>-- Choose a monitored sector from dropdown --</option>
+            {locations.map((loc) => {
+              const hazardIcon = loc.current_risk?.dominant_hazard === 'landslide' ? '⛰️ Landslide' : (loc.current_risk?.dominant_hazard === 'heavy_rainfall' ? '🌧️ Heavy Rain' : '🌊 Flash Flood');
+              const levelBadge = loc.current_risk?.overall_level === 'CRITICAL' ? '🔴 CRITICAL' : (loc.current_risk?.overall_level === 'HIGH' ? '🟠 HIGH' : (loc.current_risk?.overall_level === 'MODERATE' ? '🟡 MODERATE' : '🟢 LOW'));
+              return (
+                <option key={loc.id} value={loc.id} className="bg-slate-900 text-white py-1">
+                  📍 {loc.name} ({loc.state}) — {levelBadge} — {hazardIcon} ({loc.current_risk?.overall_score || 50}/100)
+                </option>
+              );
+            })}
+          </select>
         </div>
       </div>
 
@@ -171,33 +201,47 @@ export default function LocationSearch({ onSearchComplete = null }) {
         </div>
       </div>
 
-      {/* 3. GRID OF SELECTABLE LOCATION CHIPS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-64 overflow-y-auto pr-1">
+      {/* 3. GRID OF SELECTABLE LOCATION CHIPS WITH HAZARD COMPONENTS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 max-h-72 overflow-y-auto pr-1">
         {filteredLocations.map((loc) => {
           const isSelected = loc.id === selectedLocationId;
           const level = loc.current_risk?.overall_level || 'LOW';
+          const dominantHazard = loc.current_risk?.dominant_hazard || 'flash_flood';
+          const hazardLabel = dominantHazard === 'landslide' ? '⛰️ Landslide' : (dominantHazard === 'heavy_rainfall' ? '🌧️ Heavy Rain' : '🌊 Flash Flood');
 
           return (
             <button
               key={loc.id}
               onClick={() => handleSelect(loc.id)}
-              className={`flex items-center justify-between p-2.5 rounded-lg border text-left text-xs transition-all ${
+              className={`flex flex-col justify-between p-3 rounded-xl border text-left text-xs transition-all ${
                 isSelected
-                  ? 'bg-blue-950/80 border-blue-500 text-white shadow-sm ring-1 ring-blue-400'
-                  : 'bg-slate-900/80 border-slate-800 text-slate-300 hover:bg-slate-800 hover:border-slate-700'
+                  ? 'bg-blue-950/90 border-blue-500 text-white shadow-lg ring-2 ring-blue-400'
+                  : 'bg-slate-900/80 border-slate-800 text-slate-300 hover:bg-slate-800/90 hover:border-slate-700'
               }`}
             >
-              <div className="truncate pr-2">
-                <div className="font-semibold text-slate-200 truncate flex items-center gap-1.5">
-                  <MapPin className="w-3 h-3 text-red-400 shrink-0" />
+              <div className="flex items-start justify-between gap-1 w-full mb-1.5">
+                <div className="font-bold text-slate-100 truncate flex items-center gap-1 text-xs">
+                  <MapPin className="w-3.5 h-3.5 text-red-400 shrink-0" />
                   <span className="truncate">{loc.name}</span>
                 </div>
-                <div className="text-[10px] font-mono text-slate-400 truncate pl-4.5">{loc.state}, {loc.country}</div>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${getLevelBadgeClass(level)} shrink-0`}>
+                  {level}
+                </span>
               </div>
 
-              <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${getLevelBadgeClass(level)} shrink-0`}>
-                {level}
-              </span>
+              <div className="text-[11px] font-mono text-slate-400 truncate mb-2">
+                {loc.state}, {loc.country}
+              </div>
+
+              {/* Hazard Components Badges */}
+              <div className="flex flex-wrap items-center gap-1.5 pt-1.5 border-t border-slate-800/80 w-full text-[10px] font-mono">
+                <span className="px-1.5 py-0.5 rounded bg-blue-950/80 text-blue-300 border border-blue-800/50">
+                  {hazardLabel}
+                </span>
+                <span className="text-slate-400">
+                  Risk: <strong className="text-cyan-400">{loc.current_risk?.overall_score || 50}/100</strong>
+                </span>
+              </div>
             </button>
           );
         })}
