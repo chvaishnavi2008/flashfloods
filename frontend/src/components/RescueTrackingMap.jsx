@@ -127,6 +127,28 @@ const createDestinationIcon = (name) => {
   });
 };
 
+// 100% Free, Keyless, High-Definition Tactical Basemap Providers (Zero Watermark)
+const BASEMAPS = {
+  dark: {
+    name: 'Tactical Dark',
+    icon: '🌒',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+    attribution: '&copy; Esri, HERE, Garmin, OpenStreetMap contributors'
+  },
+  satellite: {
+    name: 'Satellite',
+    icon: '🛰️',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attribution: '&copy; Esri, DigitalGlobe, GeoEye'
+  },
+  topo: {
+    name: 'Mountain Topo',
+    icon: '🏔️',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+    attribution: '&copy; Esri, USGS, NOAA'
+  }
+};
+
 export default function RescueTrackingMap({
   teams = [],
   locations = [],
@@ -141,6 +163,7 @@ export default function RescueTrackingMap({
   const [mapCenter, setMapCenter] = useState([30.4124, 79.3198]);
   const [mapZoom, setMapZoom] = useState(9);
   const [selectedIncident, setSelectedIncident] = useState(null);
+  const [activeBasemap, setActiveBasemap] = useState('dark');
 
   // Focus on selected team if provided
   useEffect(() => {
@@ -159,7 +182,7 @@ export default function RescueTrackingMap({
       {/* Top Tactical Map Floating Header */}
       <div className="absolute top-3 left-3 right-3 z-[1000] flex flex-wrap items-center justify-between gap-2 pointer-events-none">
         {/* Left: Map Title & Disclaimer */}
-        <div className="bg-[#0B1120]/90 backdrop-blur-md px-3.5 py-2 rounded-xl border border-slate-700/80 shadow-lg flex items-center gap-2 pointer-events-auto">
+        <div className="bg-[#0B1120]/95 backdrop-blur-md px-3.5 py-2 rounded-xl border border-slate-700/80 shadow-lg flex items-center gap-2 pointer-events-auto">
           <div className="p-1 bg-rose-500/20 text-rose-400 rounded-lg border border-rose-500/30">
             <Radio className="w-4 h-4 animate-pulse" />
           </div>
@@ -178,28 +201,48 @@ export default function RescueTrackingMap({
           </div>
         </div>
 
-        {/* Right: Simulation Controls */}
-        <div className="bg-[#0B1120]/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-700/80 shadow-lg flex items-center gap-2 pointer-events-auto">
-          <button
-            onClick={onToggleSimulation}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-md ${
-              isSimulating
-                ? 'bg-amber-600 hover:bg-amber-500 text-white animate-pulse'
-                : 'bg-indigo-600 hover:bg-indigo-500 text-white'
-            }`}
-          >
-            {isSimulating ? (
-              <>
-                <Pause className="w-3.5 h-3.5" />
-                <span>Pause GPS Sim</span>
-              </>
-            ) : (
-              <>
-                <Play className="w-3.5 h-3.5" />
-                <span>🧪 Simulate Movement</span>
-              </>
-            )}
-          </button>
+        {/* Right: Basemap Switcher & Simulation Controls */}
+        <div className="flex flex-wrap items-center gap-2 pointer-events-auto">
+          {/* Basemap Switcher */}
+          <div className="bg-[#0B1120]/95 backdrop-blur-md px-1.5 py-1 rounded-xl border border-slate-700/80 shadow-lg flex items-center gap-1">
+            {Object.entries(BASEMAPS).map(([key, bm]) => (
+              <button
+                key={key}
+                onClick={() => setActiveBasemap(key)}
+                className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold flex items-center gap-1 transition-all ${
+                  activeBasemap === key
+                    ? 'bg-blue-600 text-white shadow'
+                    : 'text-slate-400 hover:text-white bg-slate-900/60'
+                }`}
+              >
+                <span>{bm.icon}</span>
+                <span className="hidden sm:inline">{bm.name}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="bg-[#0B1120]/95 backdrop-blur-md px-2 py-1 rounded-xl border border-slate-700/80 shadow-lg flex items-center gap-2">
+            <button
+              onClick={onToggleSimulation}
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-md ${
+                isSimulating
+                  ? 'bg-amber-600 hover:bg-amber-500 text-white animate-pulse'
+                  : 'bg-indigo-600 hover:bg-indigo-500 text-white'
+              }`}
+            >
+              {isSimulating ? (
+                <>
+                  <Pause className="w-3.5 h-3.5" />
+                  <span>Pause GPS Sim</span>
+                </>
+              ) : (
+                <>
+                  <Play className="w-3.5 h-3.5" />
+                  <span>🧪 Simulate Movement</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -211,11 +254,12 @@ export default function RescueTrackingMap({
           scrollWheelZoom={true}
           style={{ height: '100%', width: '100%', background: '#090D16' }}
         >
-          {/* Dark Tactical CartoDB TileLayer */}
+          {/* Free High-Definition Keyless Basemap Layer */}
           <TileLayer
-            attribution='&copy; <a href="https://carto.com/">CARTO</a> &copy; OpenStreetMap'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-            maxZoom={19}
+            key={activeBasemap}
+            url={BASEMAPS[activeBasemap].url}
+            attribution={BASEMAPS[activeBasemap].attribution}
+            maxZoom={18}
           />
 
           <MapFlyController center={mapCenter} zoom={mapZoom} />
