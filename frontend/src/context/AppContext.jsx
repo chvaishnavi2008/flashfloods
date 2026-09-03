@@ -5,6 +5,7 @@ import { weatherService } from '../services/weatherService';
 import { terrainService } from '../services/terrainService';
 import { historicalRiskService } from '../services/historicalRiskService';
 import { riskEngineService } from '../services/riskEngineService';
+import { sosService } from '../services/sosService';
 import { 
   FALLBACK_LOCATIONS, 
   FALLBACK_SYSTEM_RISK, 
@@ -49,31 +50,36 @@ export function AppProvider({ children }) {
   const [latestNotification, setLatestNotification] = useState(null);
   const [pipelineData, setPipelineData] = useState(null);
   
-  // Citizen SOS Rescue Requests Queue
-  const [sosRequests, setSosRequests] = useState([
-    {
-      id: 'SOS-801',
-      citizen_name: 'Rajesh Negi',
-      phone: '+91 98450 12345',
-      location_name: 'Dehradun (Rispana River Bank)',
-      people_count: 4,
-      urgency: 'HIGH',
-      status: 'PENDING',
-      message: 'Water entered ground floor, elderly person with mobility issue needing evacuation assistance.',
-      timestamp: '10 mins ago'
-    },
-    {
-      id: 'SOS-802',
-      citizen_name: 'Pooja Verma',
-      phone: '+91 97110 56789',
-      location_name: 'Joshimath (Sunil Ward)',
-      people_count: 2,
-      urgency: 'CRITICAL',
-      status: 'DISPATCHED',
-      message: 'Slope behind house cracking rapidly, road blocked by debris.',
-      timestamp: '25 mins ago'
+  // Citizen SOS Rescue Requests Queue (Synchronized with Flask API + Storage)
+  const [sosRequests, setSosRequests] = useState(() => sosService.loadLocalRequests());
+  const [lastKnownNewSosCount, setLastKnownNewSosCount] = useState(0);
+
+  // Real-time SOS background polling (10s interval)
+  const fetchSosRequests = useCallback(async () => {
+    try {
+      const data = await sosService.getSosRequests();
+      if (Array.isArray(data)) {
+        setSosRequests(data);
+        const newCount = data.filter(s => s.status === 'NEW').length;
+        if (newCount > lastKnownNewSosCount && lastKnownNewSosCount > 0) {
+          try {
+            soundService.playAlertChime();
+          } catch (err) {
+            // ignore audio autoplay policy
+          }
+        }
+        setLastKnownNewSosCount(newCount);
+      }
+    } catch (e) {
+      console.warn('[AppContext] Failed to sync SOS requests:', e);
     }
-  ]);
+  }, [lastKnownNewSosCount]);
+
+  useEffect(() => {
+    fetchSosRequests();
+    const interval = setInterval(fetchSosRequests, 10000);
+    return () => clearInterval(interval);
+  }, [fetchSosRequests]);
 
   // Map & Simulation states
   const [selectedLayer, setSelectedLayer] = useState('overall'); // 'overall' | 'flash_flood' | 'flood' | 'landslide' | 'heavy_rainfall' | 'safe_locations'
@@ -637,25 +643,71 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Submit Citizen SOS Request
-  const submitSosRequest = (sosData) => {
-    const newSos = {
-      id: `SOS-${Math.floor(100 + Math.random() * 900)}`,
-      citizen_name: sosData.citizen_name || 'Citizen in Distress',
-      phone: sosData.phone || '+91 98765 43210',
-      location_name: selectedLocation ? `${selectedLocation.name} (${selectedLocation.state})` : 'Monitored Sector',
-      people_count: sosData.people_count || 1,
-      message: sosData.message || 'Urgent evacuation / rescue required.',
-      status: 'PENDING',
-      created_at: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-    setSosRequests(prev => [newSos, ...prev]);
-    return newSos;
+  // Submit Citizen SOS Request (Calls Backend API + Syncs)
+  const submitSosRequest = async (sosData) => {
+    try {
+      const created = await sosService.createSos(sosData);
+      await fetchSosRequests();
+      return created;
+    } catch (err) {
+      console.error('[AppContext] Submit SOS error:', err);
+      throw err;
+    }
+  };
+
+  // Acknowledge SOS
+  const acknowledgeSos = async (sosId) => {
+    try {
+      const res = await sosService.acknowledgeSos(sosId);
+      await fetchSosRequests();
+      return res;
+    } catch (err) {
+      console.error('[AppContext] Acknowledge SOS error:', err);
+    }
+  };
+
+  // Dispatch Rescue Team to SOS
+  const dispatchRescueToSos = async (sosId, teamId, teamName) => {
+    try {
+      const res = await sosService.dispatchTeamToSos(sosId, teamId, teamName);
+      await fetchSosRequests();
+      return res;
+    } catch (err) {
+      console.error('[AppContext] Dispatch SOS error:', err);
+    }
   };
 
   // Update SOS status (Authority dispatch / resolve)
-  const updateSosStatus = (sosId, newStatus) => {
-    setSosRequests(prev => prev.map(s => s.id === sosId ? { ...s, status: newStatus } : s));
+  const updateSosStatus = async (sosId, newStatus, extraData = {}) => {
+    try {
+      const res = await sosService.updateSosStatus(sosId, newStatus, extraData);
+      await fetchSosRequests();
+      return res;
+    } catch (err) {
+      console.error('[AppContext] Update SOS status error:', err);
+    }
+  };
+
+  // Resolve SOS
+  const resolveSos = async (sosId) => {
+    try {
+      const res = await sosService.resolveSos(sosId);
+      await fetchSosRequests();
+      return res;
+    } catch (err) {
+      console.error('[AppContext] Resolve SOS error:', err);
+    }
+  };
+
+  // Create Demo SOS
+  const createDemoSos = async (overrideData = {}) => {
+    try {
+      const res = await sosService.createDemoSos(overrideData);
+      await fetchSosRequests();
+      return res;
+    } catch (err) {
+      console.error('[AppContext] Create demo SOS error:', err);
+    }
   };
 
   return (
@@ -679,7 +731,12 @@ export function AppProvider({ children }) {
         setSelectedShelter,
         sosRequests,
         submitSosRequest,
+        acknowledgeSos,
+        dispatchRescueToSos,
         updateSosStatus,
+        resolveSos,
+        createDemoSos,
+        fetchSosRequests,
         notifications,
         latestNotification,
         pipelineData,

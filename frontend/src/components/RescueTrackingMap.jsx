@@ -11,6 +11,7 @@ import {
   useMapEvents
 } from 'react-leaflet';
 import L from 'leaflet';
+import { useApp } from '../context/AppContext';
 import { 
   ShieldAlert, 
   Navigation, 
@@ -127,6 +128,28 @@ const createDestinationIcon = (name) => {
   });
 };
 
+// SOS Distress Marker Icon
+const createSosMarkerIcon = (sos) => {
+  const html = `
+    <div class="relative flex items-center justify-center cursor-pointer transform -translate-x-1/2 -translate-y-1/2">
+      <div class="absolute w-10 h-10 rounded-full bg-red-500/40 animate-ping"></div>
+      <div class="w-9 h-9 rounded-xl bg-red-600 border-2 border-white shadow-xl flex items-center justify-center text-xs font-black text-white ring-2 ring-red-950">
+        🆘
+      </div>
+      <div class="absolute -bottom-5 px-1.5 py-0.2 bg-red-950 text-[9px] font-mono font-bold text-red-300 border border-red-500 rounded shadow whitespace-nowrap">
+        ${sos.sos_id}
+      </div>
+    </div>
+  `;
+  return L.divIcon({
+    className: 'custom-sos-track-icon',
+    html: html,
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+    popupAnchor: [0, -20]
+  });
+};
+
 // 100% Free, Keyless, High-Definition Tactical Basemap Providers (Zero Watermark)
 const BASEMAPS = {
   dark: {
@@ -160,6 +183,7 @@ export default function RescueTrackingMap({
   height = "520px",
   className = ""
 }) {
+  const { sosRequests = [] } = useApp();
   const [mapCenter, setMapCenter] = useState([30.4124, 79.3198]);
   const [mapZoom, setMapZoom] = useState(9);
   const [selectedIncident, setSelectedIncident] = useState(null);
@@ -430,6 +454,84 @@ export default function RescueTrackingMap({
               </Marker>
             );
           })}
+
+          {/* Active Citizen SOS Distress Transmissions */}
+          {sosRequests
+            .filter(s => s.status !== 'RESOLVED' && (s.location_latitude || s.lat) && (s.location_longitude || s.lng))
+            .map((sos) => {
+              const sLat = Number(sos.location_latitude || sos.lat);
+              const sLng = Number(sos.location_longitude || sos.lng);
+              return (
+                <Marker
+                  key={`sos-trackmap-${sos.sos_id || sos.id}`}
+                  position={[sLat, sLng]}
+                  icon={createSosMarkerIcon(sos)}
+                  zIndexOffset={9000}
+                >
+                  <Tooltip direction="top" offset={[0, -20]} opacity={0.95}>
+                    <div className="font-mono text-xs p-1 bg-red-950 text-white rounded border border-red-500">
+                      <strong className="text-red-400 block">🆘 SOS: {sos.sos_id} [{sos.status}]</strong>
+                      <span>{sos.location_name} • {sos.hazard}</span>
+                    </div>
+                  </Tooltip>
+                  <Popup className="custom-dark-popup">
+                    <div className="p-2.5 font-mono text-xs space-y-2 bg-slate-950 text-white rounded-lg border border-red-500 min-w-[230px]">
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                        <strong className="text-red-400 font-bold text-sm">🆘 {sos.sos_id}</strong>
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                          sos.status === 'NEW' ? 'bg-red-600 text-white animate-pulse' : 'bg-amber-600 text-white'
+                        }`}>
+                          {sos.status}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1 text-[11px] text-slate-300">
+                        <div className="flex items-center justify-between">
+                          <span className="text-slate-400">Location:</span>
+                          <strong className="text-white truncate max-w-[130px]">{sos.location_name}</strong>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-slate-400">Threat:</span>
+                          <strong className="text-amber-400">{sos.hazard} ({sos.risk_level})</strong>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-slate-400">Time:</span>
+                          <span>{sos.time_ago || 'Recently'}</span>
+                        </div>
+                        {sos.assigned_team_name && (
+                          <div className="flex items-center justify-between text-blue-300 pt-1 border-t border-slate-900 font-bold">
+                            <span>Assigned:</span>
+                            <span>🚑 {sos.assigned_team_name}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="p-1.5 bg-red-950/40 border border-red-500/30 rounded text-[10px] text-slate-300 italic">
+                        "{sos.message || 'Urgent evacuation required.'}"
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          const matchLoc = locations.find(l => 
+                            (sos.location_name && l.name && sos.location_name.toLowerCase().includes(l.name.toLowerCase()))
+                          ) || { 
+                            id: sos.id || 1, 
+                            name: sos.location_name, 
+                            lat: sLat, 
+                            lng: sLng 
+                          };
+                          onSelectLocationForRescue(matchLoc);
+                        }}
+                        className="w-full py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded text-[11px] transition-all shadow-md flex items-center justify-center gap-1"
+                      >
+                        <Send className="w-3 h-3" />
+                        <span>Dispatch Team to SOS</span>
+                      </button>
+                    </div>
+                  </Popup>
+                </Marker>
+              );
+            })}
         </MapContainer>
       </div>
 

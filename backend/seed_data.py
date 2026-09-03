@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import json
 from database import db
-from models import Location, Hazard, EnvironmentalData, RiskAssessment, Alert, SafeLocation, User, Notification
+from models import Location, Hazard, EnvironmentalData, RiskAssessment, Alert, SafeLocation, User, Notification, SOSRequest
 from services.risk_engine import PralayWatchRiskEngine
 from services.ai_service import AiIntelligenceService
 
@@ -267,5 +267,41 @@ def seed_database():
     for u in users_data:
         db.session.add(User(**u))
 
+    # 7. Seed Initial SOS Distress Requests
+    sos1 = SOSRequest(
+        sos_id="SOS-801",
+        location_latitude=30.4124,
+        location_longitude=79.3198,
+        location_name="Chamoli (Alaknanda Basin), Uttarakhand",
+        timestamp=datetime.utcnow() - timedelta(minutes=6),
+        status="NEW",
+        risk_level="CRITICAL",
+        hazard="FLASH FLOOD",
+        message="Water entered ground floor, elderly person with mobility issue needing evacuation assistance.",
+        people_count=4,
+        citizen_name="Rajesh Negi",
+        phone="+91 98450 12345",
+        is_demo=False
+    )
+    db.session.add(sos1)
+
+    sos2 = SOSRequest(
+        sos_id="SOS-802",
+        location_latitude=30.5539,
+        location_longitude=79.5658,
+        location_name="Joshimath (Sunil Ward), Uttarakhand",
+        timestamp=datetime.utcnow() - timedelta(minutes=18),
+        status="ACKNOWLEDGED",
+        risk_level="HIGH",
+        hazard="LANDSLIDE",
+        message="Slope behind house cracking rapidly, road blocked by debris.",
+        people_count=2,
+        citizen_name="Pooja Verma",
+        phone="+91 97110 56789",
+        acknowledged_at=datetime.utcnow() - timedelta(minutes=10),
+        is_demo=False
+    )
+    db.session.add(sos2)
+
     db.session.commit()
-    print(f"[Database] Successfully seeded {len(locations_data)} multi-hazard monitoring zones across India and neighboring borders!")
+    print(f"[Database] Successfully seeded {len(locations_data)} multi-hazard monitoring zones and initial SOS distress queue!")

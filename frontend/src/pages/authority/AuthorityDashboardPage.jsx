@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import RiskMap from '../../components/RiskMap';
 import RescueOperationsSummaryCard from '../../components/RescueOperationsSummaryCard';
 import SendRescueTeamModal from '../../components/SendRescueTeamModal';
+import AuthoritySosPanel from '../../components/authority/AuthoritySosPanel';
 import { rescueService } from '../../services/rescueService';
 import { 
   ShieldAlert, 
@@ -41,7 +42,11 @@ export default function AuthorityDashboardPage() {
     selectedLocationId, 
     selectLocation, 
     sosRequests, 
+    acknowledgeSos,
+    dispatchRescueToSos,
     updateSosStatus,
+    resolveSos,
+    createDemoSos,
     setActivePage,
     pipelineData,
     environmentalData
@@ -52,6 +57,7 @@ export default function AuthorityDashboardPage() {
   const [isRescueDispatchOpen, setIsRescueDispatchOpen] = useState(false);
   const [dispatchLocation, setDispatchLocation] = useState(null);
   const [dispatchTeam, setDispatchTeam] = useState(null);
+  const [activeSosForDispatch, setActiveSosForDispatch] = useState(null);
 
   useEffect(() => {
     const loadRescue = async () => {
@@ -67,8 +73,34 @@ export default function AuthorityDashboardPage() {
     const res = await rescueService.dispatchRescueTeam(data);
     setRescueTeams([...rescueService.teams]);
     setRescueMissions([...rescueService.missions]);
+
+    // If this dispatch was triggered for an active SOS ticket, update SOS record and assign team
+    if (activeSosForDispatch) {
+      await dispatchRescueToSos(
+        activeSosForDispatch.sos_id,
+        res.team?.id || res.team?.team_id || 'NDRF-01',
+        res.team?.name || 'NDRF Team Alpha'
+      );
+      setActiveSosForDispatch(null);
+    }
+
     setSuccessMsg(`Rescue Team ${res.team?.name || 'Unit'} assigned & dispatched to ${res.team?.destination_name || 'Target Sector'}!`);
     setTimeout(() => setSuccessMsg(''), 5000);
+  };
+
+  const handleOpenDispatchForSos = (sos) => {
+    setActiveSosForDispatch(sos);
+    const matchLoc = locations.find(l => 
+      l.id === sos.id || 
+      (sos.location_name && l.name && sos.location_name.toLowerCase().includes(l.name.toLowerCase()))
+    ) || { 
+      id: sos.id || 1, 
+      name: sos.location_name, 
+      lat: sos.location_latitude || sos.lat || 30.4124, 
+      lng: sos.location_longitude || sos.lng || 79.3198 
+    };
+    setDispatchLocation(matchLoc);
+    setIsRescueDispatchOpen(true);
   };
 
   const handleUpdateRescueTeamStatus = async (teamId, newStatus) => {
@@ -255,6 +287,22 @@ export default function AuthorityDashboardPage() {
           </button>
         </div>
       </div>
+
+      {/* 2. REAL-TIME CITIZEN SOS DISTRESS QUEUE PANEL */}
+      <AuthoritySosPanel
+        sosRequests={sosRequests}
+        onAcknowledge={acknowledgeSos}
+        onOpenDispatch={handleOpenDispatchForSos}
+        onResolve={resolveSos}
+        onCreateDemoSos={createDemoSos}
+        onSelectSosLocation={(sos) => {
+          const matchLoc = locations.find(l => 
+            (sos.location_name && l.name && sos.location_name.toLowerCase().includes(l.name.toLowerCase()))
+          );
+          if (matchLoc) selectLocation(matchLoc.id);
+          setActivePage('risk-intelligence');
+        }}
+      />
 
       {/* RESCUE OPERATIONS & LIVE TEAM TRACKING WORKSPACE CARD */}
       <RescueOperationsSummaryCard

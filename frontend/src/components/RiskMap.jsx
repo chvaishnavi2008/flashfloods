@@ -225,6 +225,7 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
     setActivePage,
     environmentalData,
     locationRisk,
+    sosRequests,
     submitSosRequest
   } = useApp();
 
@@ -545,6 +546,24 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
     `,
     iconSize: [44, 44],
     iconAnchor: [22, 22]
+  });
+
+  const createSosMapIcon = (sos) => new L.DivIcon({
+    className: 'custom-sos-distress-marker',
+    html: `
+      <div style="position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; pointer-events: auto; cursor: pointer;">
+        <div style="position: absolute; width: 44px; height: 44px; border-radius: 50%; background: rgba(220, 38, 38, 0.4); border: 2px solid #EF4444; animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+        <div style="position: absolute; width: 30px; height: 30px; border-radius: 50%; background: #DC2626; border: 2px solid #FFFFFF; box-shadow: 0 0 16px rgba(239, 68, 68, 0.95); display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 11px;">
+          🆘
+        </div>
+        <div style="position: absolute; bottom: -18px; background: #7F1D1D; color: #FCA5A5; font-size: 9px; font-weight: 900; font-family: monospace; padding: 1px 5px; border-radius: 4px; border: 1px solid #EF4444; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.6);">
+          ${sos.sos_id || 'SOS'}
+        </div>
+      </div>
+    `,
+    iconSize: [44, 44],
+    iconAnchor: [22, 22],
+    popupAnchor: [0, -20]
   });
 
   const createRoadCheckpointIcon = (cp) => new L.DivIcon({
@@ -1349,6 +1368,82 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
               </Popup>
             </Marker>
           )}
+
+          {/* 10. Active Citizen SOS Distress Transmissions */}
+          {sosRequests
+            .filter(s => s.status !== 'RESOLVED' && (s.location_latitude || s.lat) && (s.location_longitude || s.lng))
+            .map((sos) => {
+              const sLat = Number(sos.location_latitude || sos.lat);
+              const sLng = Number(sos.location_longitude || sos.lng);
+              return (
+                <Marker
+                  key={`sos-map-marker-${sos.sos_id || sos.id}`}
+                  position={[sLat, sLng]}
+                  icon={createSosMapIcon(sos)}
+                  zIndexOffset={9000}
+                >
+                  <Tooltip direction="top" offset={[0, -20]} opacity={0.95}>
+                    <div className="font-mono text-xs p-1 bg-red-950 text-white rounded border border-red-500">
+                      <strong className="text-red-400 block">🆘 SOS: {sos.sos_id} [{sos.status}]</strong>
+                      <span>{sos.location_name} • {sos.hazard}</span>
+                    </div>
+                  </Tooltip>
+                  <Popup>
+                    <div className="p-2.5 min-w-[240px] font-mono text-xs text-slate-100">
+                      <div className="flex items-center justify-between border-b border-slate-700 pb-1.5 mb-2">
+                        <strong className="text-red-400 font-bold text-sm flex items-center gap-1">
+                          <span>🆘</span>
+                          <span>{sos.sos_id}</span>
+                        </strong>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                          sos.status === 'NEW' ? 'bg-red-600 text-white font-black animate-pulse' :
+                          sos.status === 'ACKNOWLEDGED' ? 'bg-amber-600 text-white' :
+                          'bg-blue-600 text-white'
+                        }`}>
+                          {sos.status}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1.5 text-[11px] text-slate-300 mb-2.5 bg-slate-900/90 p-2 rounded-lg border border-slate-800">
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Location:</span>
+                          <strong className="text-white text-right truncate max-w-[140px]">{sos.location_name}</strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Threat Risk:</span>
+                          <strong className={sos.risk_level === 'CRITICAL' ? 'text-red-400' : 'text-orange-400'}>{sos.risk_level}</strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Primary Hazard:</span>
+                          <strong className="text-amber-300">{sos.hazard}</strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Received Time:</span>
+                          <span className="text-slate-200">{sos.time_ago || 'Recently'}</span>
+                        </div>
+                        {sos.assigned_team_name && (
+                          <div className="flex justify-between pt-1 border-t border-slate-800">
+                            <span className="text-slate-400">Assigned Team:</span>
+                            <strong className="text-blue-300 truncate">🚑 {sos.assigned_team_name}</strong>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="p-2 bg-red-950/40 border border-red-500/30 rounded text-[11px] text-slate-200 mb-2 italic">
+                        "{sos.message || 'Urgent evacuation / rescue required.'}"
+                      </div>
+
+                      <button
+                        onClick={() => setActivePage('authority')}
+                        className="w-full py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded text-[11px] text-center transition-all shadow-md"
+                      >
+                        Open SOS Command Panel →
+                      </button>
+                    </div>
+                  </Popup>
+                </Marker>
+              );
+            })}
         </MapContainer>
       </div>
     </div>

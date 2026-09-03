@@ -355,3 +355,76 @@ class AssessmentRecord(db.Model):
             "created_at": self.created_at.isoformat() if self.created_at else None
         }
 
+class SOSRequest(db.Model):
+    __tablename__ = 'sos_requests'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    sos_id = db.Column(db.String(50), unique=True, nullable=False, index=True) # e.g. SOS-123
+    
+    location_latitude = db.Column(db.Float, nullable=False, default=30.4124)
+    location_longitude = db.Column(db.Float, nullable=False, default=79.3198)
+    location_name = db.Column(db.String(150), nullable=False, default="Chamoli, Uttarakhand")
+    
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    status = db.Column(db.String(50), default="NEW", nullable=False) # NEW, ACKNOWLEDGED, TEAM DISPATCHED, RESCUE IN PROGRESS, RESOLVED
+    
+    risk_level = db.Column(db.String(30), default="HIGH", nullable=False) # CRITICAL, HIGH, MODERATE, LOW
+    hazard = db.Column(db.String(50), default="FLASH FLOOD", nullable=False)
+    message = db.Column(db.Text, default="")
+    
+    people_count = db.Column(db.Integer, default=1)
+    citizen_name = db.Column(db.String(100), default="Citizen in Distress")
+    phone = db.Column(db.String(30), default="")
+    
+    assigned_team_id = db.Column(db.String(50), nullable=True)
+    assigned_team_name = db.Column(db.String(100), nullable=True)
+    
+    acknowledged_at = db.Column(db.DateTime, nullable=True)
+    dispatched_at = db.Column(db.DateTime, nullable=True)
+    resolved_at = db.Column(db.DateTime, nullable=True)
+    
+    is_demo = db.Column(db.Boolean, default=False)
+    
+    def time_ago(self):
+        if not self.timestamp:
+            return "Just now"
+        diff = datetime.utcnow() - self.timestamp
+        seconds = int(diff.total_seconds())
+        if seconds < 60:
+            return "Just now"
+        minutes = seconds // 60
+        if minutes < 60:
+            return f"{minutes} min{'s' if minutes > 1 else ''} ago"
+        hours = minutes // 60
+        if hours < 24:
+            return f"{hours} hr{'s' if hours > 1 else ''} ago"
+        days = hours // 24
+        return f"{days} day{'s' if days > 1 else ''} ago"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "sos_id": self.sos_id,
+            "location_latitude": self.location_latitude,
+            "location_longitude": self.location_longitude,
+            "lat": self.location_latitude,
+            "lng": self.location_longitude,
+            "location_name": self.location_name,
+            "timestamp": self.timestamp.isoformat() if self.timestamp else datetime.utcnow().isoformat(),
+            "time_ago": self.time_ago(),
+            "status": self.status,
+            "risk_level": self.risk_level,
+            "urgency": self.risk_level,
+            "hazard": self.hazard,
+            "message": self.message or "Immediate evacuation / rescue assistance required.",
+            "people_count": self.people_count,
+            "citizen_name": self.citizen_name,
+            "phone": self.phone,
+            "assigned_team_id": self.assigned_team_id,
+            "assigned_team_name": self.assigned_team_name,
+            "acknowledged_at": self.acknowledged_at.isoformat() if self.acknowledged_at else None,
+            "dispatched_at": self.dispatched_at.isoformat() if self.dispatched_at else None,
+            "resolved_at": self.resolved_at.isoformat() if self.resolved_at else None,
+            "is_demo": self.is_demo
+        }
+
