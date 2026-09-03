@@ -165,11 +165,31 @@ export default function RescueTrackingMap({
   const [selectedIncident, setSelectedIncident] = useState(null);
   const [activeBasemap, setActiveBasemap] = useState('dark');
 
-  // Focus on selected team if provided
+  // Focus on selected team if provided (smoothly framing route & destination)
   useEffect(() => {
-    if (selectedTeam && selectedTeam.latitude && selectedTeam.longitude) {
-      setMapCenter([selectedTeam.latitude, selectedTeam.longitude]);
-      setMapZoom(12);
+    if (selectedTeam) {
+      if (selectedTeam.waypoints && selectedTeam.waypoints.length > 1) {
+        const lats = selectedTeam.waypoints.map(w => w[0]);
+        const lngs = selectedTeam.waypoints.map(w => w[1]);
+        const midLat = (Math.min(...lats) + Math.max(...lats)) / 2;
+        const midLng = (Math.min(...lngs) + Math.max(...lngs)) / 2;
+        const latDiff = Math.max(...lats) - Math.min(...lats);
+        const lngDiff = Math.max(...lngs) - Math.min(...lngs);
+        const maxDiff = Math.max(latDiff, lngDiff);
+
+        let zoom = 11;
+        if (maxDiff > 2.0) zoom = 7;
+        else if (maxDiff > 1.0) zoom = 8;
+        else if (maxDiff > 0.4) zoom = 9;
+        else if (maxDiff > 0.15) zoom = 10;
+        else zoom = 11;
+
+        setMapCenter([midLat, midLng]);
+        setMapZoom(zoom);
+      } else if (selectedTeam.latitude && selectedTeam.longitude) {
+        setMapCenter([Number(selectedTeam.latitude), Number(selectedTeam.longitude)]);
+        setMapZoom(11);
+      }
     }
   }, [selectedTeam]);
 
@@ -320,18 +340,20 @@ export default function RescueTrackingMap({
           {/* 2. Rescue Team Route Polylines */}
           {teams.map((team) => {
             if (!team.waypoints || team.waypoints.length < 2) return null;
-            const isSelected = selectedTeam?.id === team.id;
+            const isSelected = selectedTeam && (selectedTeam.id === team.id || selectedTeam.team_id === team.id || selectedTeam.id === team.team_id || selectedTeam.team_id === team.team_id);
             const isEnRoute = team.status === 'EN ROUTE';
+            const isActive = ['EN ROUTE', 'ASSIGNED', 'EMERGENCY', 'ON SITE'].includes(team.status);
+            if (!isActive && !isSelected) return null;
 
             return (
-              <React.Fragment key={`route-${team.id}`}>
+              <React.Fragment key={`route-${team.id || team.team_id}`}>
                 {/* Glowing Background Polyline */}
                 <Polyline
                   positions={team.waypoints}
                   pathOptions={{
-                    color: isEnRoute ? '#F59E0B' : '#3B82F6',
+                    color: isEnRoute ? '#F59E0B' : (isSelected ? '#3B82F6' : '#6366F1'),
                     weight: isSelected ? 5 : 3,
-                    opacity: isSelected ? 0.9 : 0.6,
+                    opacity: isSelected ? 0.95 : 0.7,
                     dashArray: isEnRoute ? '6, 8' : undefined
                   }}
                 />
@@ -355,10 +377,10 @@ export default function RescueTrackingMap({
 
           {/* 3. Rescue Team Markers */}
           {teams.map((team) => {
-            const isSelected = selectedTeam?.id === team.id;
+            const isSelected = selectedTeam && (selectedTeam.id === team.id || selectedTeam.team_id === team.id || selectedTeam.id === team.team_id || selectedTeam.team_id === team.team_id);
             return (
               <Marker
-                key={`team-${team.id}`}
+                key={`team-${team.id || team.team_id}`}
                 position={[team.latitude, team.longitude]}
                 icon={createTeamIcon(team, isSelected)}
                 eventHandlers={{

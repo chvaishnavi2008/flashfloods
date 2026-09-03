@@ -325,15 +325,23 @@ class RescueService {
     const team = teams[teamIdx];
     const missionId = `MSN-${Date.now()}`;
 
-    // Create waypoints from current team position to target destination
-    const startLat = team.latitude;
-    const startLng = team.longitude;
-    const targetLat = destinationLat || startLat + 0.05;
-    const targetLng = destinationLng || startLng + 0.05;
+    // Create multi-segment waypoints from current team position to target destination
+    const startLat = Number(team.latitude) || 30.4124;
+    const startLng = Number(team.longitude) || 79.3198;
+    const targetLat = Number(destinationLat) || (startLat + 0.05);
+    const targetLng = Number(destinationLng) || (startLng + 0.05);
 
-    const mid1 = [startLat + (targetLat - startLat) * 0.33, startLng + (targetLng - startLng) * 0.33];
-    const mid2 = [startLat + (targetLat - startLat) * 0.66, startLng + (targetLng - startLng) * 0.66];
-    const waypoints = [[startLat, startLng], mid1, mid2, [targetLat, targetLng]];
+    const numPoints = 5;
+    const waypoints = [];
+    for (let i = 0; i <= numPoints; i++) {
+      const frac = i / numPoints;
+      // Slight natural mountain curve jitter
+      const jitter = (i > 0 && i < numPoints) ? (Math.sin(frac * Math.PI) * 0.008) : 0;
+      waypoints.push([
+        Number((startLat + (targetLat - startLat) * frac + jitter).toFixed(5)),
+        Number((startLng + (targetLng - startLng) * frac - jitter).toFixed(5))
+      ]);
+    }
 
     // Approx distance in km
     const distKm = Math.round(Math.sqrt(Math.pow((targetLat - startLat) * 111, 2) + Math.pow((targetLng - startLng) * 111, 2)) * 10) / 10 || 8.5;
@@ -341,7 +349,7 @@ class RescueService {
 
     const updatedTeam = {
       ...team,
-      status: "ASSIGNED",
+      status: "EN ROUTE",
       mission_id: missionId,
       assigned_location_id: locationId,
       destination_name: destinationName,
@@ -361,13 +369,13 @@ class RescueService {
     const newMission = {
       id: missionId,
       mission_id: missionId,
-      team_id: team.id,
+      team_id: team.id || team.team_id,
       team_name: team.name,
       location_id: locationId,
       destination_name: destinationName,
       mission_type: missionType || "Flood Rescue",
       priority: priority || "HIGH",
-      status: "ASSIGNED",
+      status: "EN ROUTE",
       notes: notes || "",
       dispatched_at: "Just now",
       completed_at: null
@@ -449,8 +457,11 @@ class RescueService {
   stepSimulatedMovement() {
     let changed = false;
     const teams = this.teams.map(team => {
-      // Only advance teams that are EN ROUTE and have waypoints
-      if (team.status === 'EN ROUTE' && team.waypoints && team.waypoints.length > 1) {
+      // Advance teams that are active and have waypoints
+      const isActivelyMoving = (team.status === 'EN ROUTE' || team.status === 'ASSIGNED' || team.status === 'EMERGENCY') && 
+        team.waypoints && team.waypoints.length > 1;
+
+      if (isActivelyMoving) {
         changed = true;
         const totalWps = team.waypoints.length;
         const currentIdx = team.current_waypoint_idx || 0;
@@ -459,16 +470,16 @@ class RescueService {
         const nextCoord = team.waypoints[nextIdx];
         const isArrived = nextIdx === totalWps - 1;
 
-        const remainingKm = Math.max(0, Math.round((team.distance_km - 1.2) * 10) / 10);
-        const remainingEta = Math.max(1, Math.round(team.eta_minutes - 3));
+        const remainingKm = isArrived ? 0 : Math.max(0, Math.round((team.distance_km - Math.max(0.8, team.distance_km / totalWps)) * 10) / 10);
+        const remainingEta = isArrived ? 0 : Math.max(1, Math.round(team.eta_minutes - Math.max(2, team.eta_minutes / totalWps)));
 
         return {
           ...team,
           latitude: nextCoord[0],
           longitude: nextCoord[1],
           current_waypoint_idx: nextIdx,
-          distance_km: isArrived ? 0 : remainingKm,
-          eta_minutes: isArrived ? 0 : remainingEta,
+          distance_km: remainingKm,
+          eta_minutes: remainingEta,
           status: isArrived ? 'ON SITE' : 'EN ROUTE',
           last_updated: "Simulated GPS just now"
         };

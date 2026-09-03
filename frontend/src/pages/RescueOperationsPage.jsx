@@ -88,6 +88,8 @@ export default function RescueOperationsPage() {
     setTeams([...rescueService.teams]);
     setMissions([...rescueService.missions]);
     setSelectedTeam(res.team);
+    // Automatically turn on live telemetry GPS simulation so movement is immediately visible
+    setIsSimulating(true);
   };
 
   const handleUpdateStatus = async (teamId, newStatus) => {
@@ -106,20 +108,32 @@ export default function RescueOperationsPage() {
   // KPIs
   const summary = rescueService.getSummaryStats(teams, missions);
 
-  // Filtered Teams
-  const filteredTeams = teams.filter(team => {
-    if (statusFilter !== 'ALL' && team.status !== statusFilter) return false;
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      return (
-        team.name.toLowerCase().includes(q) ||
-        team.team_id.toLowerCase().includes(q) ||
-        team.team_type.toLowerCase().includes(q) ||
-        (team.destination_name && team.destination_name.toLowerCase().includes(q))
-      );
-    }
-    return true;
-  });
+  // Filtered Teams with Active / Dispatched teams prioritized at the top
+  const filteredTeams = [...teams]
+    .sort((a, b) => {
+      const getPriority = (st) => {
+        if (st === 'EMERGENCY') return 1;
+        if (st === 'EN ROUTE') return 2;
+        if (st === 'ON SITE') return 3;
+        if (st === 'ASSIGNED') return 4;
+        if (st === 'AVAILABLE') return 5;
+        return 6;
+      };
+      return getPriority(a.status) - getPriority(b.status);
+    })
+    .filter(team => {
+      if (statusFilter !== 'ALL' && team.status !== statusFilter) return false;
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        return (
+          team.name.toLowerCase().includes(q) ||
+          team.team_id.toLowerCase().includes(q) ||
+          team.team_type.toLowerCase().includes(q) ||
+          (team.destination_name && team.destination_name.toLowerCase().includes(q))
+        );
+      }
+      return true;
+    });
 
   const getStatusBadge = (status) => {
     switch (status) {

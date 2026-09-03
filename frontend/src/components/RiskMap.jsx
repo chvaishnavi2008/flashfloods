@@ -40,8 +40,10 @@ import {
   ChevronDown,
   ChevronUp,
   Flame,
-  Globe
+  Globe,
+  Truck
 } from 'lucide-react';
+import { rescueService } from '../services/rescueService';
 
 // Custom Map Controller to smoothly fly to center coordinates and handle resize events
 function MapController({ center, zoom, bounds }) {
@@ -235,6 +237,16 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
   const [isLegendExpanded, setIsLegendExpanded] = useState(true);
   const [isHudExpanded, setIsHudExpanded] = useState(true);
   const [mapBounds, setMapBounds] = useState(null);
+  const [rescueTeams, setRescueTeams] = useState(() => rescueService.loadTeams());
+
+  useEffect(() => {
+    const syncTeams = () => {
+      setRescueTeams(rescueService.loadTeams());
+    };
+    syncTeams();
+    const interval = setInterval(syncTeams, 2500);
+    return () => clearInterval(interval);
+  }, []);
 
   const containerRef = useRef(null);
 
@@ -386,6 +398,62 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
     iconAnchor: [18, 20]
   });
 
+  const createMapTeamIcon = (team) => {
+    const isEnRoute = team.status === 'EN ROUTE';
+    const isEmergency = team.status === 'EMERGENCY';
+    const isOnSite = team.status === 'ON SITE';
+
+    let color = '#3B82F6';
+    if (isEmergency) color = '#EF4444';
+    else if (isOnSite) color = '#10B981';
+    else if (isEnRoute) color = '#F59E0B';
+
+    return new L.DivIcon({
+      className: 'custom-riskmap-team-marker',
+      html: `
+        <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer;">
+          ${(isEnRoute || isEmergency) ? `
+            <div style="position: absolute; width: 38px; height: 38px; border-radius: 50%; background: ${color}40; ${isEmergency ? 'animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;' : 'animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;'}"></div>
+          ` : ''}
+          <div style="
+            background: ${color}; 
+            color: white; 
+            width: 32px; 
+            height: 32px; 
+            border-radius: 10px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border: 2px solid #FFFFFF; 
+            box-shadow: 0 4px 14px ${color}99, 0 0 0 2px rgba(11,17,32,0.8);
+            font-size: 14px;
+            font-weight: bold;
+          ">
+            🚑
+          </div>
+          <div style="
+            margin-top: 2px;
+            background: rgba(11, 17, 32, 0.95);
+            border: 1px solid ${color};
+            color: #FFFFFF;
+            font-size: 9px;
+            font-family: monospace;
+            font-weight: 800;
+            padding: 1px 5px;
+            border-radius: 4px;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+          ">
+            ${team.team_id || team.name?.split(' ')[0]} ${isEnRoute ? '• 🚚' : ''}
+          </div>
+        </div>
+      `,
+      iconSize: [38, 48],
+      iconAnchor: [19, 19],
+      popupAnchor: [0, -19]
+    });
+  };
+
   const createHazardNodeIcon = (loc, isSelected, level, color) => {
     const isCritical = level === 'CRITICAL';
     const isHigh = level === 'HIGH';
@@ -513,26 +581,27 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
   const isLandslide = selectedLayer === 'landslide';
   const isRainfall = selectedLayer === 'rainfall' || selectedLayer === 'heavy_rainfall';
   const isSafeShelters = selectedLayer === 'safe_locations';
+  const isRescueTeams = selectedLayer === 'rescue' || selectedLayer === 'rescue_teams';
 
   // 1. Filtered Hazard Polygons / Corridors
   const visibleCorridors = useMemo(() => {
-    if (isSafeShelters || isRainfall) return [];
+    if (isSafeShelters || isRainfall || isRescueTeams) return [];
     if (isFlood) return HAZARD_CORRIDORS.filter(c => c.type === 'flood');
     if (isLandslide) return HAZARD_CORRIDORS.filter(c => c.type === 'landslide');
     return HAZARD_CORRIDORS; // 'all'
-  }, [isAll, isFlood, isLandslide, isRainfall, isSafeShelters]);
+  }, [isAll, isFlood, isLandslide, isRainfall, isSafeShelters, isRescueTeams]);
 
   // 2. Filtered Road Checkpoint Markers
   const visibleRoadBlocks = useMemo(() => {
-    if (!showRoadBlocks || isSafeShelters || isRainfall) return [];
+    if (!showRoadBlocks || isSafeShelters || isRainfall || isRescueTeams) return [];
     if (isFlood) return ROAD_CHECKPOINTS.filter(cp => cp.hazard.toLowerCase().includes('inundat') || cp.hazard.toLowerCase().includes('flood') || cp.hazard.toLowerCase().includes('water'));
     if (isLandslide) return ROAD_CHECKPOINTS.filter(cp => cp.hazard.toLowerCase().includes('rockfall') || cp.hazard.toLowerCase().includes('debris') || cp.hazard.toLowerCase().includes('slope'));
     return ROAD_CHECKPOINTS; // 'all'
-  }, [showRoadBlocks, isAll, isFlood, isLandslide, isRainfall, isSafeShelters]);
+  }, [showRoadBlocks, isAll, isFlood, isLandslide, isRainfall, isSafeShelters, isRescueTeams]);
 
   // 3. Filtered Sector Locations
   const filteredLocations = useMemo(() => {
-    if (isSafeShelters) return [];
+    if (isSafeShelters || isRescueTeams) return [];
     if (isFlood) {
       return locations.filter(loc => {
         const dom = loc.current_risk?.dominant_hazard;
@@ -555,7 +624,7 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
       });
     }
     return locations;
-  }, [locations, isAll, isFlood, isLandslide, isRainfall, isSafeShelters]);
+  }, [locations, isAll, isFlood, isLandslide, isRainfall, isSafeShelters, isRescueTeams]);
 
   // 4. Radar Sweep Visibility
   const isRadarVisible = showRadarSweep && (isAll || isRainfall);
@@ -582,7 +651,8 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
             { id: 'flood', label: '🌊 Flash Flood', icon: Droplets },
             { id: 'landslide', label: '⛰️ Landslide', icon: Mountain },
             { id: 'rainfall', label: '🌧️ Rain Radar', icon: Wind },
-            { id: 'safe_locations', label: '🏥 Safe Shelters', icon: ShieldCheck }
+            { id: 'safe_locations', label: '🏥 Safe Shelters', icon: ShieldCheck },
+            { id: 'rescue', label: '🚑 Rescue Forces', icon: Truck }
           ].map((layer) => {
             const isActive = selectedLayer === layer.id;
             return (
@@ -755,6 +825,15 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
                   Evacuation Safe Path
                 </span>
                 <span className="text-cyan-400 font-bold">Active</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded bg-blue-600 text-[8px] flex items-center justify-center text-white font-bold">🚑</span> 
+                  Active Rescue Units
+                </span>
+                <span className="text-amber-300 font-bold">
+                  {rescueTeams.filter(t => ['EN ROUTE', 'ASSIGNED', 'EMERGENCY', 'ON SITE'].includes(t.status)).length} Active
+                </span>
               </div>
             </div>
           </div>
@@ -1166,6 +1245,72 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
               </Polyline>
             </>
           )}
+
+          {/* 9. Active Dispatched Rescue Teams (Visible on Map and with Rescue Forces layer) */}
+          {rescueTeams
+            .filter(t => (isRescueTeams || ['EN ROUTE', 'ASSIGNED', 'EMERGENCY', 'ON SITE'].includes(t.status)) && t.latitude && t.longitude)
+            .map((team) => (
+              <React.Fragment key={`team-riskmap-${team.id || team.team_id}`}>
+                {/* Route Polyline to Destination */}
+                {team.waypoints && team.waypoints.length > 1 && (
+                  <Polyline
+                    positions={team.waypoints}
+                    pathOptions={{
+                      color: team.status === 'EN ROUTE' ? '#F59E0B' : '#3B82F6',
+                      weight: 3.5,
+                      opacity: 0.85,
+                      dashArray: team.status === 'EN ROUTE' ? '6, 8' : undefined
+                    }}
+                  />
+                )}
+
+                <Marker
+                  position={[Number(team.latitude), Number(team.longitude)]}
+                  icon={createMapTeamIcon(team)}
+                >
+                  <Tooltip direction="top" offset={[0, -18]} opacity={0.95}>
+                    <div className="font-mono text-xs p-1 bg-slate-950 text-white rounded">
+                      <strong className="text-amber-400 block">{team.name}</strong>
+                      <span>Status: {team.status} • {team.destination_name || 'En route'}</span>
+                    </div>
+                  </Tooltip>
+                  <Popup>
+                    <div className="p-2 min-w-[220px] font-mono text-xs text-slate-100">
+                      <div className="flex items-center justify-between border-b border-slate-700 pb-1.5 mb-2">
+                        <strong className="text-amber-400 font-bold text-sm">{team.name}</strong>
+                        <span className="px-1.5 py-0.2 rounded text-[10px] bg-blue-500/20 text-blue-300 font-bold border border-blue-500/30">
+                          {team.team_id}
+                        </span>
+                      </div>
+                      <div className="space-y-1 text-[11px] text-slate-300 mb-2.5">
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Status:</span>
+                          <strong className={team.status === 'EN ROUTE' ? 'text-amber-400' : 'text-emerald-400'}>{team.status}</strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Mission:</span>
+                          <span className="text-white font-bold">{team.mission_type || 'Rescue Response'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Destination:</span>
+                          <span className="text-amber-300 font-bold">{team.destination_name || 'Standby'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">ETA / Distance:</span>
+                          <span className="text-emerald-400 font-bold">{team.eta_minutes > 0 ? `${team.eta_minutes} mins` : 'On Site'} ({team.distance_km} km)</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setActivePage('rescue-operations')}
+                        className="w-full py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded text-[11px] text-center transition-all"
+                      >
+                        Open Rescue Command Center →
+                      </button>
+                    </div>
+                  </Popup>
+                </Marker>
+              </React.Fragment>
+            ))}
 
           {/* 9. User Live GPS Marker ("YOU ARE HERE") */}
           {userGpsLocation && userGpsLocation.lat && userGpsLocation.lng && (
