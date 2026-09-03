@@ -38,7 +38,6 @@ export default function AuthoritySidebar() {
     { id: 'rescue-operations', label: 'Rescue Operations', icon: Truck },
     { id: 'ai-map-studio', label: 'AI Map Studio', icon: Sparkles },
     { id: 'risk-intelligence', label: 'Risk Intelligence Map', icon: Map },
-    { id: 'alerts', label: 'Alerts & Warnings', icon: BellRing, badge: activeAlertsCount },
     { id: 'impact-assessment', label: 'Impact Assessment', icon: Users },
     { id: 'simulation-studio', label: 'Simulation Studio', icon: Zap },
     { id: 'settings', label: 'System Settings', icon: Settings }
