@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import RiskMap from '../components/RiskMap';
-import LocationSearch from '../components/LocationSearch';
 import { 
   Map, 
   MapPin, 
@@ -110,11 +109,6 @@ export default function CitizenDangerMapPage() {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Change Location Search */}
-      <section>
-        <LocationSearch />
       </section>
     </div>
   );
