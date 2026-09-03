@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import RiskMap from '../components/RiskMap';
 import HazardCard from '../components/HazardCard';
-import LocationSearch from '../components/LocationSearch';
 import RiskGauge from '../components/RiskGauge';
 import { 
   Map, 
@@ -209,11 +208,6 @@ export default function RiskIntelligencePage() {
             <span className="text-[10px] text-slate-400">Slope: {environmentalData?.slope_deg}°</span>
           </div>
         </div>
-      </section>
-
-      {/* 4. Sector Search & Switcher */}
-      <section>
-        <LocationSearch />
       </section>
     </div>
   );
