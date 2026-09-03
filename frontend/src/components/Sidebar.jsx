@@ -103,12 +103,6 @@ export default function Sidebar() {
       icon: Map 
     },
     { 
-      id: 'alerts', 
-      label: 'Alerts & Warnings', 
-      icon: BellRing, 
-      badge: activeAlertsCount 
-    },
-    { 
       id: 'impact-assessment', 
       label: 'Impact Assessment', 
       icon: Users 

@@ -9,7 +9,8 @@ import {
   LayoutDashboard, 
   Zap, 
   Menu,
-  Sparkles
+  Sparkles,
+  Truck
 } from 'lucide-react';
 
 export default function MobileBottomNav() {
@@ -170,24 +171,19 @@ export default function MobileBottomNav() {
             <span className="text-[10px] mt-0.5 tracking-tight font-medium">AI Studio</span>
           </button>
 
-          {/* 4. Alerts */}
+          {/* 4. Rescue Operations */}
           <button
-            onClick={() => handleNav('alerts')}
-            className={`relative flex flex-col items-center justify-center w-full py-1 rounded-xl transition-all ${
-              activePage === 'alerts'
-                ? 'text-amber-400 font-bold'
+            onClick={() => handleNav('rescue-operations')}
+            className={`flex flex-col items-center justify-center w-full py-1 rounded-xl transition-all ${
+              activePage === 'rescue-operations'
+                ? 'text-red-400 font-bold'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <div className={`p-1 rounded-lg relative ${activePage === 'alerts' ? 'bg-amber-500/20' : ''}`}>
-              <BellRing className="w-5 h-5" />
-              {activeAlertsCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white text-[9px] font-black rounded-full flex items-center justify-center animate-pulse">
-                  {activeAlertsCount}
-                </span>
-              )}
+            <div className={`p-1 rounded-lg ${activePage === 'rescue-operations' ? 'bg-red-500/20' : ''}`}>
+              <Truck className="w-5 h-5" />
             </div>
-            <span className="text-[10px] mt-0.5 tracking-tight font-medium">Alerts</span>
+            <span className="text-[10px] mt-0.5 tracking-tight font-medium">Rescue</span>
           </button>
 
           {/* 5. Full Drawer Menu */}

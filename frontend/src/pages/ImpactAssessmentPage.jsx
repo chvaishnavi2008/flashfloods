@@ -1,7 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import ImpactAssessmentPanel from '../components/ImpactAssessmentPanel';
-import LocationSearch from '../components/LocationSearch';
 import { 
   Users, 
   School, 
@@ -70,11 +69,6 @@ export default function ImpactAssessmentPage() {
 
       {/* 1. Main Impact Assessment Core Panel */}
       <ImpactAssessmentPanel />
-
-      {/* 2. Location Switcher */}
-      <section>
-        <LocationSearch />
-      </section>
     </div>
   );
 }

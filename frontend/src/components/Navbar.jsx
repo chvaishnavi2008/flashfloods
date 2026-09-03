@@ -67,7 +67,6 @@ export default function Navbar() {
     { id: 'rescue-operations', label: 'Rescue Operations', icon: Truck, highlightRed: true },
     { id: 'ai-map-studio', label: 'AI Map Studio', icon: Sparkles },
     { id: 'risk-intelligence', label: 'Risk Intelligence Map', icon: Map },
-    { id: 'alerts', label: 'Alerts & Warnings', icon: BellRing, badge: activeAlertsCount },
     { id: 'impact-assessment', label: 'Impact Assessment', icon: Users },
     { id: 'simulation-studio', label: 'Simulation Studio', icon: Zap, highlightIndigo: true },
     { id: 'settings', label: 'System Settings', icon: Settings }
