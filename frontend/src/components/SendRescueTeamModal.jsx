@@ -118,7 +118,7 @@ export default function SendRescueTeamModal({
   const activeSelectedLoc = locations.find(l => String(l.id) === String(selectedLocationId));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
       <div className="bg-[#0B1120] border border-slate-700 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden font-mono flex flex-col max-h-[92vh]">
         {/* Modal Header */}
         <div className="bg-gradient-to-r from-red-950/80 via-slate-900 to-indigo-950/80 px-5 py-4 border-b border-slate-700/80 flex items-center justify-between">

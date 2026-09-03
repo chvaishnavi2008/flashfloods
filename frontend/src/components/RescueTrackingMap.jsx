@@ -180,7 +180,7 @@ export default function RescueTrackingMap({
   return (
     <div className={`relative bg-[#0B1120] border border-slate-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col ${className}`}>
       {/* Top Tactical Map Floating Header */}
-      <div className="absolute top-3 left-3 right-3 z-[1000] flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+      <div className="absolute top-3 left-3 right-3 z-[400] flex flex-wrap items-center justify-between gap-2 pointer-events-none">
         {/* Left: Map Title & Disclaimer */}
         <div className="bg-[#0B1120]/95 backdrop-blur-md px-3.5 py-2 rounded-xl border border-slate-700/80 shadow-lg flex items-center gap-2 pointer-events-auto">
           <div className="p-1 bg-rose-500/20 text-rose-400 rounded-lg border border-rose-500/30">
