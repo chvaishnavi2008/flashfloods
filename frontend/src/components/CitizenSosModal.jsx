@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
+import { formatSosTime, formatSosDateTime } from '../services/sosService';
 import { 
   AlertOctagon, 
   Send, 
@@ -209,6 +210,15 @@ export default function CitizenSosModal({ isOpen, onClose }) {
                   <div className="flex justify-between">
                     <span className="text-[#5B6B78]">Location:</span>
                     <strong className="text-[#172B3A] text-right">{activeSosTicket.location_name}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#5B6B78] flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-[#C62828]" />
+                      <span>Time Generated:</span>
+                    </span>
+                    <strong className="text-[#172B3A] font-bold">
+                      {formatSosDateTime(activeSosTicket.timestamp)} ({activeSosTicket.time_ago || 'Just now'})
+                    </strong>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#5B6B78]">GPS Coordinates:</span>

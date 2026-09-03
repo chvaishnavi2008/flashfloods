@@ -9,6 +9,30 @@
 
 const SOS_STORAGE_KEY = 'pralaywatch_sos_requests_v3';
 
+export const formatSosTime = (isoString) => {
+  if (!isoString) return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  try {
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  } catch (e) {
+    return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+};
+
+export const formatSosDateTime = (isoString) => {
+  if (!isoString) return new Date().toLocaleString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', day: '2-digit', month: 'short' });
+  try {
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const dateStr = d.toLocaleDateString([], { day: '2-digit', month: 'short' });
+    return `${timeStr} (${dateStr})`;
+  } catch (e) {
+    return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+};
+
 const INITIAL_DEMO_SOS = [
   {
     id: 801,
@@ -137,7 +161,7 @@ class SosService {
    * Create a new real SOS request from Citizen Portal
    */
   async createSos(sosData) {
-    const sosId = `SOS-${Math.floor(100 + Math.random() * 900)}`;
+    const sosId = sosData.sos_id || `SOS-${Math.floor(100 + Math.random() * 900)}`;
     const now = new Date().toISOString();
 
     const newRecord = {

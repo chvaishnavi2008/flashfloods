@@ -84,13 +84,21 @@ def create_sos():
             if not lat or not lng:
                 lat = 30.4124
                 lng = 79.3198
+        timestamp = datetime.utcnow()
+        if data.get('timestamp'):
+            try:
+                ts_str = str(data.get('timestamp')).replace('Z', '+00:00')
+                dt = datetime.fromisoformat(ts_str)
+                timestamp = dt.replace(tzinfo=None)
+            except Exception:
+                timestamp = datetime.utcnow()
 
         new_sos = SOSRequest(
             sos_id=sos_id,
             location_latitude=float(lat),
             location_longitude=float(lng),
             location_name=location_name,
-            timestamp=datetime.utcnow(),
+            timestamp=timestamp,
             status='NEW',
             risk_level=data.get('risk_level') or data.get('urgency') or 'HIGH',
             hazard=data.get('hazard') or 'FLASH FLOOD',

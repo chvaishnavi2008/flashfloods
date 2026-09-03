@@ -44,6 +44,7 @@ import {
   Truck
 } from 'lucide-react';
 import { rescueService } from '../services/rescueService';
+import { formatSosDateTime } from '../services/sosService';
 
 // Custom Map Controller to smoothly fly to center coordinates and handle resize events
 function MapController({ center, zoom, bounds }) {
@@ -1419,7 +1420,7 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
                         </div>
                         <div className="flex justify-between">
                           <span className="text-slate-400">Received Time:</span>
-                          <span className="text-slate-200">{sos.time_ago || 'Recently'}</span>
+                          <strong className="text-white font-mono">{formatSosDateTime(sos.timestamp)} ({sos.time_ago || 'Just now'})</strong>
                         </div>
                         {sos.assigned_team_name && (
                           <div className="flex justify-between pt-1 border-t border-slate-800">

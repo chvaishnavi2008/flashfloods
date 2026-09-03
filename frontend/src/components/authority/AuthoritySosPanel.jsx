@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatSosTime, formatSosDateTime } from '../../services/sosService';
 import { 
   HeartPulse, 
   MapPin, 
@@ -135,9 +136,9 @@ export default function AuthoritySosPanel({
                         </span>
                       )}
                       <strong className="text-[#172B3A] text-xs truncate">{sos.sos_id}</strong>
-                      <span className="text-[10px] text-[#5B6B78] flex items-center gap-1">
+                      <span className="text-[10px] text-[#5B6B78] flex items-center gap-1 font-mono">
                         <Clock className="w-3 h-3 text-[#5B6B78]" />
-                        {sos.time_ago || 'Recently'}
+                        <span>{formatSosTime(sos.timestamp)} ({sos.time_ago || 'Just now'})</span>
                       </span>
                     </div>
 
@@ -235,8 +236,11 @@ export default function AuthoritySosPanel({
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#5B6B78]">Received Time:</span>
-                  <span className="text-[#172B3A]">{selectedSos.time_ago} ({new Date(selectedSos.timestamp).toLocaleTimeString()})</span>
+                  <span className="text-[#5B6B78] flex items-center gap-1">
+                    <Clock className="w-3 h-3 text-[#C62828]" />
+                    <span>Time Received:</span>
+                  </span>
+                  <strong className="text-[#172B3A] font-mono">{formatSosDateTime(selectedSos.timestamp)} ({selectedSos.time_ago || 'Just now'})</strong>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#5B6B78]">Threat Risk Level:</span>
