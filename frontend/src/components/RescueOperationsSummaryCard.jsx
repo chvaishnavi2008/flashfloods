@@ -127,13 +127,9 @@ export default function RescueOperationsSummaryCard({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {[...teams]
             .sort((a, b) => {
-              const isAActive = ['EMERGENCY', 'EN ROUTE', 'ON SITE', 'ASSIGNED'].includes(a.status);
-              const isBActive = ['EMERGENCY', 'EN ROUTE', 'ON SITE', 'ASSIGNED'].includes(b.status);
-              if (isAActive && !isBActive) return -1;
-              if (!isAActive && isBActive) return 1;
-              return 0;
+              const priorityMap = { EMERGENCY: 1, 'EN ROUTE': 2, 'ON SITE': 3, ASSIGNED: 4, AVAILABLE: 5, COMPLETED: 6 };
+              return (priorityMap[a.status] || 9) - (priorityMap[b.status] || 9);
             })
-            .slice(0, 6)
             .map((team) => (
             <div key={team.id || team.team_id} className="p-3.5 bg-slate-950/80 border border-slate-800 rounded-xl space-y-2.5">
               <div className="flex items-center justify-between">

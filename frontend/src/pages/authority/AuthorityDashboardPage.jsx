@@ -50,6 +50,8 @@ export default function AuthorityDashboardPage() {
   const [rescueTeams, setRescueTeams] = useState(() => rescueService.loadTeams());
   const [rescueMissions, setRescueMissions] = useState(() => rescueService.loadMissions());
   const [isRescueDispatchOpen, setIsRescueDispatchOpen] = useState(false);
+  const [dispatchLocation, setDispatchLocation] = useState(null);
+  const [dispatchTeam, setDispatchTeam] = useState(null);
 
   useEffect(() => {
     const loadRescue = async () => {
@@ -62,9 +64,11 @@ export default function AuthorityDashboardPage() {
   }, []);
 
   const handleRescueDispatch = async (data) => {
-    await rescueService.dispatchRescueTeam(data);
+    const res = await rescueService.dispatchRescueTeam(data);
     setRescueTeams([...rescueService.teams]);
     setRescueMissions([...rescueService.missions]);
+    setSuccessMsg(`Rescue Team ${res.team?.name || 'Unit'} assigned & dispatched to ${res.team?.destination_name || 'Target Sector'}!`);
+    setTimeout(() => setSuccessMsg(''), 5000);
   };
 
   const handleUpdateRescueTeamStatus = async (teamId, newStatus) => {
@@ -211,7 +215,9 @@ export default function AuthorityDashboardPage() {
 
           <div className="p-2 bg-slate-900/90 border border-emerald-500/40 rounded">
             <span className="text-[10px] text-emerald-400 uppercase tracking-wider block">RESPONSE UNITS</span>
-            <span className="text-base font-bold text-emerald-400 mt-0.5 block">8 AVAILABLE</span>
+            <span className="text-base font-bold text-emerald-400 mt-0.5 block">
+              {rescueTeams.filter(t => t.status === 'AVAILABLE').length} AVAILABLE
+            </span>
           </div>
         </div>
       </div>
@@ -282,46 +288,86 @@ export default function AuthorityDashboardPage() {
                 <th className="p-2.5 text-center">Risk Score</th>
                 <th className="p-2.5">Severity</th>
                 <th className="p-2.5 text-right">Population at Risk</th>
+                <th className="p-2.5 text-center">Assigned Rescue Unit</th>
                 <th className="p-2.5 text-center">Status</th>
                 <th className="p-2.5 text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800 text-[11px]">
-              {priorityIncidents.map((inc) => (
-                <tr key={inc.id} className="hover:bg-slate-900/60 transition-colors">
-                  <td className="p-2.5 font-bold text-white flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-red-500" />
-                    <span>{inc.location}, {inc.state}</span>
-                  </td>
-                  <td className="p-2.5 text-slate-300">{inc.hazard}</td>
-                  <td className="p-2.5 text-center font-bold">
-                    <span className={inc.riskScore >= 76 ? 'text-red-400' : 'text-orange-400'}>
-                      {inc.riskScore}
-                    </span>
-                  </td>
-                  <td className="p-2.5">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                      inc.severity === 'CRITICAL' ? 'bg-red-950 text-red-300 border border-red-500/50' : 'bg-orange-950 text-orange-300 border border-orange-500/50'
-                    }`}>
-                      {inc.severity}
-                    </span>
-                  </td>
-                  <td className="p-2.5 text-right font-bold text-white">{inc.populationAtRisk}</td>
-                  <td className="p-2.5 text-center">
-                    <span className="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 border border-slate-700">
-                      {inc.status}
-                    </span>
-                  </td>
-                  <td className="p-2.5 text-right">
-                    <button
-                      onClick={() => selectLocation(inc.locationId)}
-                      className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-white rounded border border-slate-600 text-[10px] font-bold"
-                    >
-                      VIEW
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {priorityIncidents.map((inc) => {
+                const assignedTeam = rescueTeams.find(t => 
+                  (t.assigned_location_id && Number(t.assigned_location_id) === Number(inc.locationId)) || 
+                  (t.destination_name && t.destination_name.toLowerCase().includes(inc.location.toLowerCase()))
+                );
+
+                return (
+                  <tr key={inc.id} className="hover:bg-slate-900/60 transition-colors">
+                    <td className="p-2.5 font-bold text-white flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-red-500" />
+                      <span>{inc.location}, {inc.state}</span>
+                    </td>
+                    <td className="p-2.5 text-slate-300">{inc.hazard}</td>
+                    <td className="p-2.5 text-center font-bold">
+                      <span className={inc.riskScore >= 76 ? 'text-red-400' : 'text-orange-400'}>
+                        {inc.riskScore}
+                      </span>
+                    </td>
+                    <td className="p-2.5">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        inc.severity === 'CRITICAL' ? 'bg-red-950 text-red-300 border border-red-500/50' : 'bg-orange-950 text-orange-300 border border-orange-500/50'
+                      }`}>
+                        {inc.severity}
+                      </span>
+                    </td>
+                    <td className="p-2.5 text-right font-bold text-white">{inc.populationAtRisk}</td>
+
+                    {/* Assigned Rescue Unit */}
+                    <td className="p-2.5 text-center">
+                      {assignedTeam ? (
+                        <div className="flex flex-col items-center gap-0.5">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1 ${
+                            assignedTeam.status === 'EN ROUTE' ? 'bg-amber-950 text-amber-300 border border-amber-500/40' :
+                            assignedTeam.status === 'ON SITE' ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/40' :
+                            assignedTeam.status === 'EMERGENCY' ? 'bg-rose-950 text-rose-300 border border-rose-500/40 animate-pulse' :
+                            'bg-blue-950 text-blue-300 border border-blue-500/40'
+                          }`}>
+                            <span>🚑 {assignedTeam.name.split(' (')[0]}</span>
+                            <span className="font-mono text-[9px] opacity-80">[{assignedTeam.status}]</span>
+                          </span>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            const loc = locations.find(l => l.id === inc.locationId) || { id: inc.locationId, name: inc.location };
+                            setDispatchLocation(loc);
+                            setIsRescueDispatchOpen(true);
+                          }}
+                          className="px-2 py-0.5 bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/40 rounded text-[10px] font-bold flex items-center gap-1 mx-auto transition-all"
+                        >
+                          <Send className="w-3 h-3" />
+                          <span>Assign Team</span>
+                        </button>
+                      )}
+                    </td>
+
+                    <td className="p-2.5 text-center">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        assignedTeam ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/40' : 'bg-slate-800 text-slate-300 border border-slate-700'
+                      }`}>
+                        {assignedTeam ? (assignedTeam.status === 'ON SITE' ? 'ON SITE' : 'DEPLOYED') : inc.status}
+                      </span>
+                    </td>
+                    <td className="p-2.5 text-right">
+                      <button
+                        onClick={() => selectLocation(inc.locationId)}
+                        className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-white rounded border border-slate-600 text-[10px] font-bold transition-all"
+                      >
+                        VIEW
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -459,40 +505,63 @@ export default function AuthorityDashboardPage() {
                 FIELD RESCUE & UNIT DEPLOYMENTS
               </h2>
             </div>
-            <span className="text-emerald-400 text-[10px] font-bold">4 TEAMS ACTIVE</span>
+            <button
+              onClick={() => {
+                setDispatchLocation(null);
+                setDispatchTeam(null);
+                setIsRescueDispatchOpen(true);
+              }}
+              className="text-[11px] text-red-400 hover:underline font-bold"
+            >
+              + Dispatch Team
+            </button>
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-[11px] pb-1">
             <div className="p-2 bg-slate-900 border border-slate-800 rounded">
-              <span className="text-[10px] text-slate-400 block uppercase">URGENT SOS</span>
-              <strong className="text-sm font-bold text-rose-400">3 Pending</strong>
+              <span className="text-[10px] text-slate-400 block uppercase">ACTIVE DEPLOYMENTS</span>
+              <strong className="text-sm font-bold text-amber-400">
+                {rescueTeams.filter(t => ['EN ROUTE', 'ASSIGNED', 'EMERGENCY', 'ON SITE'].includes(t.status)).length} In Field
+              </strong>
             </div>
             <div className="p-2 bg-slate-900 border border-slate-800 rounded">
-              <span className="text-[10px] text-slate-400 block uppercase">RESCUE TEAMS</span>
-              <strong className="text-sm font-bold text-emerald-400">6 AVAILABLE</strong>
+              <span className="text-[10px] text-slate-400 block uppercase">AVAILABLE UNITS</span>
+              <strong className="text-sm font-bold text-emerald-400">
+                {rescueTeams.filter(t => t.status === 'AVAILABLE').length} Ready at Base
+              </strong>
             </div>
           </div>
 
-          {/* Quick Actions List */}
-          <div className="space-y-1.5">
-            {responseUnits.slice(0, 2).map((u) => (
-              <div key={u.id} className="p-2 bg-slate-900/90 border border-slate-800 rounded flex items-center justify-between text-[11px]">
-                <div>
-                  <strong className="text-white block">{u.name}</strong>
-                  <span className="text-slate-400 text-[10px]">Sector: {u.location} • {u.tasks}</span>
+          {/* Dynamic Units List */}
+          <div className="space-y-1.5 max-h-[160px] overflow-y-auto pr-1">
+            {[...rescueTeams]
+              .sort((a, b) => (a.status !== 'AVAILABLE' ? -1 : 1))
+              .map((u) => (
+                <div key={u.id || u.team_id} className="p-2 bg-slate-900/90 border border-slate-800 rounded flex items-center justify-between text-[11px]">
+                  <div>
+                    <strong className="text-white block">{u.name}</strong>
+                    <span className="text-slate-400 text-[10px]">
+                      Sector: <strong className="text-amber-300">{u.destination_name || u.base_station}</strong> • {u.team_type}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      u.status === 'EMERGENCY' ? 'bg-rose-950 text-rose-300 border border-rose-500/40 animate-pulse' :
+                      u.status === 'ON SITE' ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/40' :
+                      u.status === 'EN ROUTE' ? 'bg-amber-950 text-amber-300 border border-amber-500/40' :
+                      u.status === 'ASSIGNED' ? 'bg-purple-950 text-purple-300 border border-purple-500/40' :
+                      'bg-slate-800 text-slate-300 border border-slate-700'
+                    }`}>
+                      {u.status}
+                    </span>
+                  </div>
                 </div>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                  u.status === 'DEPLOYED' ? 'bg-red-950 text-red-300 border border-red-500/40' : 'bg-emerald-950 text-emerald-300 border border-emerald-500/40'
-                }`}>
-                  {u.status}
-                </span>
-              </div>
-            ))}
+              ))}
           </div>
 
           <div className="pt-2 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
             <span>Rescue Command Frequency: <strong>VHF Ch 16</strong></span>
-            <span className="text-emerald-400 font-bold">NDRF / SDRF Linked</span>
+            <span className="text-emerald-400 font-bold">Live GPS Synchronized</span>
           </div>
         </section>
       </div>
@@ -658,9 +727,15 @@ export default function AuthorityDashboardPage() {
       {/* Send Rescue Team Dispatch Modal */}
       <SendRescueTeamModal
         isOpen={isRescueDispatchOpen}
-        onClose={() => setIsRescueDispatchOpen(false)}
+        onClose={() => {
+          setIsRescueDispatchOpen(false);
+          setDispatchLocation(null);
+          setDispatchTeam(null);
+        }}
         teams={rescueTeams}
         locations={locations}
+        initialLocation={dispatchLocation}
+        initialTeam={dispatchTeam}
         onDispatch={handleRescueDispatch}
       />
     </div>
