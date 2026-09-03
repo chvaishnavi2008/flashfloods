@@ -204,59 +204,6 @@ export default function LiveWeatherRiskCard() {
         </div>
       )}
 
-      {/* QUICK PRESET SELECTOR BAR (Step 8 Required Testing Locations) */}
-      <div className="flex flex-wrap items-center gap-2 p-2.5 bg-slate-950/70 border border-slate-800/80 rounded-xl text-xs">
-        <span className="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1 shrink-0">
-          <MapPin className="w-3 h-3 text-cyan-400" />
-          Test Sectors:
-        </span>
-        <div className="flex flex-wrap gap-1.5">
-          <button
-            onClick={() => handlePresetClick(30.3165, 78.0322, 'Dehradun, Uttarakhand')}
-            className={`px-2.5 py-1 rounded text-[11px] font-bold transition-all border ${
-              locationName.includes('Dehradun') 
-                ? 'bg-blue-600 text-white border-blue-400 shadow' 
-                : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-700'
-            }`}
-          >
-            Dehradun (30.32°N, 78.03°E)
-          </button>
-
-          <button
-            onClick={() => handlePresetClick(30.4137, 79.3242, 'Chamoli, Uttarakhand')}
-            className={`px-2.5 py-1 rounded text-[11px] font-bold transition-all border ${
-              locationName.includes('Chamoli') 
-                ? 'bg-blue-600 text-white border-blue-400 shadow' 
-                : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-700'
-            }`}
-          >
-            Chamoli (30.41°N, 79.32°E)
-          </button>
-
-          <button
-            onClick={() => handlePresetClick(11.6854, 76.1320, 'Wayanad, Kerala')}
-            className={`px-2.5 py-1 rounded text-[11px] font-bold transition-all border ${
-              locationName.includes('Wayanad') 
-                ? 'bg-blue-600 text-white border-blue-400 shadow' 
-                : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-700'
-            }`}
-          >
-            Wayanad (11.69°N, 76.13°E)
-          </button>
-
-          <button
-            onClick={() => handlePresetClick(27.3389, 88.6065, 'Gangtok, Sikkim')}
-            className={`px-2.5 py-1 rounded text-[11px] font-bold transition-all border ${
-              locationName.includes('Gangtok') 
-                ? 'bg-blue-600 text-white border-blue-400 shadow' 
-                : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-700'
-            }`}
-          >
-            Gangtok (27.34°N, 88.61°E)
-          </button>
-        </div>
-      </div>
-
       {/* ===================================================================== */}
       {/* 2. ERROR DISPLAY (If API fails)                                        */}
       {/* ===================================================================== */}

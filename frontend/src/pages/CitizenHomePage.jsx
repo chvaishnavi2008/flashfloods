@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import RiskMap from '../components/RiskMap';
 import LocationSearch from '../components/LocationSearch';
 import CitizenSosModal from '../components/CitizenSosModal';
 import LiveWeatherRiskCard from '../components/LiveWeatherRiskCard';
@@ -197,44 +196,6 @@ export default function CitizenHomePage() {
           >
             <HeartPulse className="w-5 h-5 animate-pulse" />
             <span>EMERGENCY HELP (SOS)</span>
-          </button>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 3. WHERE IS THE DANGER? (Simple Danger Map with Clean Legend)              */}
-      {/* ========================================================================= */}
-      <section className="bg-[#1E293B] border border-slate-700 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
-          <div>
-            <h2 className="text-base font-bold text-white uppercase tracking-wider">
-              🗺️ DANGER MAP
-            </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Shows flooded zones, safe shelters, and high-risk slopes in your neighborhood.
-            </p>
-          </div>
-
-          {/* Simple Legend */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs bg-slate-900 p-2 sm:px-3 sm:py-1.5 rounded-lg border border-slate-800">
-            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Safe</span>
-            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-amber-400" /> Watch</span>
-            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-orange-500" /> High Risk</span>
-            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-red-500" /> Danger Zone</span>
-          </div>
-        </div>
-
-        {/* Map View */}
-        <RiskMap height="360px" showRoute={isCritical || isHigh} />
-
-        <div className="flex items-center justify-between pt-2 text-xs text-slate-400">
-          <span>Tap on any colored area to see simple safety instructions.</span>
-          <button
-            onClick={() => setActivePage('map')}
-            className="text-blue-400 hover:text-blue-300 font-bold flex items-center gap-1"
-          >
-            <span>Open Full Danger Map</span>
-            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </section>
