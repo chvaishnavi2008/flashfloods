@@ -69,23 +69,23 @@ const createTeamIcon = (team, isSelected) => {
   const isEmergency = team.status === 'EMERGENCY';
   const isAssigned = team.status === 'ASSIGNED';
 
-  let colorClass = 'bg-blue-600 border-blue-400 text-white';
+  let colorClass = 'bg-[#1769AA] border-[#1769AA] text-white';
   let pulseClass = '';
   let badgeText = 'TEAM';
 
   if (isEmergency) {
-    colorClass = 'bg-rose-600 border-rose-400 text-white';
+    colorClass = 'bg-[#C62828] border-[#C62828] text-white';
     pulseClass = 'animate-ping';
     badgeText = 'SOS';
   } else if (isOnSite) {
-    colorClass = 'bg-emerald-600 border-emerald-400 text-white';
+    colorClass = 'bg-[#16855B] border-[#16855B] text-white';
     badgeText = 'ON SITE';
   } else if (isEnRoute) {
-    colorClass = 'bg-amber-600 border-amber-300 text-white';
+    colorClass = 'bg-[#D99A00] border-[#D99A00] text-white';
     pulseClass = 'animate-pulse';
     badgeText = 'EN ROUTE';
   } else if (isAssigned) {
-    colorClass = 'bg-purple-600 border-purple-400 text-white';
+    colorClass = 'bg-[#123047] border-[#1769AA] text-white';
     badgeText = 'ASSIGNED';
   }
 

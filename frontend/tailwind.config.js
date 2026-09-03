@@ -8,34 +8,43 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#0F172A', // Slate 950
-        surface: {
-          DEFAULT: '#131315',
-          low: '#1E293B',     // Slate 800
-          container: '#1E293B',
-          high: '#273549',
-          highest: '#334155'  // Slate 700
+        navy: {
+          primary: '#123047',
+          dark: '#0B2233',
+          hover: '#183D55',
+          border: '#294657',
+          DEFAULT: '#123047'
         },
+        blue: {
+          primary: '#1769AA',
+          light: '#E8F2F8',
+          hover: '#125890',
+          DEFAULT: '#1769AA'
+        },
+        page: '#F5F7F9',
+        card: {
+          DEFAULT: '#FFFFFF',
+          secondary: '#F8FAFC'
+        },
+        heading: '#172B3A',
+        subtext: '#5B6B78',
         border: {
-          DEFAULT: '#475569',
-          light: '#334155'
-        },
-        primary: {
-          DEFAULT: '#60A5FA', // Blue 400
-          light: '#93C5FD',
-          dark: '#1D4ED8',
-          container: '#1E3A8A'
+          DEFAULT: '#D7E0E7',
+          light: '#E5EBF0',
+          navy: '#294657'
         },
         risk: {
-          low: '#10B981',      // Emerald Green
-          moderate: '#F59E0B', // Amber
-          high: '#F97316',     // Orange
-          critical: '#EF4444'  // Red
+          low: '#16855B',
+          moderate: '#D99A00',
+          high: '#E87516',
+          critical: '#C62828'
         },
-        error: {
-          DEFAULT: '#EF4444',
-          container: '#450A0A',
-          border: '#991B1B'
+        emergency: {
+          sos: '#C62828',
+          bg: '#FFF1F1',
+          warningBg: '#FFF7E6',
+          safeBg: '#EAF7F1',
+          info: '#1769AA'
         }
       },
       fontFamily: {

@@ -35,11 +35,11 @@ export default function LocationSearch({ onSearchComplete = null }) {
   }, [locations]);
 
   const riskFilters = [
-    { id: 'ALL', label: 'All Threats', count: riskCounts.ALL, badge: 'border-slate-700 bg-slate-900 text-slate-300' },
-    { id: 'CRITICAL', label: '🔴 Critical', count: riskCounts.CRITICAL, badge: 'border-red-500/60 bg-red-950/60 text-red-300' },
-    { id: 'HIGH', label: '🟠 High', count: riskCounts.HIGH, badge: 'border-orange-500/60 bg-orange-950/60 text-orange-300' },
-    { id: 'MODERATE', label: '🟡 Moderate', count: riskCounts.MODERATE, badge: 'border-amber-500/60 bg-amber-950/60 text-amber-300' },
-    { id: 'LOW', label: '🟢 Low / Normal', count: riskCounts.LOW, badge: 'border-emerald-500/60 bg-emerald-950/60 text-emerald-300' }
+    { id: 'ALL', label: 'All Threats', count: riskCounts.ALL, badge: 'border-[#1769AA] bg-[#E8F2F8] text-[#1769AA]' },
+    { id: 'CRITICAL', label: '🔴 Critical', count: riskCounts.CRITICAL, badge: 'border-[#C62828] bg-[#FFF1F1] text-[#C62828]' },
+    { id: 'HIGH', label: '🟠 High', count: riskCounts.HIGH, badge: 'border-[#E87516] bg-[#FFF7E6] text-[#E87516]' },
+    { id: 'MODERATE', label: '🟡 Moderate', count: riskCounts.MODERATE, badge: 'border-[#D99A00] bg-[#FFF7E6] text-[#D99A00]' },
+    { id: 'LOW', label: '🟢 Low / Safe', count: riskCounts.LOW, badge: 'border-[#16855B] bg-[#EAF7F1] text-[#16855B]' }
   ];
 
   const filteredLocations = useMemo(() => {
@@ -63,39 +63,39 @@ export default function LocationSearch({ onSearchComplete = null }) {
   const getLevelBadgeClass = (level) => {
     switch (level) {
       case 'CRITICAL':
-        return 'bg-red-500/20 text-red-400 border-red-500/40 font-bold shadow-sm animate-pulse';
+        return 'bg-[#FFF1F1] text-[#C62828] border-[#C62828]/40 font-bold';
       case 'HIGH':
-        return 'bg-orange-500/20 text-orange-400 border-orange-500/40 font-semibold';
+        return 'bg-[#FFF7E6] text-[#E87516] border-[#E87516]/40 font-semibold';
       case 'MODERATE':
-        return 'bg-amber-500/20 text-amber-400 border-amber-500/40 font-semibold';
+        return 'bg-[#FFF7E6] text-[#D99A00] border-[#D99A00]/40 font-semibold';
       case 'LOW':
       default:
-        return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 font-semibold';
+        return 'bg-[#EAF7F1] text-[#16855B] border-[#16855B]/40 font-semibold';
     }
   };
 
   return (
-    <div className="bg-[#1E293B] rounded-xl border border-[#334155] p-5 shadow-lg space-y-4 font-sans">
+    <div className="bg-white rounded-2xl border border-[#D7E0E7] p-5 shadow-sm space-y-4 font-sans text-[#172B3A]">
       {/* Search Input Bar */}
       <div className="space-y-2">
         <div className="flex items-center justify-between mb-1">
-          <label className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
+          <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#5B6B78]">
             SEARCH YOUR LOCATION / SECTOR ({filteredLocations.length} Matched)
           </label>
-          <span className="text-[11px] font-mono text-cyan-400">
+          <span className="text-[11px] font-mono text-[#1769AA] font-bold">
             31 Multi-Hazard Monitored Sectors
           </span>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3.5 top-3 w-4 h-4 text-[#5B6B78]" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search vulnerable towns (e.g. Dehradun, Chamoli, Joshimath, Wayanad, Shimla, Gangtok...)"
-              className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 font-mono"
+              className="w-full bg-[#F8FAFC] border border-[#D7E0E7] rounded-lg pl-10 pr-4 py-2.5 text-sm text-[#172B3A] placeholder-[#5B6B78] focus:outline-none focus:border-[#1769AA] font-mono"
             />
           </div>
           <button
@@ -105,20 +105,20 @@ export default function LocationSearch({ onSearchComplete = null }) {
                 setActivePage('location-risk');
               }
             }}
-            className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-mono text-xs font-bold uppercase tracking-wider shadow-md transition-all shrink-0 text-center"
+            className="w-full sm:w-auto px-5 py-2.5 bg-[#1769AA] hover:bg-[#125890] text-white rounded-lg font-mono text-xs font-bold uppercase tracking-wider shadow-sm transition-all shrink-0 text-center"
           >
             Check Risk
           </button>
         </div>
 
-        {/* Quick Select Place Dropdown ("Downbar") */}
-        <div className="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2.5 space-y-1">
-          <div className="flex items-center justify-between text-[11px] font-mono text-slate-300">
-            <span className="flex items-center gap-1.5 font-bold uppercase text-cyan-300">
-              <MapPin className="w-3.5 h-3.5 text-red-400" />
-              <span>SELECT PLACE / SECTOR DROPDOWN (DOWNBAR):</span>
+        {/* Quick Select Place Dropdown */}
+        <div className="bg-[#F8FAFC] border border-[#D7E0E7] rounded-xl p-2.5 space-y-1">
+          <div className="flex items-center justify-between text-[11px] font-mono text-[#172B3A]">
+            <span className="flex items-center gap-1.5 font-bold uppercase text-[#1769AA]">
+              <MapPin className="w-3.5 h-3.5 text-[#C62828]" />
+              <span>SELECT PLACE / SECTOR DROPDOWN:</span>
             </span>
-            <span className="text-[10px] text-slate-400">Jump directly to any sector</span>
+            <span className="text-[10px] text-[#5B6B78]">Jump directly to any sector</span>
           </div>
           <select
             value={selectedLocationId}
@@ -126,14 +126,14 @@ export default function LocationSearch({ onSearchComplete = null }) {
               const val = Number(e.target.value);
               handleSelect(val);
             }}
-            className="w-full bg-slate-950 border border-cyan-500/50 rounded-lg px-3 py-2 text-sm text-cyan-300 font-mono font-bold focus:outline-none focus:ring-1 focus:ring-cyan-400 cursor-pointer shadow-inner"
+            className="w-full bg-white border border-[#D7E0E7] rounded-lg px-3 py-2 text-sm text-[#172B3A] font-mono font-bold focus:outline-none focus:border-[#1769AA] cursor-pointer shadow-sm"
           >
             <option value="" disabled>-- Choose a monitored sector from dropdown --</option>
             {locations.map((loc) => {
               const hazardIcon = loc.current_risk?.dominant_hazard === 'landslide' ? '⛰️ Landslide' : (loc.current_risk?.dominant_hazard === 'heavy_rainfall' ? '🌧️ Heavy Rain' : '🌊 Flash Flood');
               const levelBadge = loc.current_risk?.overall_level === 'CRITICAL' ? '🔴 CRITICAL' : (loc.current_risk?.overall_level === 'HIGH' ? '🟠 HIGH' : (loc.current_risk?.overall_level === 'MODERATE' ? '🟡 MODERATE' : '🟢 LOW'));
               return (
-                <option key={loc.id} value={loc.id} className="bg-slate-900 text-white py-1">
+                <option key={loc.id} value={loc.id} className="bg-white text-[#172B3A] py-1">
                   📍 {loc.name} ({loc.state}) — {levelBadge} — {hazardIcon} ({loc.current_risk?.overall_score || 50}/100)
                 </option>
               );
@@ -142,14 +142,14 @@ export default function LocationSearch({ onSearchComplete = null }) {
         </div>
       </div>
 
-      {/* 1. FOUR THREAT LEVEL FILTER BUTTONS (Primary Multi-Hazard Filter) */}
+      {/* 1. FOUR THREAT LEVEL FILTER BUTTONS */}
       <div className="space-y-1.5 font-mono">
-        <div className="flex items-center justify-between text-[11px] text-slate-400">
-          <span className="flex items-center gap-1 font-bold uppercase tracking-wider text-slate-300">
-            <Filter className="w-3.5 h-3.5 text-cyan-400" />
+        <div className="flex items-center justify-between text-[11px] text-[#5B6B78]">
+          <span className="flex items-center gap-1 font-bold uppercase tracking-wider text-[#172B3A]">
+            <Filter className="w-3.5 h-3.5 text-[#1769AA]" />
             <span>Filter by Threat Level:</span>
           </span>
-          <span className="text-[10px] text-slate-500">
+          <span className="text-[10px] text-[#5B6B78]">
             Select a risk level to isolate sectors
           </span>
         </div>
@@ -163,13 +163,13 @@ export default function LocationSearch({ onSearchComplete = null }) {
                 onClick={() => setActiveRiskFilter(rf.id)}
                 className={`px-3 py-2 rounded-xl border text-left flex items-center justify-between transition-all ${
                   isActive
-                    ? `${rf.badge} ring-2 ring-cyan-400 font-bold shadow-lg transform scale-[1.02]`
-                    : 'bg-slate-900/90 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200 hover:border-slate-700'
+                    ? `${rf.badge} font-bold shadow-sm`
+                    : 'bg-[#F8FAFC] border-[#D7E0E7] text-[#5B6B78] hover:bg-white hover:text-[#172B3A]'
                 }`}
               >
                 <span>{rf.label}</span>
                 <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${
-                  isActive ? 'bg-black/40 text-white' : 'bg-slate-800 text-slate-400'
+                  isActive ? 'bg-white text-[#172B3A] border border-[#D7E0E7]' : 'bg-white text-[#5B6B78] border border-[#D7E0E7]'
                 }`}>
                   {rf.count}
                 </span>
@@ -181,7 +181,7 @@ export default function LocationSearch({ onSearchComplete = null }) {
 
       {/* 2. REGION FILTER PILLS */}
       <div className="space-y-1.5 font-mono">
-        <span className="text-[11px] text-slate-400 block font-bold uppercase tracking-wider">
+        <span className="text-[11px] text-[#5B6B78] block font-bold uppercase tracking-wider">
           Filter by Region:
         </span>
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs">
@@ -191,8 +191,8 @@ export default function LocationSearch({ onSearchComplete = null }) {
               onClick={() => setActiveRegionFilter(reg.id)}
               className={`px-3 py-1 rounded-full whitespace-nowrap transition-all ${
                 activeRegionFilter === reg.id
-                  ? 'bg-blue-600 text-white font-semibold shadow-sm'
-                  : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-slate-700'
+                  ? 'bg-[#1769AA] text-white font-semibold shadow-sm'
+                  : 'bg-[#F8FAFC] text-[#5B6B78] hover:bg-white hover:text-[#172B3A] border border-[#D7E0E7]'
               }`}
             >
               {reg.label}
@@ -201,7 +201,7 @@ export default function LocationSearch({ onSearchComplete = null }) {
         </div>
       </div>
 
-      {/* 3. GRID OF SELECTABLE LOCATION CHIPS WITH HAZARD COMPONENTS */}
+      {/* 3. GRID OF SELECTABLE LOCATION CHIPS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 max-h-72 overflow-y-auto pr-1">
         {filteredLocations.map((loc) => {
           const isSelected = loc.id === selectedLocationId;
@@ -215,13 +215,13 @@ export default function LocationSearch({ onSearchComplete = null }) {
               onClick={() => handleSelect(loc.id)}
               className={`flex flex-col justify-between p-3 rounded-xl border text-left text-xs transition-all ${
                 isSelected
-                  ? 'bg-blue-950/90 border-blue-500 text-white shadow-lg ring-2 ring-blue-400'
-                  : 'bg-slate-900/80 border-slate-800 text-slate-300 hover:bg-slate-800/90 hover:border-slate-700'
+                  ? 'bg-[#E8F2F8] border-2 border-[#1769AA] text-[#172B3A] shadow-sm'
+                  : 'bg-[#F8FAFC] border-[#D7E0E7] text-[#172B3A] hover:bg-white hover:border-[#1769AA]'
               }`}
             >
               <div className="flex items-start justify-between gap-1 w-full mb-1.5">
-                <div className="font-bold text-slate-100 truncate flex items-center gap-1 text-xs">
-                  <MapPin className="w-3.5 h-3.5 text-red-400 shrink-0" />
+                <div className="font-bold text-[#172B3A] truncate flex items-center gap-1 text-xs">
+                  <MapPin className="w-3.5 h-3.5 text-[#C62828] shrink-0" />
                   <span className="truncate">{loc.name}</span>
                 </div>
                 <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${getLevelBadgeClass(level)} shrink-0`}>
@@ -229,17 +229,17 @@ export default function LocationSearch({ onSearchComplete = null }) {
                 </span>
               </div>
 
-              <div className="text-[11px] font-mono text-slate-400 truncate mb-2">
+              <div className="text-[11px] font-mono text-[#5B6B78] truncate mb-2">
                 {loc.state}, {loc.country}
               </div>
 
               {/* Hazard Components Badges */}
-              <div className="flex flex-wrap items-center gap-1.5 pt-1.5 border-t border-slate-800/80 w-full text-[10px] font-mono">
-                <span className="px-1.5 py-0.5 rounded bg-blue-950/80 text-blue-300 border border-blue-800/50">
+              <div className="flex flex-wrap items-center gap-1.5 pt-1.5 border-t border-[#D7E0E7] w-full text-[10px] font-mono">
+                <span className="px-1.5 py-0.5 rounded bg-white text-[#1769AA] border border-[#D7E0E7]">
                   {hazardLabel}
                 </span>
-                <span className="text-slate-400">
-                  Risk: <strong className="text-cyan-400">{loc.current_risk?.overall_score || 50}/100</strong>
+                <span className="text-[#5B6B78]">
+                  Risk: <strong className="text-[#1769AA] font-bold">{loc.current_risk?.overall_score || 50}/100</strong>
                 </span>
               </div>
             </button>
@@ -247,7 +247,7 @@ export default function LocationSearch({ onSearchComplete = null }) {
         })}
 
         {filteredLocations.length === 0 && (
-          <div className="col-span-full p-6 text-center text-slate-400 font-mono text-xs bg-slate-900/50 rounded-xl border border-slate-800">
+          <div className="col-span-full p-6 text-center text-[#5B6B78] font-mono text-xs bg-[#F8FAFC] rounded-xl border border-[#D7E0E7]">
             No monitored sectors match the active search and filter criteria.
           </div>
         )}

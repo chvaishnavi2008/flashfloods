@@ -4,46 +4,50 @@
 
 @layer base {
   body {
-    @apply bg-[#0F172A] text-slate-100 font-sans;
+    background-color: #F5F7F9;
+    color: #172B3A;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #172B3A;
   }
 }
 
-/* Custom Scrollbar for high-density command center dashboards */
+/* Custom Clean Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0F172A;
+  background: #F5F7F9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #D7E0E7;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #5B6B78;
 }
 
-/* Custom Leaflet Map styling for Dark Tactical Command Center */
+/* Professional Leaflet Map styling */
 .leaflet-container {
   width: 100%;
   height: 100%;
-  background-color: #0b1120 !important;
+  background-color: #E8F2F8 !important;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   z-index: 1;
 }
 
 .leaflet-popup-content-wrapper {
-  background: rgba(15, 23, 42, 0.95) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  color: #f8fafc !important;
-  border: 1px solid rgba(51, 65, 85, 0.9) !important;
-  border-radius: 16px !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 20px rgba(59, 130, 246, 0.15) !important;
+  background: #FFFFFF !important;
+  color: #172B3A !important;
+  border: 1px solid #D7E0E7 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(18, 48, 71, 0.15) !important;
   padding: 0px !important;
   overflow: hidden !important;
 }
@@ -51,20 +55,20 @@
 .leaflet-popup-content {
   margin: 12px 14px !important;
   line-height: 1.4 !important;
+  color: #172B3A !important;
 }
 
 .leaflet-popup-tip {
-  background: rgba(15, 23, 42, 0.95) !important;
-  border: 1px solid rgba(51, 65, 85, 0.9) !important;
+  background: #FFFFFF !important;
+  border: 1px solid #D7E0E7 !important;
 }
 
 .leaflet-tooltip {
-  background: rgba(15, 23, 42, 0.92) !important;
-  backdrop-filter: blur(8px) !important;
-  color: #f8fafc !important;
-  border: 1px solid rgba(71, 85, 105, 0.8) !important;
-  border-radius: 8px !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+  background: #0B2233 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #294657 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 10px rgba(11, 34, 51, 0.25) !important;
   padding: 4px 8px !important;
   font-family: 'JetBrains Mono', monospace !important;
   font-size: 11px !important;
@@ -72,87 +76,88 @@
 }
 
 .leaflet-tooltip-top:before {
-  border-top-color: rgba(15, 23, 42, 0.92) !important;
+  border-top-color: #0B2233 !important;
 }
 
 .leaflet-tooltip-bottom:before {
-  border-bottom-color: rgba(15, 23, 42, 0.92) !important;
+  border-bottom-color: #0B2233 !important;
 }
 
 /* Custom Zoom Control Styling */
 .leaflet-control-zoom {
-  border: 1px solid rgba(51, 65, 85, 0.8) !important;
-  border-radius: 12px !important;
+  border: 1px solid #D7E0E7 !important;
+  border-radius: 8px !important;
   overflow: hidden !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
-  background: rgba(15, 23, 42, 0.9) !important;
-  backdrop-filter: blur(8px) !important;
+  box-shadow: 0 4px 12px rgba(18, 48, 71, 0.08) !important;
+  background: #FFFFFF !important;
 }
 
 .leaflet-control-zoom a {
-  background: rgba(15, 23, 42, 0.9) !important;
-  color: #94a3b8 !important;
-  border-bottom: 1px solid rgba(51, 65, 85, 0.8) !important;
+  background: #FFFFFF !important;
+  color: #172B3A !important;
+  border-bottom: 1px solid #D7E0E7 !important;
   transition: all 0.2s ease !important;
 }
 
 .leaflet-control-zoom a:hover {
-  background: #1e293b !important;
-  color: #38bdf8 !important;
+  background: #E8F2F8 !important;
+  color: #1769AA !important;
 }
 
-/* Tactical Pulse animations */
+/* Standardized Button Utility Classes */
+.btn-primary {
+  background-color: #1769AA;
+  color: #FFFFFF;
+}
+.btn-primary:hover {
+  background-color: #125890;
+}
+
+.btn-secondary {
+  background-color: #FFFFFF;
+  border: 1px solid #1769AA;
+  color: #1769AA;
+}
+.btn-secondary:hover {
+  background-color: #E8F2F8;
+}
+
+.btn-safe {
+  background-color: #16855B;
+  color: #FFFFFF;
+}
+.btn-safe:hover {
+  background-color: #126d4a;
+}
+
+.btn-warning {
+  background-color: #D99A00;
+  color: #FFFFFF;
+}
+.btn-warning:hover {
+  background-color: #b88200;
+}
+
+.btn-emergency {
+  background-color: #C62828;
+  color: #FFFFFF;
+}
+.btn-emergency:hover {
+  background-color: #a82222;
+}
+
+/* Subtle operational pulse animations */
 @keyframes sirenGlow {
   0%, 100% {
-    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
-    border-color: #EF4444;
+    border-color: #C62828;
   }
   50% {
-    box-shadow: 0 0 35px rgba(239, 68, 68, 0.9);
-    border-color: #F87171;
+    border-color: #E87516;
   }
 }
 
 .siren-active {
   animation: sirenGlow 1.2s infinite ease-in-out;
-}
-
-@keyframes mapPing {
-  0% {
-    transform: scale(0.9);
-    opacity: 1;
-  }
-  70% {
-    transform: scale(2.4);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(2.4);
-    opacity: 0;
-  }
-}
-
-.pulse-marker-ring {
-  animation: mapPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-@keyframes criticalPing {
-  0% {
-    transform: scale(0.85);
-    opacity: 0.95;
-  }
-  60% {
-    transform: scale(2.2);
-    opacity: 0.3;
-  }
-  100% {
-    transform: scale(2.8);
-    opacity: 0;
-  }
-}
-
-.critical-ping-ring {
-  animation: criticalPing 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
 @keyframes dashFlow {
@@ -178,17 +183,4 @@
 .radar-sweep-beam {
   transform-origin: center center;
   animation: radarSweep 3.5s linear infinite;
-}
-
-@keyframes targetSpin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.target-reticle-spin {
-  animation: targetSpin 12s linear infinite;
 }

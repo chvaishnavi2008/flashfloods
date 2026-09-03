@@ -267,13 +267,13 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
   const getRiskColor = (level) => {
     switch (level) {
       case 'CRITICAL':
-        return '#EF4444'; // Red
+        return '#C62828'; // Red
       case 'HIGH':
-        return '#F97316'; // Orange
+        return '#E87516'; // Orange
       case 'MODERATE':
-        return '#F59E0B'; // Amber
+        return '#D99A00'; // Amber
       default:
-        return '#10B981'; // Emerald
+        return '#16855B'; // Green
     }
   };
 
