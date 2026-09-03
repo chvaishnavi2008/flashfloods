@@ -5,6 +5,13 @@
  * or when the backend service is unreachable.
  */
 
+const getLevelFromScore = (score) => {
+  if (score >= 76) return "CRITICAL";
+  if (score >= 51) return "HIGH";
+  if (score >= 26) return "MODERATE";
+  return "LOW";
+};
+
 export const FALLBACK_LOCATIONS = [
   // --- UTTARAKHAND ---
   {
@@ -19,6 +26,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 34,
     population: 22400,
     terrain_type: "Mountain Valley Corridor",
+    is_vulnerable: true,
     current_risk: {
       overall_score: 72,
       overall_level: "HIGH",
@@ -26,8 +34,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 76,
       landslide_score: 68,
       heavy_rainfall_score: 70,
+      flood_score: 55,
+      flash_flood: { score: 76, level: "CRITICAL" },
+      landslide: { score: 68, level: "HIGH" },
+      heavy_rainfall: { score: 70, level: "HIGH" },
+      flood: { score: 55, level: "HIGH" },
       lead_time_minutes: 30,
-      contributing_factors: "Steep river canyon, saturation 78%, precipitation rate 52mm/h",
+      contributing_factors: [
+        "Steep Alaknanda river canyon runoff acceleration",
+        "Soil mantle saturation reaching 78% moisture capacity",
+        "Precipitation rate of 52mm/hr in upper catchment"
+      ],
+      ai_explanation: "In Chamoli, the current risk index (72/100 - HIGH) is driven by localized precipitation rates and saturated soil moisture levels across surrounding mountain slopes.",
       recommended_action: "Immediate evacuation of riverbank floodplains; move uphill to designated relief havens."
     },
     environmental_data: {
@@ -54,6 +72,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 36,
     population: 16700,
     terrain_type: "Steep Mountain Slope",
+    is_vulnerable: true,
     current_risk: {
       overall_score: 88,
       overall_level: "CRITICAL",
@@ -61,8 +80,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 65,
       landslide_score: 92,
       heavy_rainfall_score: 80,
+      flood_score: 40,
+      flash_flood: { score: 65, level: "HIGH" },
+      landslide: { score: 92, level: "CRITICAL" },
+      heavy_rainfall: { score: 80, level: "CRITICAL" },
+      flood: { score: 40, level: "MODERATE" },
       lead_time_minutes: 20,
-      contributing_factors: "Severe slope subsidence, soil saturation 92%, ongoing heavy precipitation",
+      contributing_factors: [
+        "Severe slope subsidence and bedrock fissures",
+        "Soil moisture saturation at 92% pore-water volume",
+        "Ongoing torrential precipitation across Sunil Ward"
+      ],
+      ai_explanation: "In Joshimath, critical geotechnical shear stress is exacerbated by heavy cloudburst infiltration into active slope fissures.",
       recommended_action: "Immediate structural evacuation; do not stay inside cracked masonry buildings."
     },
     environmental_data: {
@@ -89,6 +118,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 38,
     population: 8500,
     terrain_type: "High Himalayan Catchment",
+    is_vulnerable: true,
     current_risk: {
       overall_score: 85,
       overall_level: "CRITICAL",
@@ -96,8 +126,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 89,
       landslide_score: 78,
       heavy_rainfall_score: 86,
+      flood_score: 50,
+      flash_flood: { score: 89, level: "CRITICAL" },
+      landslide: { score: 78, level: "CRITICAL" },
+      heavy_rainfall: { score: 86, level: "CRITICAL" },
+      flood: { score: 50, level: "MODERATE" },
       lead_time_minutes: 25,
-      contributing_factors: "Glacial moraine catchment deluge, intense cloudburst rates",
+      contributing_factors: [
+        "Glacial moraine catchment deluge in upper Mandakini",
+        "Intense cloudburst rate of 90mm/hr",
+        "Steep 38° mountain slope runoff acceleration"
+      ],
+      ai_explanation: "In Kedarnath, glacial catchment runoff combined with extreme rainfall indicates imminent flash surge danger along the valley floor.",
       recommended_action: "Ascend elevated reinforced valley shelter ridges; stay clear of Mandakini riverbed."
     },
     environmental_data: {
@@ -124,6 +164,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 18,
     population: 578000,
     terrain_type: "Valley Basin",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 38,
       overall_level: "MODERATE",
@@ -131,8 +172,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 42,
       landslide_score: 25,
       heavy_rainfall_score: 45,
+      flood_score: 35,
+      flash_flood: { score: 42, level: "MODERATE" },
+      landslide: { score: 25, level: "LOW" },
+      heavy_rainfall: { score: 45, level: "MODERATE" },
+      flood: { score: 35, level: "MODERATE" },
       lead_time_minutes: 60,
-      contributing_factors: "Urban stream drainage swell near Bindal & Rispana rivers",
+      contributing_factors: [
+        "Urban stream drainage swell near Bindal & Rispana rivers",
+        "Moderate rainfall accumulation of 38mm",
+        "Valley floor waterlogging in low-lying subways"
+      ],
+      ai_explanation: "In Dehradun, risk is moderate and confined to urban stream swell and low-lying stormwater drains.",
       recommended_action: "Avoid driving through water-covered low bridges and subways."
     },
     environmental_data: {
@@ -159,6 +210,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 32,
     population: 34000,
     terrain_type: "High Vulnerability Valley",
+    is_vulnerable: true,
     current_risk: {
       overall_score: 68,
       overall_level: "HIGH",
@@ -166,8 +218,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 62,
       landslide_score: 74,
       heavy_rainfall_score: 66,
+      flood_score: 52,
+      flash_flood: { score: 62, level: "HIGH" },
+      landslide: { score: 74, level: "HIGH" },
+      heavy_rainfall: { score: 66, level: "HIGH" },
+      flood: { score: 52, level: "HIGH" },
       lead_time_minutes: 40,
-      contributing_factors: "Bhagirathi gorge water rise combined with active hillside debris runout",
+      contributing_factors: [
+        "Bhagirathi gorge water rise combined with active hillside debris runout",
+        "Soil saturation reached 76%",
+        "Heavy downpour rate 48mm/hr"
+      ],
+      ai_explanation: "In Uttarkashi, elevated Bhagirathi river discharge and steep highway cuts create dual hazards of slope failure and floodplain surge.",
       recommended_action: "Monitor national highway corridors and stay clear of unstable cut slopes."
     },
     environmental_data: {
@@ -196,6 +258,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 32,
     population: 43500,
     terrain_type: "High-Flow River Catchment",
+    is_vulnerable: true,
     current_risk: {
       overall_score: 74,
       overall_level: "HIGH",
@@ -203,8 +266,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 78,
       landslide_score: 68,
       heavy_rainfall_score: 72,
+      flood_score: 60,
+      flash_flood: { score: 78, level: "CRITICAL" },
+      landslide: { score: 68, level: "HIGH" },
+      heavy_rainfall: { score: 72, level: "HIGH" },
+      flood: { score: 60, level: "HIGH" },
       lead_time_minutes: 35,
-      contributing_factors: "Beas river discharge swelling, catchment deluge",
+      contributing_factors: [
+        "Beas river discharge swelling rapidly past 1400 m3/s",
+        "Intense mountain downpour across Solang and Rohtang catchments",
+        "Saturated riverbanks with high scouring hazard"
+      ],
+      ai_explanation: "In Kullu - Manali, fast-moving torrential waters in the Beas basin threaten low-lying tourist resorts, bridges, and NH-3.",
       recommended_action: "Evacuate riverside campsites, hotels, and low roadways immediately."
     },
     environmental_data: {
@@ -231,6 +304,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 26,
     population: 26000,
     terrain_type: "River Gorge Basin",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 46,
       overall_level: "MODERATE",
@@ -238,8 +312,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 50,
       landslide_score: 38,
       heavy_rainfall_score: 44,
+      flood_score: 42,
+      flash_flood: { score: 50, level: "MODERATE" },
+      landslide: { score: 38, level: "MODERATE" },
+      heavy_rainfall: { score: 44, level: "MODERATE" },
+      flood: { score: 42, level: "MODERATE" },
       lead_time_minutes: 50,
-      contributing_factors: "Pandoh dam backwater rise and local tributary inflow",
+      contributing_factors: [
+        "Pandoh dam backwater rise and local tributary inflow",
+        "Moderate showers recorded in catchment",
+        "River level at 58% carrying capacity"
+      ],
+      ai_explanation: "In Mandi, steady Beas river flow is under active monitoring with moderate flood risk near historic ghats.",
       recommended_action: "Stay away from riverbanks and low ghats."
     },
     environmental_data: {
@@ -266,6 +350,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 30,
     population: 21000,
     terrain_type: "Steep Urban Ridge",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 44,
       overall_level: "MODERATE",
@@ -273,8 +358,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 32,
       landslide_score: 48,
       heavy_rainfall_score: 40,
+      flood_score: 15,
+      flash_flood: { score: 32, level: "MODERATE" },
+      landslide: { score: 48, level: "MODERATE" },
+      heavy_rainfall: { score: 40, level: "MODERATE" },
+      flood: { score: 15, level: "LOW" },
       lead_time_minutes: 60,
-      contributing_factors: "Steep urban slope construction load with rain seepage",
+      contributing_factors: [
+        "Steep urban slope construction load with rain seepage",
+        "Soil saturation at 55%",
+        "Moderate showers of 40mm"
+      ],
+      ai_explanation: "In Shimla, slope stress is moderate along steep urban hillside developments.",
       recommended_action: "Monitor retaining walls and road fissures."
     },
     environmental_data: {
@@ -301,6 +396,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 34,
     population: 53000,
     terrain_type: "Dhauladhar Slope",
+    is_vulnerable: true,
     current_risk: {
       overall_score: 66,
       overall_level: "HIGH",
@@ -308,8 +404,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 58,
       landslide_score: 72,
       heavy_rainfall_score: 64,
+      flood_score: 45,
+      flash_flood: { score: 58, level: "HIGH" },
+      landslide: { score: 72, level: "HIGH" },
+      heavy_rainfall: { score: 64, level: "HIGH" },
+      flood: { score: 45, level: "MODERATE" },
       lead_time_minutes: 40,
-      contributing_factors: "Bhagsunag stream torrent and steep slope instability",
+      contributing_factors: [
+        "Bhagsunag stream torrent and steep slope instability",
+        "High precipitation on Dhauladhar slopes (74mm)",
+        "Soil saturation reaching 75%"
+      ],
+      ai_explanation: "In Dharamshala, heavy hillside precipitation creates elevated flash flood potential in mountain nullahs.",
       recommended_action: "Move away from mountain stream beds and steep slope cuts."
     },
     environmental_data: {
@@ -338,6 +444,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 35,
     population: 12000,
     terrain_type: "Glacial Lake Outflow Basin",
+    is_vulnerable: true,
     current_risk: {
       overall_score: 86,
       overall_level: "CRITICAL",
@@ -345,8 +452,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 90,
       landslide_score: 82,
       heavy_rainfall_score: 84,
+      flood_score: 70,
+      flash_flood: { score: 90, level: "CRITICAL" },
+      landslide: { score: 82, level: "CRITICAL" },
+      heavy_rainfall: { score: 84, level: "CRITICAL" },
+      flood: { score: 70, level: "HIGH" },
       lead_time_minutes: 20,
-      contributing_factors: "Teesta basin surge, high glacial runoff, torrential rain",
+      contributing_factors: [
+        "Teesta basin surge and glacial melt runoff",
+        "Torrential rainfall rate 91mm/hr",
+        "River capacity exceeded at 93%"
+      ],
+      ai_explanation: "In Chungthang, critical flash flood surge in the Teesta corridor creates severe danger for riverbank infrastructure.",
       recommended_action: "Immediate evacuation of lower Chungthang to elevated community centers."
     },
     environmental_data: {
@@ -373,6 +490,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 30,
     population: 100000,
     terrain_type: "Active Slope Geohazard",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 48,
       overall_level: "MODERATE",
@@ -380,8 +498,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 36,
       landslide_score: 52,
       heavy_rainfall_score: 46,
+      flood_score: 20,
+      flash_flood: { score: 36, level: "MODERATE" },
+      landslide: { score: 52, level: "HIGH" },
+      heavy_rainfall: { score: 46, level: "MODERATE" },
+      flood: { score: 20, level: "LOW" },
       lead_time_minutes: 55,
-      contributing_factors: "Hillside drainage saturation along national highway",
+      contributing_factors: [
+        "Hillside drainage saturation along national highway",
+        "Soil moisture at 60%",
+        "Moderate continuous mountain showers"
+      ],
+      ai_explanation: "In Gangtok, moderate landslide risk is present on steep residential slopes and road cuts.",
       recommended_action: "Exercise caution on NH-10 and keep emergency kit accessible."
     },
     environmental_data: {
@@ -410,6 +538,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 8,
     population: 960000,
     terrain_type: "Major Floodplain Basin",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 22,
       overall_level: "LOW",
@@ -417,8 +546,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 18,
       landslide_score: 10,
       heavy_rainfall_score: 24,
+      flood_score: 28,
+      flash_flood: { score: 18, level: "LOW" },
+      landslide: { score: 10, level: "LOW" },
+      heavy_rainfall: { score: 24, level: "LOW" },
+      flood: { score: 28, level: "MODERATE" },
       lead_time_minutes: 180,
-      contributing_factors: "Brahmaputra river gauge within safe normal limits",
+      contributing_factors: [
+        "Brahmaputra river gauge within safe normal limits",
+        "Light precipitation rate 2.2mm/hr",
+        "Embankments stable and monitored"
+      ],
+      ai_explanation: "In Guwahati, Brahmaputra river gauges are currently well below warning thresholds.",
       recommended_action: "Normal daily activities safe. Regular river level monitoring active."
     },
     environmental_data: {
@@ -445,6 +584,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 6,
     population: 172000,
     terrain_type: "Inundation Floodplain",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 42,
       overall_level: "MODERATE",
@@ -452,8 +592,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 46,
       landslide_score: 15,
       heavy_rainfall_score: 48,
+      flood_score: 50,
+      flash_flood: { score: 46, level: "MODERATE" },
+      landslide: { score: 15, level: "LOW" },
+      heavy_rainfall: { score: 48, level: "MODERATE" },
+      flood: { score: 50, level: "MODERATE" },
       lead_time_minutes: 90,
-      contributing_factors: "Barak river steady rise with moderate catchment showers",
+      contributing_factors: [
+        "Barak river steady rise with moderate catchment showers",
+        "Floodplain drainage backflow in low town sectors",
+        "River capacity at 50%"
+      ],
+      ai_explanation: "In Silchar, Barak river levels are rising gradually with moderate inundation risk in low-lying wards.",
       recommended_action: "Store essentials on elevated shelves; verify local embankment status."
     },
     environmental_data: {
@@ -480,6 +630,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 5,
     population: 48000,
     terrain_type: "Wetland Floodplain",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 36,
       overall_level: "MODERATE",
@@ -487,8 +638,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 40,
       landslide_score: 12,
       heavy_rainfall_score: 38,
+      flood_score: 45,
+      flash_flood: { score: 40, level: "MODERATE" },
+      landslide: { score: 12, level: "LOW" },
+      heavy_rainfall: { score: 38, level: "MODERATE" },
+      flood: { score: 45, level: "MODERATE" },
       lead_time_minutes: 120,
-      contributing_factors: "Seasonal water spread in wetland sanctuary channels",
+      contributing_factors: [
+        "Seasonal water spread in wetland sanctuary channels",
+        "Moderate tributary inflow into floodplain grasslands",
+        "Water capacity at 46%"
+      ],
+      ai_explanation: "In Kaziranga, seasonal wetland river spread is moderate with wildlife animal highlands operational.",
       recommended_action: "Maintain wildlife corridor speed limits; watch low bridges."
     },
     environmental_data: {
@@ -517,6 +678,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 20,
     population: 25000,
     terrain_type: "Riverine Foothills",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 44,
       overall_level: "MODERATE",
@@ -524,8 +686,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 48,
       landslide_score: 35,
       heavy_rainfall_score: 46,
+      flood_score: 42,
+      flash_flood: { score: 48, level: "MODERATE" },
+      landslide: { score: 35, level: "MODERATE" },
+      heavy_rainfall: { score: 46, level: "MODERATE" },
+      flood: { score: 42, level: "MODERATE" },
       lead_time_minutes: 60,
-      contributing_factors: "Siang river inflow rise from upstream mountain catchments",
+      contributing_factors: [
+        "Siang river inflow rise from upstream mountain catchments",
+        "Moderate rainfall rate 23mm/hr",
+        "River capacity at 53%"
+      ],
+      ai_explanation: "In Pasighat, Siang river levels show moderate flow increase following upstream rainfall.",
       recommended_action: "Avoid recreational boating and stay off low sandbanks."
     },
     environmental_data: {
@@ -552,6 +724,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 32,
     population: 11200,
     terrain_type: "High Altitude Slopes",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 42,
       overall_level: "MODERATE",
@@ -559,8 +732,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 34,
       landslide_score: 46,
       heavy_rainfall_score: 40,
+      flood_score: 15,
+      flash_flood: { score: 34, level: "MODERATE" },
+      landslide: { score: 46, level: "MODERATE" },
+      heavy_rainfall: { score: 40, level: "MODERATE" },
+      flood: { score: 15, level: "LOW" },
       lead_time_minutes: 70,
-      contributing_factors: "High altitude slope seepage and mist condensation",
+      contributing_factors: [
+        "High altitude slope seepage and mist condensation",
+        "Moderate showers along mountain passes",
+        "Soil saturation at 51%"
+      ],
+      ai_explanation: "In Tawang, high altitude road corridors experience minor rockfall vulnerability during rains.",
       recommended_action: "Drive cautiously across mountain passes; watch for loose gravel."
     },
     environmental_data: {
@@ -589,6 +772,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 30,
     population: 15000,
     terrain_type: "Extreme Rainfall Plateau",
+    is_vulnerable: true,
     current_risk: {
       overall_score: 76,
       overall_level: "HIGH",
@@ -596,8 +780,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 72,
       landslide_score: 68,
       heavy_rainfall_score: 82,
+      flood_score: 55,
+      flash_flood: { score: 72, level: "HIGH" },
+      landslide: { score: 68, level: "HIGH" },
+      heavy_rainfall: { score: 82, level: "CRITICAL" },
+      flood: { score: 55, level: "HIGH" },
       lead_time_minutes: 30,
-      contributing_factors: "Convective rainfall surge over 80mm/h and gorge runoff",
+      contributing_factors: [
+        "Convective rainfall surge over 86mm/24h and gorge runoff",
+        "Soil saturation at 82%",
+        "Rapid stream velocity along deep Khasi ravines"
+      ],
+      ai_explanation: "In Cherrapunji, torrential orographic cloudburst leads to high cliff runoff and gorge flooding.",
       recommended_action: "Stay away from gorge cliff edges and flooded waterfall trails."
     },
     environmental_data: {
@@ -624,6 +818,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 28,
     population: 13500,
     terrain_type: "Ultra-High Precipitation Zone",
+    is_vulnerable: true,
     current_risk: {
       overall_score: 74,
       overall_level: "HIGH",
@@ -631,8 +826,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 70,
       landslide_score: 65,
       heavy_rainfall_score: 80,
+      flood_score: 52,
+      flash_flood: { score: 70, level: "HIGH" },
+      landslide: { score: 65, level: "HIGH" },
+      heavy_rainfall: { score: 80, level: "CRITICAL" },
+      flood: { score: 52, level: "HIGH" },
       lead_time_minutes: 35,
-      contributing_factors: "Heavy orographic precipitation and intense runoff",
+      contributing_factors: [
+        "Heavy orographic precipitation and intense runoff",
+        "Precipitation rate of 56mm/hr",
+        "Soil saturation at 80%"
+      ],
+      ai_explanation: "In Mawsynram, extreme precipitation rates create flash flood conditions across local drainage paths.",
       recommended_action: "Avoid travel during peak downpours; stay on concrete high ground."
     },
     environmental_data: {
@@ -661,6 +866,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 36,
     population: 19000,
     terrain_type: "Active Landslide Corridor",
+    is_vulnerable: true,
     current_risk: {
       overall_score: 70,
       overall_level: "HIGH",
@@ -668,8 +874,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 55,
       landslide_score: 78,
       heavy_rainfall_score: 62,
+      flood_score: 40,
+      flash_flood: { score: 55, level: "HIGH" },
+      landslide: { score: 78, level: "CRITICAL" },
+      heavy_rainfall: { score: 62, level: "HIGH" },
+      flood: { score: 40, level: "MODERATE" },
       lead_time_minutes: 30,
-      contributing_factors: "Shear stress on Panthyal shooting stone sector; road vulnerable",
+      contributing_factors: [
+        "Shear stress on Panthyal shooting stone sector; road vulnerable",
+        "Steep 36° slope gradient in Chenab gorge",
+        "Soil saturation at 77%"
+      ],
+      ai_explanation: "In Ramban along NH-44, heavy rainfall on steep mountain strata elevates rockfall and mudslide hazards.",
       recommended_action: "NH-44 vehicular travel halted near active slip zones; use designated shelter camps."
     },
     environmental_data: {
@@ -696,6 +912,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 12,
     population: 1180000,
     terrain_type: "Riverine Valley Basin",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 18,
       overall_level: "LOW",
@@ -703,8 +920,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 16,
       landslide_score: 12,
       heavy_rainfall_score: 20,
+      flood_score: 22,
+      flash_flood: { score: 16, level: "LOW" },
+      landslide: { score: 12, level: "LOW" },
+      heavy_rainfall: { score: 20, level: "LOW" },
+      flood: { score: 22, level: "LOW" },
       lead_time_minutes: 200,
-      contributing_factors: "Jhelum river gauge at Ram Munshi Bagh within normal flow range",
+      contributing_factors: [
+        "Jhelum river gauge at Ram Munshi Bagh within normal flow range",
+        "Light rainfall accumulation 6mm",
+        "River capacity safe at 25%"
+      ],
+      ai_explanation: "In Srinagar, Jhelum river hydrology is normal and well within safe flood bounds.",
       recommended_action: "All sectors normal. Routine water monitoring ongoing."
     },
     environmental_data: {
@@ -731,6 +958,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 24,
     population: 28000,
     terrain_type: "Mountain River Gorge",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 24,
       overall_level: "LOW",
@@ -738,8 +966,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 26,
       landslide_score: 22,
       heavy_rainfall_score: 20,
+      flood_score: 20,
+      flash_flood: { score: 26, level: "LOW" },
+      landslide: { score: 22, level: "LOW" },
+      heavy_rainfall: { score: 20, level: "LOW" },
+      flood: { score: 20, level: "LOW" },
       lead_time_minutes: 150,
-      contributing_factors: "Mountain river flow within nominal thresholds",
+      contributing_factors: [
+        "Mountain river flow within nominal thresholds",
+        "Light precipitation rate 1.8mm/hr",
+        "Stable hillside soil moisture"
+      ],
+      ai_explanation: "In Poonch, hydrological conditions remain stable with nominal river discharge.",
       recommended_action: "Normal conditions. Keep emergency contact 112 saved."
     },
     environmental_data: {
@@ -768,6 +1006,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 38,
     population: 45000,
     terrain_type: "High Geotechnical Slope Vulnerability",
+    is_vulnerable: true,
     current_risk: {
       overall_score: 92,
       overall_level: "CRITICAL",
@@ -775,8 +1014,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 84,
       landslide_score: 95,
       heavy_rainfall_score: 90,
+      flood_score: 65,
+      flash_flood: { score: 84, level: "CRITICAL" },
+      landslide: { score: 95, level: "CRITICAL" },
+      heavy_rainfall: { score: 90, level: "CRITICAL" },
+      flood: { score: 65, level: "HIGH" },
       lead_time_minutes: 15,
-      contributing_factors: "Severe soil saturation (92%), slope gradient 38°, extreme cloudburst",
+      contributing_factors: [
+        "Severe soil moisture saturation reaching 94% pore-water capacity",
+        "Steep 38° tea estate hill slope gradient",
+        "Torrential cloudburst precipitation rate of 96mm/hr"
+      ],
+      ai_explanation: "In Wayanad (Meppadi), extreme rainfall on steep saturated Western Ghat slopes creates imminent major debris flow risk.",
       recommended_action: "Immediate life-safety evacuation of Chooralmala & Mundakkai sectors to relief havens."
     },
     environmental_data: {
@@ -803,6 +1052,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 32,
     population: 52000,
     terrain_type: "Steep Hill Reservoir Basin",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 46,
       overall_level: "MODERATE",
@@ -810,8 +1060,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 42,
       landslide_score: 50,
       heavy_rainfall_score: 45,
+      flood_score: 35,
+      flash_flood: { score: 42, level: "MODERATE" },
+      landslide: { score: 50, level: "MODERATE" },
+      heavy_rainfall: { score: 45, level: "MODERATE" },
+      flood: { score: 35, level: "MODERATE" },
       lead_time_minutes: 60,
-      contributing_factors: "Moderate hill reservoir inflow and hillside rain runoff",
+      contributing_factors: [
+        "Moderate hill reservoir inflow and hillside rain runoff",
+        "Soil saturation at 57%",
+        "Moderate rainfall 41mm"
+      ],
+      ai_explanation: "In Idukki, reservoir water levels and hill slope saturation are in moderate watch phase.",
       recommended_action: "Avoid night driving in ghat sections; follow dam advisory."
     },
     environmental_data: {
@@ -838,6 +1098,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 35,
     population: 38000,
     terrain_type: "Tea Plantation Slopes",
+    is_vulnerable: true,
     current_risk: {
       overall_score: 80,
       overall_level: "CRITICAL",
@@ -845,8 +1106,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 72,
       landslide_score: 84,
       heavy_rainfall_score: 78,
+      flood_score: 45,
+      flash_flood: { score: 72, level: "HIGH" },
+      landslide: { score: 84, level: "CRITICAL" },
+      heavy_rainfall: { score: 78, level: "CRITICAL" },
+      flood: { score: 45, level: "MODERATE" },
       lead_time_minutes: 25,
-      contributing_factors: "Steep tea estate slopes saturated, potential mudslide runout",
+      contributing_factors: [
+        "Steep tea estate slopes saturated, potential mudslide runout",
+        "Cloudburst precipitation rate 85mm/hr",
+        "Soil saturation at 90%"
+      ],
+      ai_explanation: "In Munnar, heavy rainfall on high-gradient tea estates triggers critical slope failure warnings.",
       recommended_action: "Relocate from downhill settlement lines to concrete municipal shelters."
     },
     environmental_data: {
@@ -875,6 +1146,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 34,
     population: 120000,
     terrain_type: "Steep Hill Slopes",
+    is_vulnerable: true,
     current_risk: {
       overall_score: 68,
       overall_level: "HIGH",
@@ -882,8 +1154,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 58,
       landslide_score: 75,
       heavy_rainfall_score: 65,
+      flood_score: 40,
+      flash_flood: { score: 58, level: "HIGH" },
+      landslide: { score: 75, level: "HIGH" },
+      heavy_rainfall: { score: 65, level: "HIGH" },
+      flood: { score: 40, level: "MODERATE" },
       lead_time_minutes: 35,
-      contributing_factors: "Teesta gorge slope saturation and active rockfall warnings",
+      contributing_factors: [
+        "Teesta gorge slope saturation and active rockfall warnings",
+        "Soil saturation at 78%",
+        "Heavy rainfall 76mm on steep road bends"
+      ],
+      ai_explanation: "In Darjeeling - Kalimpong, high slope saturation increases risk of landslides along NH-10.",
       recommended_action: "Avoid travel along Teesta river roads and vulnerable hillside bends."
     },
     environmental_data: {
@@ -910,6 +1192,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 10,
     population: 107000,
     terrain_type: "Teesta Floodplain",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 38,
       overall_level: "MODERATE",
@@ -917,8 +1200,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 42,
       landslide_score: 18,
       heavy_rainfall_score: 40,
+      flood_score: 45,
+      flash_flood: { score: 42, level: "MODERATE" },
+      landslide: { score: 18, level: "LOW" },
+      heavy_rainfall: { score: 40, level: "MODERATE" },
+      flood: { score: 45, level: "MODERATE" },
       lead_time_minutes: 90,
-      contributing_factors: "Dooars river runoff and moderate floodplain water rise",
+      contributing_factors: [
+        "Dooars river runoff and moderate floodplain water rise",
+        "River capacity at 49%",
+        "Moderate showers 37mm"
+      ],
+      ai_explanation: "In Jalpaiguri, Teesta river downstream inundation is moderate with low embankment overflow risk.",
       recommended_action: "Keep cattle and grain on high flood platforms."
     },
     environmental_data: {
@@ -947,6 +1240,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 6,
     population: 65000,
     terrain_type: "Braided River Inundation Zone",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 44,
       overall_level: "MODERATE",
@@ -954,8 +1248,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 48,
       landslide_score: 10,
       heavy_rainfall_score: 45,
+      flood_score: 52,
+      flash_flood: { score: 48, level: "MODERATE" },
+      landslide: { score: 10, level: "LOW" },
+      heavy_rainfall: { score: 45, level: "MODERATE" },
+      flood: { score: 52, level: "HIGH" },
       lead_time_minutes: 80,
-      contributing_factors: "Kosi barrage water discharge increase",
+      contributing_factors: [
+        "Kosi barrage water discharge increase",
+        "River capacity reached 54%",
+        "Moderate rainfall 39mm"
+      ],
+      ai_explanation: "In Supaul, Kosi river water volume is rising steadily with moderate embankment stress.",
       recommended_action: "Stay alert along embankment sectors; know boat evacuation points."
     },
     environmental_data: {
@@ -982,6 +1286,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 5,
     population: 2040000,
     terrain_type: "Lowland Confluence",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 20,
       overall_level: "LOW",
@@ -989,8 +1294,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 22,
       landslide_score: 8,
       heavy_rainfall_score: 20,
+      flood_score: 24,
+      flash_flood: { score: 22, level: "LOW" },
+      landslide: { score: 8, level: "LOW" },
+      heavy_rainfall: { score: 20, level: "LOW" },
+      flood: { score: 24, level: "LOW" },
       lead_time_minutes: 240,
-      contributing_factors: "Ganga water levels comfortably below danger mark",
+      contributing_factors: [
+        "Ganga water levels comfortably below danger mark",
+        "Light precipitation 5mm",
+        "River capacity safe at 26%"
+      ],
+      ai_explanation: "In Patna, Ganga river levels remain well within normal capacity.",
       recommended_action: "Normal activities safe. River cruise operations normal."
     },
     environmental_data: {
@@ -1019,6 +1334,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 30,
     population: 21000,
     terrain_type: "Transboundary River Canyon",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 48,
       overall_level: "MODERATE",
@@ -1026,8 +1342,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 52,
       landslide_score: 44,
       heavy_rainfall_score: 46,
+      flood_score: 42,
+      flash_flood: { score: 52, level: "HIGH" },
+      landslide: { score: 44, level: "MODERATE" },
+      heavy_rainfall: { score: 46, level: "MODERATE" },
+      flood: { score: 42, level: "MODERATE" },
       lead_time_minutes: 50,
-      contributing_factors: "Mahakali river canyon swelling from upstream precipitation",
+      contributing_factors: [
+        "Mahakali river canyon swelling from upstream precipitation",
+        "Soil saturation at 59%",
+        "Moderate showers 43mm"
+      ],
+      ai_explanation: "In Darchula Border, transboundary Mahakali river swell creates moderate flood potential.",
       recommended_action: "Avoid suspension bridges and river ghats during high flow."
     },
     environmental_data: {
@@ -1054,6 +1380,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 32,
     population: 45000,
     terrain_type: "Debris Flow & Flash Flood Zone",
+    is_vulnerable: true,
     current_risk: {
       overall_score: 70,
       overall_level: "HIGH",
@@ -1061,8 +1388,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 75,
       landslide_score: 66,
       heavy_rainfall_score: 68,
+      flood_score: 58,
+      flash_flood: { score: 75, level: "HIGH" },
+      landslide: { score: 66, level: "HIGH" },
+      heavy_rainfall: { score: 68, level: "HIGH" },
+      flood: { score: 58, level: "HIGH" },
       lead_time_minutes: 35,
-      contributing_factors: "Upstream debris flow risk in steep mountain channel",
+      contributing_factors: [
+        "Upstream debris flow risk in steep mountain channel",
+        "Precipitation rate 53mm/hr",
+        "River capacity at 77%"
+      ],
+      ai_explanation: "In Melamchi, high rainfall on upstream sediment beds creates elevated debris surge risk.",
       recommended_action: "Evacuate lower bazaar settlements to higher ridge terraces."
     },
     environmental_data: {
@@ -1089,6 +1426,7 @@ export const FALLBACK_LOCATIONS = [
     slope: 18,
     population: 350000,
     terrain_type: "Gorge Catchment",
+    is_vulnerable: false,
     current_risk: {
       overall_score: 22,
       overall_level: "LOW",
@@ -1096,8 +1434,18 @@ export const FALLBACK_LOCATIONS = [
       flash_flood_score: 25,
       landslide_score: 18,
       heavy_rainfall_score: 20,
+      flood_score: 20,
+      flash_flood: { score: 25, level: "LOW" },
+      landslide: { score: 18, level: "LOW" },
+      heavy_rainfall: { score: 20, level: "LOW" },
+      flood: { score: 20, level: "LOW" },
       lead_time_minutes: 180,
-      contributing_factors: "Seti river canyon within nominal flow range",
+      contributing_factors: [
+        "Seti river canyon within nominal flow range",
+        "Light precipitation 6mm",
+        "Stable canyon rock walls"
+      ],
+      ai_explanation: "In Pokhara, Seti river gorge flow is normal and well below hazard thresholds.",
       recommended_action: "Normal activities safe. Regular river gorge monitoring active."
     },
     environmental_data: {

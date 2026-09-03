@@ -31,11 +31,16 @@ export default function RiskIntelligencePage() {
 
   const [activeTab, setActiveTab] = useState('gis'); // 'gis' or 'telemetry'
 
-  const factors = locationRisk?.contributing_factors || [
-    "High rainfall intensity detected in upper catchment",
-    "Saturated soil mantle with elevated pore-water pressure",
-    "Rapidly rising hydro-gauge river capacity"
-  ];
+  const rawFactors = locationRisk?.contributing_factors;
+  const factors = Array.isArray(rawFactors)
+    ? rawFactors
+    : typeof rawFactors === 'string'
+    ? rawFactors.split(',').map(s => s.trim()).filter(Boolean)
+    : [
+        "High rainfall intensity detected in upper catchment",
+        "Saturated soil mantle with elevated pore-water pressure",
+        "Rapidly rising hydro-gauge river capacity"
+      ];
 
   return (
     <div className="space-y-6 pb-12 font-mono">

@@ -5,9 +5,17 @@ import { Sparkles, BrainCircuit, CheckCircle2, ShieldAlert, Cpu } from 'lucide-r
 export default function AiExplanationPanel() {
   const { locationRisk, selectedLocation, environmentalData } = useApp();
 
-  if (!locationRisk) return null;
-
-  const factors = locationRisk.contributing_factors || [];
+  const activeRisk = locationRisk || selectedLocation?.current_risk;
+  const rawFactors = activeRisk?.contributing_factors || [];
+  const factors = Array.isArray(rawFactors)
+    ? rawFactors
+    : typeof rawFactors === 'string'
+    ? rawFactors.split(',').map(s => s.trim()).filter(Boolean)
+    : [
+        `Rainfall rate: ${environmentalData?.rainfall_rate || 5} mm/hr`,
+        `River channel load: ${environmentalData?.river_capacity_pct || 35}%`,
+        `Terrain slope: ${environmentalData?.slope_deg || 30}°`
+      ];
 
   return (
     <div className="bg-[#1E293B] rounded-xl border border-blue-500/30 overflow-hidden shadow-lg">

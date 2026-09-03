@@ -38,7 +38,12 @@ export default function LocationRiskPage() {
     );
   }
 
-  const factors = locationRisk.contributing_factors || [];
+  const rawFactors = locationRisk?.contributing_factors || [];
+  const factors = Array.isArray(rawFactors)
+    ? rawFactors
+    : typeof rawFactors === 'string'
+    ? rawFactors.split(',').map(s => s.trim()).filter(Boolean)
+    : [];
 
   const getLevelColor = (lvl) => {
     switch (lvl) {
