@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import RiskMap from '../../components/RiskMap';
+import RescueOperationsSummaryCard from '../../components/RescueOperationsSummaryCard';
+import SendRescueTeamModal from '../../components/SendRescueTeamModal';
+import { rescueService } from '../../services/rescueService';
 import { 
   ShieldAlert, 
   Send, 
@@ -43,6 +46,32 @@ export default function AuthorityDashboardPage() {
     pipelineData,
     environmentalData
   } = useApp();
+
+  const [rescueTeams, setRescueTeams] = useState(() => rescueService.loadTeams());
+  const [rescueMissions, setRescueMissions] = useState(() => rescueService.loadMissions());
+  const [isRescueDispatchOpen, setIsRescueDispatchOpen] = useState(false);
+
+  useEffect(() => {
+    const loadRescue = async () => {
+      const t = await rescueService.getRescueTeams();
+      const m = await rescueService.getRescueMissions();
+      setRescueTeams(t);
+      setRescueMissions(m);
+    };
+    loadRescue();
+  }, []);
+
+  const handleRescueDispatch = async (data) => {
+    await rescueService.dispatchRescueTeam(data);
+    setRescueTeams([...rescueService.teams]);
+    setRescueMissions([...rescueService.missions]);
+  };
+
+  const handleUpdateRescueTeamStatus = async (teamId, newStatus) => {
+    await rescueService.updateTeamStatus(teamId, newStatus);
+    setRescueTeams([...rescueService.teams]);
+    setRescueMissions([...rescueService.missions]);
+  };
 
   const [formData, setFormData] = useState({
     location_id: selectedLocationId || (locations[0]?.id || 1),
@@ -220,6 +249,15 @@ export default function AuthorityDashboardPage() {
           </button>
         </div>
       </div>
+
+      {/* RESCUE OPERATIONS & LIVE TEAM TRACKING WORKSPACE CARD */}
+      <RescueOperationsSummaryCard
+        teams={rescueTeams}
+        missions={rescueMissions}
+        onOpenDispatchModal={() => setIsRescueDispatchOpen(true)}
+        onNavigateRescueOps={() => setActivePage('rescue-operations')}
+        onUpdateTeamStatus={handleUpdateRescueTeamStatus}
+      />
 
       {/* ========================================================================= */}
       {/* 3. PRIORITY INCIDENTS TABLE (Government-Style Operational Grid)            */}
@@ -616,6 +654,15 @@ export default function AuthorityDashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Send Rescue Team Dispatch Modal */}
+      <SendRescueTeamModal
+        isOpen={isRescueDispatchOpen}
+        onClose={() => setIsRescueDispatchOpen(false)}
+        teams={rescueTeams}
+        locations={locations}
+        onDispatch={handleRescueDispatch}
+      />
     </div>
   );
 }

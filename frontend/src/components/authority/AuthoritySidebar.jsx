@@ -16,6 +16,7 @@ import {
   Clock,
   Building2,
   Sparkles,
+  Truck,
   X
 } from 'lucide-react';
 
@@ -34,6 +35,7 @@ export default function AuthoritySidebar() {
 
   const navItems = [
     { id: 'authority', label: 'Command Dashboard', icon: LayoutDashboard },
+    { id: 'rescue-operations', label: 'Rescue Operations', icon: Truck },
     { id: 'ai-map-studio', label: 'AI Map Studio', icon: Sparkles },
     { id: 'risk-intelligence', label: 'Risk Intelligence Map', icon: Map },
     { id: 'alerts', label: 'Alerts & Warnings', icon: BellRing, badge: activeAlertsCount },

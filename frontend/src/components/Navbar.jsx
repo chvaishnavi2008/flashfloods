@@ -22,7 +22,8 @@ import {
   Settings,
   Zap,
   LayoutDashboard,
-  Users
+  Users,
+  Truck
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -63,6 +64,7 @@ export default function Navbar() {
 
   const authorityNavItems = [
     { id: 'authority', label: 'Command Dashboard', icon: LayoutDashboard },
+    { id: 'rescue-operations', label: 'Rescue Operations', icon: Truck, highlightRed: true },
     { id: 'ai-map-studio', label: 'AI Map Studio', icon: Sparkles },
     { id: 'risk-intelligence', label: 'Risk Intelligence Map', icon: Map },
     { id: 'alerts', label: 'Alerts & Warnings', icon: BellRing, badge: activeAlertsCount },

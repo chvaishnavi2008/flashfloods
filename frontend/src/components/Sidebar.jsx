@@ -16,7 +16,8 @@ import {
   Brain, 
   Zap, 
   Settings,
-  Sparkles 
+  Sparkles,
+  Truck 
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -84,6 +85,12 @@ export default function Sidebar() {
       id: 'authority', 
       label: 'Command Dashboard', 
       icon: LayoutDashboard 
+    },
+    { 
+      id: 'rescue-operations', 
+      label: 'Rescue Operations', 
+      icon: Truck,
+      highlightRed: true 
     },
     { 
       id: 'ai-map-studio', 

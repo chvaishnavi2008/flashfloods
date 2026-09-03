@@ -16,7 +16,7 @@ import AuthorityHeader from './components/authority/AuthorityHeader';
 import AuthoritySidebar from './components/authority/AuthoritySidebar';
 import AuthorityDashboardPage from './pages/authority/AuthorityDashboardPage';
 
-// Shared Technical Intelligence Workspaces (For Authority & Deep Inspection)
+import RescueOperationsPage from './pages/RescueOperationsPage';
 import RiskIntelligencePage from './pages/RiskIntelligencePage';
 import AlertsPage from './pages/AlertsPage';
 import ImpactAssessmentPage from './pages/ImpactAssessmentPage';
@@ -71,6 +71,8 @@ export default function App() {
 
     // 2. Authority SEOC Command Experience (Dedicated Government Command Dashboard)
     switch (activePage) {
+      case 'rescue-operations':
+        return <RescueOperationsPage />;
       case 'ai-map-studio':
         return <AiMapStudioPage />;
       case 'risk-intelligence':

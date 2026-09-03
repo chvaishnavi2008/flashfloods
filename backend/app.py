@@ -14,6 +14,7 @@ from routes.safe_locations import safe_locations_bp
 from routes.simulate import simulate_bp
 from routes.notifications import notifications_bp
 from routes.environmental import environmental_bp
+from routes.rescue_teams import rescue_teams_bp
 
 def create_app(config_class=Config):
     dist_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend', 'dist'))
@@ -37,6 +38,7 @@ def create_app(config_class=Config):
     app.register_blueprint(simulate_bp)
     app.register_blueprint(notifications_bp)
     app.register_blueprint(environmental_bp)
+    app.register_blueprint(rescue_teams_bp)
     
     @app.route('/health')
     def health():
