@@ -173,22 +173,6 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Live System Status Tag (Desktop) */}
-          <div className="hidden xl:flex items-center gap-2 px-3 py-1 bg-[#0B2233] border border-[#294657] rounded text-xs font-mono">
-            <div
-              className={`w-2.5 h-2.5 rounded-full ${
-                isCritical
-                  ? 'bg-[#C62828]'
-                  : isHigh
-                  ? 'bg-[#E87516]'
-                  : 'bg-[#16855B]'
-              }`}
-            />
-            <span className="text-[#D7E0E7]">
-              {systemRisk?.system_status || 'SYS.ONLINE'}
-            </span>
-          </div>
-
           {/* Demo Simulated Data Badge (Desktop) */}
           <span className="hidden lg:flex px-2.5 py-1 rounded bg-[#D99A00]/20 border border-[#D99A00]/40 text-[#D99A00] font-mono text-[10px] font-bold items-center gap-1.5 whitespace-nowrap">
             <span className="w-1.5 h-1.5 rounded-full bg-[#D99A00]"></span>
