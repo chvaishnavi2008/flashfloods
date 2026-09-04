@@ -26,6 +26,7 @@ import LocationRiskPage from './pages/LocationRiskPage';
 import SimulationStudioPage from './pages/SimulationStudioPage';
 import SettingsPage from './pages/SettingsPage';
 import AiMapStudioPage from './pages/AiMapStudioPage';
+import LastMileAlertDemoPage from './pages/LastMileAlertDemoPage';
 
 // Modals
 import NotificationModal from './components/NotificationModal';
@@ -73,6 +74,8 @@ export default function App() {
     switch (activePage) {
       case 'rescue-operations':
         return <RescueOperationsPage />;
+      case 'last-mile-alert':
+        return <LastMileAlertDemoPage />;
       case 'ai-map-studio':
         return <AiMapStudioPage />;
       case 'risk-intelligence':

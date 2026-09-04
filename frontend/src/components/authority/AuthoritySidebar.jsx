@@ -34,6 +34,7 @@ export default function AuthoritySidebar() {
   const navItems = [
     { id: 'authority', label: 'Command Dashboard', icon: LayoutDashboard },
     { id: 'rescue-operations', label: 'Rescue Operations', icon: Truck },
+    { id: 'last-mile-alert', label: 'Last-Mile Alert Demo', icon: Radio, badge: 'SMS Demo' },
     { id: 'ai-map-studio', label: 'AI Map Studio', icon: Sparkles },
     { id: 'risk-intelligence', label: 'Risk Intelligence Map', icon: Map },
     { id: 'impact-assessment', label: 'Impact Assessment', icon: Users },

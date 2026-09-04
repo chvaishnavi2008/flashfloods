@@ -24,7 +24,8 @@ import {
   Zap,
   LayoutDashboard,
   Users,
-  Truck
+  Truck,
+  Radio
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -66,6 +67,7 @@ export default function Navbar() {
   const authorityNavItems = [
     { id: 'authority', label: 'Command Dashboard', icon: LayoutDashboard },
     { id: 'rescue-operations', label: 'Rescue Operations', icon: Truck, highlightRed: true },
+    { id: 'last-mile-alert', label: 'Last-Mile Alert Demo', icon: Radio },
     { id: 'ai-map-studio', label: 'AI Map Studio', icon: Sparkles },
     { id: 'risk-intelligence', label: 'Risk Intelligence Map', icon: Map },
     { id: 'impact-assessment', label: 'Impact Assessment', icon: Users },
