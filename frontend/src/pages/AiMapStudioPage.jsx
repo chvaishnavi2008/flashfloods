@@ -73,31 +73,25 @@ function MapViewController({ center, zoom }) {
   return null;
 }
 
-// Basemap Providers (100% Free, Keyless, Zero Watermarks)
+// Basemap Providers (100% Free, Keyless, OpenStreetMap Standard GIS)
 const BASEMAP_PROVIDERS = {
-  dark: {
-    name: 'Tactical Dark',
-    icon: '🌒',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-    attribution: 'Tiles &copy; Esri, HERE, Garmin, OpenStreetMap contributors'
-  },
-  satellite: {
-    name: 'Satellite World',
-    icon: '🛰️',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    attribution: 'Tiles &copy; Esri, DigitalGlobe, GeoEye'
-  },
-  terrain: {
-    name: 'Topo Mountain',
-    icon: '🏔️',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-    attribution: 'Tiles &copy; Esri, DeLorme, NAVTEQ'
-  },
-  streets: {
-    name: 'Civil Streets',
+  osm: {
+    name: 'OpenStreetMap',
     icon: '🗺️',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
-    attribution: 'Tiles &copy; Esri, HERE, Garmin, OpenStreetMap contributors'
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  },
+  osm_hot: {
+    name: 'Humanitarian OSM',
+    icon: '🧭',
+    url: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+    attribution: '&copy; OpenStreetMap contributors, Humanitarian style'
+  },
+  osm_topo: {
+    name: 'OpenTopoMap',
+    icon: '🏔️',
+    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; OpenStreetMap contributors, OpenTopoMap'
   }
 };
 
@@ -190,7 +184,7 @@ export default function AiMapStudioPage() {
   // Active Map View & Inspector State
   const [mapCenter, setMapCenter] = useState([30.4137, 79.3242]); // Default: Chamoli
   const [mapZoom, setMapZoom] = useState(10);
-  const [activeBasemap, setActiveBasemap] = useState('dark');
+  const [activeBasemap, setActiveBasemap] = useState('osm');
   const [inspectedPoint, setInspectedPoint] = useState({
     lat: 30.4137,
     lng: 79.3242,
@@ -472,7 +466,7 @@ export default function AiMapStudioPage() {
               zoom={mapZoom}
               scrollWheelZoom={true}
               className="w-full h-full"
-              style={{ background: '#0B1120' }}
+              style={{ background: '#E8F2F8' }}
             >
               <MapViewController center={mapCenter} zoom={mapZoom} />
               <MapClickHandler onMapClick={(lat, lng) => analyzeCoordinate(lat, lng)} />

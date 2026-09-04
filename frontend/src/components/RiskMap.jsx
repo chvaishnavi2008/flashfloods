@@ -69,31 +69,25 @@ function MapController({ center, zoom, bounds }) {
   return null;
 }
 
-// Available High-Definition Keyless Basemap Providers (100% Free, Zero Watermark, No API Key Required)
+// Available High-Definition OpenStreetMap GIS Basemap Providers (100% Free, Keyless, OpenStreetMap Standard)
 const BASEMAP_PROVIDERS = {
-  dark: {
-    name: 'Tactical Dark',
-    icon: '🌒',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-    attribution: 'Tiles &copy; Esri, HERE, Garmin, OpenStreetMap contributors'
-  },
-  satellite: {
-    name: 'Satellite',
-    icon: '🛰️',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    attribution: 'Tiles &copy; Esri, DigitalGlobe, GeoEye, Earthstar Geographics'
-  },
-  terrain: {
-    name: 'Topo Mountain',
-    icon: '🏔️',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-    attribution: 'Tiles &copy; Esri, DeLorme, NAVTEQ, TomTom, Intermap'
-  },
-  streets: {
-    name: 'Civil Streets',
+  osm: {
+    name: 'OpenStreetMap',
     icon: '🗺️',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
-    attribution: 'Tiles &copy; Esri, HERE, Garmin, OpenStreetMap contributors'
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  },
+  osm_hot: {
+    name: 'Humanitarian OSM',
+    icon: '🧭',
+    url: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+    attribution: '&copy; OpenStreetMap contributors, Humanitarian style'
+  },
+  osm_topo: {
+    name: 'OpenTopoMap',
+    icon: '🏔️',
+    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; OpenStreetMap contributors, OpenTopoMap'
   }
 };
 
@@ -230,7 +224,7 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
     submitSosRequest
   } = useApp();
 
-  const [basemap, setBasemap] = useState('dark');
+  const [basemap, setBasemap] = useState('osm');
   const [zoomLevel, setZoomLevel] = useState(11);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showRadarSweep, setShowRadarSweep] = useState(true);
@@ -405,54 +399,48 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
     const isEmergency = team.status === 'EMERGENCY';
     const isOnSite = team.status === 'ON SITE';
 
-    let color = '#3B82F6';
-    if (isEmergency) color = '#EF4444';
-    else if (isOnSite) color = '#10B981';
-    else if (isEnRoute) color = '#F59E0B';
+    let color = '#2563EB'; // Vibrant OSM Blue
+    let icon = '🚚';
+    if (isEmergency) {
+      color = '#DC2626';
+      icon = '🚨';
+    } else if (isOnSite) {
+      color = '#10B981';
+      icon = '✅';
+    }
+
+    const teamLabel = team.team_id || team.name?.split(' ')[0] || 'RESCUE';
 
     return new L.DivIcon({
       className: 'custom-riskmap-team-marker',
       html: `
-        <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer;">
+        <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer; transform: translate(-50%, -50%);">
           ${(isEnRoute || isEmergency) ? `
-            <div style="position: absolute; width: 38px; height: 38px; border-radius: 50%; background: ${color}40; ${isEmergency ? 'animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;' : 'animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;'}"></div>
+            <div style="position: absolute; width: 44px; height: 44px; border-radius: 9999px; background: ${color}40; ${isEmergency ? 'animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;' : 'animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;'}"></div>
           ` : ''}
           <div style="
-            background: ${color}; 
-            color: white; 
-            width: 32px; 
-            height: 32px; 
-            border-radius: 10px; 
             display: flex; 
             align-items: center; 
-            justify-content: center; 
+            gap: 5px; 
+            background: ${color}; 
+            color: white; 
+            padding: 4px 10px; 
+            border-radius: 9999px; 
             border: 2px solid #FFFFFF; 
-            box-shadow: 0 4px 14px ${color}99, 0 0 0 2px rgba(11,17,32,0.8);
-            font-size: 14px;
-            font-weight: bold;
-          ">
-            🚑
-          </div>
-          <div style="
-            margin-top: 2px;
-            background: rgba(11, 17, 32, 0.95);
-            border: 1px solid ${color};
-            color: #FFFFFF;
-            font-size: 9px;
-            font-family: monospace;
-            font-weight: 800;
-            padding: 1px 5px;
-            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.35); 
+            font-size: 11px; 
+            font-weight: 800; 
             white-space: nowrap;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+            font-family: 'Inter', system-ui, sans-serif;
           ">
-            ${team.team_id || team.name?.split(' ')[0]} ${isEnRoute ? '• 🚚' : ''}
+            <span>${icon}</span>
+            <span>${teamLabel}</span>
           </div>
         </div>
       `,
-      iconSize: [38, 48],
-      iconAnchor: [19, 19],
-      popupAnchor: [0, -19]
+      iconSize: [80, 30],
+      iconAnchor: [40, 15],
+      popupAnchor: [0, -15]
     });
   };
 
@@ -479,39 +467,41 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
 
     const hazardType = loc.current_risk?.dominant_hazard || (loc.lat > 30 ? 'flash_flood' : 'landslide');
     const symbol = getHazardSymbol(hazardType);
+    const bgBadge = isCritical ? '#EA580C' : (isHigh ? '#F97316' : '#2563EB');
 
     return new L.DivIcon({
       className: `custom-hazard-node ${isCritical ? 'critical-active' : ''}`,
       html: `
-        <div style="position: relative; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+        <div style="position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; transform: translate(-50%, -50%);">
           ${isCritical ? `
-            <div class="critical-ping-ring" style="position: absolute; width: 42px; height: 42px; border-radius: 50%; border: 2px solid ${color}; background: ${color}20;"></div>
-            <div class="pulse-marker-ring" style="position: absolute; width: 34px; height: 34px; border-radius: 50%; border: 2px solid ${color};"></div>
+            <div class="critical-ping-ring" style="position: absolute; width: 44px; height: 44px; border-radius: 50%; border: 2px solid #EF4444; background: rgba(239, 68, 68, 0.25);"></div>
+            <div class="pulse-marker-ring" style="position: absolute; width: 36px; height: 36px; border-radius: 50%; border: 2px solid #EF4444;"></div>
           ` : ''}
           ${isHigh ? `
-            <div class="pulse-marker-ring" style="position: absolute; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid ${color};"></div>
+            <div class="pulse-marker-ring" style="position: absolute; width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid #F97316; background: rgba(249, 115, 22, 0.2);"></div>
           ` : ''}
           <div style="
-            width: ${isSelected ? '28px' : '24px'}; 
-            height: ${isSelected ? '28px' : '24px'}; 
+            width: ${isSelected ? '30px' : '26px'}; 
+            height: ${isSelected ? '30px' : '26px'}; 
             border-radius: 50%; 
-            background: radial-gradient(circle, ${color} 40%, #0F172A 100%); 
-            border: 2px solid ${isSelected ? '#FFFFFF' : color}; 
-            box-shadow: 0 0 14px ${color}, 0 4px 8px rgba(0,0,0,0.8);
+            background: ${bgBadge}; 
+            border: 2px solid #FFFFFF; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.35);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 13px;
             color: #FFFFFF;
+            font-weight: bold;
             transform: ${isSelected ? 'scale(1.15)' : 'scale(1)'};
             transition: all 0.2s ease;
           ">
-            ${symbol}
+            ${isCritical || isHigh ? '⚠️' : symbol}
           </div>
         </div>
       `,
-      iconSize: [42, 42],
-      iconAnchor: [21, 21]
+      iconSize: [44, 44],
+      iconAnchor: [22, 22]
     });
   };
 
@@ -656,7 +646,7 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
   return (
     <div 
       ref={containerRef}
-      className={`relative w-full rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl flex flex-col bg-[#070D18] transition-all duration-300 ${
+      className={`relative w-full rounded-2xl overflow-hidden border border-slate-300 shadow-2xl flex flex-col bg-[#E8F2F8] transition-all duration-300 ${
         isFullscreen ? 'fixed inset-0 z-[9999] rounded-none h-screen w-screen' : ''
       } ${className}`}
       style={{ height: isFullscreen ? '100vh' : height }}
@@ -664,8 +654,15 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
       {/* ========================================================================= */}
       {/* 1. TOP FLOATING COMMAND CONTROL BAR */}
       <div className="absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 z-[400] flex flex-col xl:flex-row xl:items-center justify-between gap-2 pointer-events-none">
-        {/* Left / Row 1: Hazard Layer Filters */}
-        <div className="bg-slate-950/95 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 flex items-center gap-1 shadow-2xl pointer-events-auto overflow-x-auto whitespace-nowrap scrollbar-none max-w-full">
+        {/* Left / Row 1: GIS Title Badge & Hazard Layer Filters */}
+        <div className="flex flex-wrap items-center gap-2 pointer-events-auto">
+          <div className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-300 shadow-lg flex items-center gap-2 shrink-0 font-sans text-xs">
+            <span className="font-bold text-slate-800">Live Logistics GIS (NER)</span>
+            <span className="text-slate-300">|</span>
+            <span className="text-[11px] text-slate-600 font-semibold font-mono">Leaflet + OpenStreetMap</span>
+          </div>
+
+          <div className="bg-slate-950/95 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 flex items-center gap-1 shadow-2xl overflow-x-auto whitespace-nowrap scrollbar-none max-w-full">
           {[
             { id: 'all', label: 'All Hazards', icon: Flame },
             { id: 'flood', label: '🌊 Flash Flood', icon: Droplets },
@@ -689,6 +686,7 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
               </button>
             );
           })}
+          </div>
         </div>
 
         {/* Right / Row 2: Quick Sector Jump, Basemap Selector, Fullscreen & Tactical Tools */}
@@ -958,7 +956,7 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
           center={[centerLat, centerLng]}
           zoom={zoomLevel}
           scrollWheelZoom={true}
-          style={{ height: '100%', width: '100%', backgroundColor: '#070D18' }}
+          style={{ height: '100%', width: '100%', backgroundColor: '#E8F2F8' }}
         >
           <MapController center={[centerLat, centerLng]} zoom={zoomLevel} bounds={mapBounds} />
 
@@ -1241,9 +1239,9 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
               <Polyline
                 positions={routeCoords}
                 pathOptions={{
-                  color: '#0284C7',
+                  color: '#065F46',
                   weight: 8,
-                  opacity: 0.4
+                  opacity: 0.35
                 }}
               />
               {/* Primary Animated Dashed Path */}
@@ -1251,14 +1249,14 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
                 className="leaflet-animated-route"
                 positions={routeCoords}
                 pathOptions={{
-                  color: '#38BDF8',
-                  weight: 4,
+                  color: '#10B981',
+                  weight: 5,
                   opacity: 1
                 }}
               >
                 <Tooltip direction="top" offset={[0, -10]} opacity={0.95}>
                   <div className="font-mono text-xs text-center">
-                    <strong className="text-cyan-300 block">⚡ HIGH-GROUND SAFE CORRIDOR</strong>
+                    <strong className="text-emerald-300 block">⚡ HIGH-GROUND SAFE CORRIDOR</strong>
                     <span>Distance: {targetShelter?.distance_km || 1.4} km (~{targetShelter?.est_walking_mins || 18} mins)</span>
                   </div>
                 </Tooltip>

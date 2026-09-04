@@ -3,8 +3,8 @@
  * Supports both real backend API calls and self-healing local reactive simulation store for prototype/demo.
  */
 
-const STORAGE_KEY = 'pralaywatch_rescue_teams_v2';
-const STORAGE_MISSIONS_KEY = 'pralaywatch_rescue_missions_v2';
+const STORAGE_KEY = 'pralaywatch_rescue_teams_v3';
+const STORAGE_MISSIONS_KEY = 'pralaywatch_rescue_missions_v3';
 
 export const INITIAL_RESCUE_TEAMS = [
   {
@@ -170,6 +170,93 @@ export const INITIAL_RESCUE_TEAMS = [
     last_updated: "10 mins ago",
     waypoints: [],
     current_waypoint_idx: 0
+  },
+  {
+    id: "FCI-14",
+    team_id: "FCI-14",
+    name: "FCI Food Logistics Convoy 14",
+    team_type: "Emergency Food & Grain Supplies",
+    members_count: 8,
+    contact_phone: "+91 94120-11014",
+    status: "EN ROUTE",
+    base_station: "Guwahati Regional Depot",
+    latitude: 30.3950,
+    longitude: 79.2950,
+    assigned_location_id: 1,
+    destination_name: "Chamoli Relief Distribution Point",
+    mission_id: "MSN-2026-014",
+    mission_type: "Food Supply Logistics",
+    priority: "HIGH",
+    eta_minutes: 15,
+    distance_km: 6.2,
+    notes: "Carrying 1,200 dry ration packs and high-calorie emergency biscuits.",
+    is_simulated: true,
+    last_updated: "Just now",
+    waypoints: [
+      [30.3600, 79.2400],
+      [30.3800, 79.2700],
+      [30.3950, 79.2950],
+      [30.4124, 79.3198]
+    ],
+    current_waypoint_idx: 2
+  },
+  {
+    id: "POL-09",
+    team_id: "POL-09",
+    name: "Police & SDRF Corridor Escort 09",
+    team_type: "Tactical Road & Highway Escort",
+    members_count: 10,
+    contact_phone: "+91 94120-11009",
+    status: "EN ROUTE",
+    base_station: "Karanprayag Police Outpost",
+    latitude: 30.3700,
+    longitude: 79.2600,
+    assigned_location_id: 1,
+    destination_name: "Alaknanda Flashpoint Checkpoint",
+    mission_id: "MSN-2026-009",
+    mission_type: "Route Clearance & Security",
+    priority: "HIGH",
+    eta_minutes: 22,
+    distance_km: 11.4,
+    notes: "Escorting fuel tankers and clearing single-lane mountain bottlenecks.",
+    is_simulated: true,
+    last_updated: "1 min ago",
+    waypoints: [
+      [30.3300, 79.2100],
+      [30.3500, 79.2350],
+      [30.3700, 79.2600],
+      [30.4000, 79.3000]
+    ],
+    current_waypoint_idx: 2
+  },
+  {
+    id: "MED-02",
+    team_id: "MED-02",
+    name: "Medical Trauma Mobile Unit 02",
+    team_type: "Mobile Paramedic & Trauma Unit",
+    members_count: 6,
+    contact_phone: "+91 94120-11002",
+    status: "EN ROUTE",
+    base_station: "Gopeshwar District Hospital",
+    latitude: 30.4200,
+    longitude: 79.3300,
+    assigned_location_id: 1,
+    destination_name: "Chamoli District Relief Center",
+    mission_id: "MSN-2026-002",
+    mission_type: "Emergency Medical Relief",
+    priority: "CRITICAL",
+    eta_minutes: 8,
+    distance_km: 2.8,
+    notes: "Equipped with blood plasma cold storage and 2 mobile ventilators.",
+    is_simulated: true,
+    last_updated: "30 sec ago",
+    waypoints: [
+      [30.4350, 79.3450],
+      [30.4280, 79.3380],
+      [30.4200, 79.3300],
+      [30.4124, 79.3198]
+    ],
+    current_waypoint_idx: 2
   }
 ];
 

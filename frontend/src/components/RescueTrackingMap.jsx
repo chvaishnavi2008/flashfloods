@@ -67,36 +67,42 @@ const createTeamIcon = (team, isSelected) => {
   const isEnRoute = team.status === 'EN ROUTE';
   const isOnSite = team.status === 'ON SITE';
   const isEmergency = team.status === 'EMERGENCY';
-  const isAssigned = team.status === 'ASSIGNED';
 
-  let colorClass = 'bg-[#1769AA] border-[#1769AA] text-white';
-  let pulseClass = '';
-  let badgeText = 'TEAM';
+  let bg = '#2563EB'; // Vibrant OSM Blue
+  let icon = '🚚';
 
   if (isEmergency) {
-    colorClass = 'bg-[#C62828] border-[#C62828] text-white';
-    pulseClass = 'animate-ping';
-    badgeText = 'SOS';
+    bg = '#DC2626';
+    icon = '🚨';
   } else if (isOnSite) {
-    colorClass = 'bg-[#16855B] border-[#16855B] text-white';
-    badgeText = 'ON SITE';
-  } else if (isEnRoute) {
-    colorClass = 'bg-[#D99A00] border-[#D99A00] text-white';
-    pulseClass = 'animate-pulse';
-    badgeText = 'EN ROUTE';
-  } else if (isAssigned) {
-    colorClass = 'bg-[#123047] border-[#1769AA] text-white';
-    badgeText = 'ASSIGNED';
+    bg = '#10B981';
+    icon = '✅';
   }
 
+  const teamLabel = team.team_id || team.name?.split(' ')[0] || 'TEAM';
+
   const html = `
-    <div class="relative flex items-center justify-center cursor-pointer transform -translate-x-1/2 -translate-y-1/2 ${isSelected ? 'scale-125 z-50' : 'hover:scale-110'} transition-transform">
-      ${(isEnRoute || isEmergency) ? `<div class="absolute w-10 h-10 rounded-full ${isEmergency ? 'bg-rose-500/40' : 'bg-amber-500/40'} ${pulseClass}"></div>` : ''}
-      <div class="w-9 h-9 rounded-xl ${colorClass} border-2 shadow-xl flex items-center justify-center text-sm font-black ring-2 ring-[#0B1120]">
-        🚑
-      </div>
-      <div class="absolute -bottom-5 px-1.5 py-0.2 bg-slate-950/90 text-[9px] font-mono font-bold text-white border border-slate-700 rounded shadow whitespace-nowrap">
-        ${team.team_id || team.name.split(' ')[0]}
+    <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer; transform: translate(-50%, -50%) ${isSelected ? 'scale(1.2)' : ''};">
+      ${(isEnRoute || isEmergency) ? `
+        <div style="position: absolute; width: 44px; height: 44px; border-radius: 9999px; background: ${bg}40; ${isEmergency ? 'animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;' : 'animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;'}"></div>
+      ` : ''}
+      <div style="
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: ${bg};
+        color: white;
+        padding: 4px 10px;
+        border-radius: 9999px;
+        border: 2px solid #FFFFFF;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+        font-family: 'Inter', system-ui, sans-serif;
+      ">
+        <span>${icon}</span>
+        <span>${teamLabel}</span>
       </div>
     </div>
   `;
@@ -104,9 +110,9 @@ const createTeamIcon = (team, isSelected) => {
   return L.divIcon({
     className: 'custom-rescue-team-icon',
     html: html,
-    iconSize: [36, 36],
-    iconAnchor: [18, 18],
-    popupAnchor: [0, -20]
+    iconSize: [80, 30],
+    iconAnchor: [40, 15],
+    popupAnchor: [0, -15]
   });
 };
 
@@ -150,25 +156,63 @@ const createSosMarkerIcon = (sos) => {
   });
 };
 
-// 100% Free, Keyless, High-Definition Tactical Basemap Providers (Zero Watermark)
+// Incident Sector Hazard Warning Badge Icon
+const createIncidentWarningIcon = (loc, isCritical, isHigh) => {
+  const bg = isCritical ? '#EA580C' : (isHigh ? '#F97316' : '#2563EB');
+  return L.divIcon({
+    className: 'custom-incident-warning-icon',
+    html: `
+      <div style="position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; transform: translate(-50%, -50%);">
+        ${isCritical ? `
+          <div style="position: absolute; width: 44px; height: 44px; border-radius: 50%; border: 2px solid #EF4444; background: rgba(239, 68, 68, 0.25); animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+          <div style="position: absolute; width: 36px; height: 36px; border-radius: 50%; border: 2px solid #EF4444;"></div>
+        ` : ''}
+        ${isHigh ? `
+          <div style="position: absolute; width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid #F97316; background: rgba(249, 115, 22, 0.2);"></div>
+        ` : ''}
+        <div style="
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: ${bg};
+          border: 2px solid #FFFFFF;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 13px;
+          color: #FFFFFF;
+          font-weight: bold;
+        ">
+          ⚠️
+        </div>
+      </div>
+    `,
+    iconSize: [44, 44],
+    iconAnchor: [22, 22],
+    popupAnchor: [0, -20]
+  });
+};
+
+// 100% Free, Keyless, OpenStreetMap Standard GIS Basemap Providers
 const BASEMAPS = {
-  dark: {
-    name: 'Tactical Dark',
-    icon: '🌒',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-    attribution: '&copy; Esri, HERE, Garmin, OpenStreetMap contributors'
+  osm: {
+    name: 'OpenStreetMap',
+    icon: '🗺️',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   },
-  satellite: {
-    name: 'Satellite',
-    icon: '🛰️',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    attribution: '&copy; Esri, DigitalGlobe, GeoEye'
+  osm_hot: {
+    name: 'Humanitarian OSM',
+    icon: '🧭',
+    url: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+    attribution: '&copy; OpenStreetMap contributors, Humanitarian style'
   },
-  topo: {
-    name: 'Mountain Topo',
+  osm_topo: {
+    name: 'OpenTopoMap',
     icon: '🏔️',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-    attribution: '&copy; Esri, USGS, NOAA'
+    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; OpenStreetMap contributors, OpenTopoMap'
   }
 };
 
@@ -187,7 +231,7 @@ export default function RescueTrackingMap({
   const [mapCenter, setMapCenter] = useState([30.4124, 79.3198]);
   const [mapZoom, setMapZoom] = useState(9);
   const [selectedIncident, setSelectedIncident] = useState(null);
-  const [activeBasemap, setActiveBasemap] = useState('dark');
+  const [activeBasemap, setActiveBasemap] = useState('osm');
 
   // Focus on selected team if provided (smoothly framing route & destination)
   useEffect(() => {
@@ -222,25 +266,24 @@ export default function RescueTrackingMap({
   };
 
   return (
-    <div className={`relative bg-[#0B1120] border border-slate-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col ${className}`}>
+    <div className={`relative bg-[#E8F2F8] border border-slate-300 rounded-2xl overflow-hidden shadow-2xl flex flex-col ${className}`}>
       {/* Top Tactical Map Floating Header */}
       <div className="absolute top-3 left-3 right-3 z-[400] flex flex-wrap items-center justify-between gap-2 pointer-events-none">
-        {/* Left: Map Title & Disclaimer */}
-        <div className="bg-[#0B1120]/95 backdrop-blur-md px-3.5 py-2 rounded-xl border border-slate-700/80 shadow-lg flex items-center gap-2 pointer-events-auto">
-          <div className="p-1 bg-rose-500/20 text-rose-400 rounded-lg border border-rose-500/30">
-            <Radio className="w-4 h-4 animate-pulse" />
+        {/* Left: Map Title & OpenStreetMap GIS Badge */}
+        <div className="flex flex-wrap items-center gap-2 pointer-events-auto">
+          <div className="bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-xl border border-slate-300 shadow-lg flex items-center gap-2">
+            <span className="font-bold text-slate-800 text-xs font-sans">Live Logistics GIS (NER)</span>
+            <span className="text-slate-300">|</span>
+            <span className="text-[11px] text-slate-600 font-semibold font-mono">Leaflet + OpenStreetMap</span>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold font-mono text-white uppercase tracking-wider">
-                LIVE RESCUE TELEMETRY TRACKER
-              </span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                DEMO — SIMULATED GPS
-              </span>
-            </div>
-            <span className="text-[10px] font-mono text-slate-400 block">
-              Real-time multi-agent disaster response coordinates
+
+          <div className="bg-[#0B1120]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-700/80 shadow-lg flex items-center gap-2">
+            <Radio className="w-3.5 h-3.5 text-rose-400 animate-pulse" />
+            <span className="text-xs font-bold font-mono text-white uppercase tracking-wider">
+              RESCUE FORCES
+            </span>
+            <span className="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+              SIMULATED GPS
             </span>
           </div>
         </div>
@@ -248,7 +291,7 @@ export default function RescueTrackingMap({
         {/* Right: Basemap Switcher & Simulation Controls */}
         <div className="flex flex-wrap items-center gap-2 pointer-events-auto">
           {/* Basemap Switcher */}
-          <div className="bg-[#0B1120]/95 backdrop-blur-md px-1.5 py-1 rounded-xl border border-slate-700/80 shadow-lg flex items-center gap-1">
+          <div className="bg-slate-950/90 backdrop-blur-md px-1.5 py-1 rounded-xl border border-slate-700/80 shadow-lg flex items-center gap-1">
             {Object.entries(BASEMAPS).map(([key, bm]) => (
               <button
                 key={key}
@@ -296,7 +339,7 @@ export default function RescueTrackingMap({
           center={mapCenter}
           zoom={mapZoom}
           scrollWheelZoom={true}
-          style={{ height: '100%', width: '100%', background: '#090D16' }}
+          style={{ height: '100%', width: '100%', background: '#E8F2F8' }}
         >
           {/* Free High-Definition Keyless Basemap Layer */}
           <TileLayer
@@ -314,49 +357,38 @@ export default function RescueTrackingMap({
             const isCritical = riskLevel === 'CRITICAL';
             const isHigh = riskLevel === 'HIGH';
 
-            let fillColor = '#10B981'; // green
-            if (isCritical) fillColor = '#EF4444'; // red
-            else if (isHigh) fillColor = '#F97316'; // orange
-            else if (riskLevel === 'MODERATE') fillColor = '#F59E0B'; // yellow
-
             return (
               <React.Fragment key={`loc-${loc.id}`}>
                 {/* Outer Danger Ripple */}
                 {(isCritical || isHigh) && (
                   <CircleMarker
                     center={[loc.lat, loc.lng]}
-                    radius={isCritical ? 24 : 18}
+                    radius={isCritical ? 26 : 20}
                     pathOptions={{
-                      color: fillColor,
-                      weight: 1,
-                      opacity: 0.4,
-                      fillColor: fillColor,
-                      fillOpacity: 0.15
+                      color: isCritical ? '#EF4444' : '#F97316',
+                      weight: 1.5,
+                      opacity: 0.6,
+                      fillColor: isCritical ? '#EF4444' : '#F97316',
+                      fillOpacity: 0.2
                     }}
                   />
                 )}
 
-                {/* Central Danger Marker */}
-                <CircleMarker
-                  center={[loc.lat, loc.lng]}
-                  radius={isCritical ? 10 : 8}
-                  pathOptions={{
-                    color: '#FFFFFF',
-                    weight: 1.5,
-                    fillColor: fillColor,
-                    fillOpacity: 0.9
-                  }}
+                {/* Central Warning Badge */}
+                <Marker
+                  position={[loc.lat, loc.lng]}
+                  icon={createIncidentWarningIcon(loc, isCritical, isHigh)}
                   eventHandlers={{
                     click: () => handleSectorClick(loc)
                   }}
                 >
-                  <Tooltip direction="top" offset={[0, -10]} opacity={0.95}>
+                  <Tooltip direction="top" offset={[0, -20]} opacity={0.95}>
                     <div className="font-mono text-xs p-1 bg-slate-950 text-white rounded">
                       <strong className="block text-amber-400">{loc.name}</strong>
                       <span>Risk: {riskLevel} ({loc.current_risk?.overall_score || 45}%)</span>
                     </div>
                   </Tooltip>
-                </CircleMarker>
+                </Marker>
               </React.Fragment>
             );
           })}
@@ -371,14 +403,24 @@ export default function RescueTrackingMap({
 
             return (
               <React.Fragment key={`route-${team.id || team.team_id}`}>
-                {/* Glowing Background Polyline */}
+                {/* Outer Glow Halo */}
                 <Polyline
                   positions={team.waypoints}
                   pathOptions={{
-                    color: isEnRoute ? '#F59E0B' : (isSelected ? '#3B82F6' : '#6366F1'),
-                    weight: isSelected ? 5 : 3,
-                    opacity: isSelected ? 0.95 : 0.7,
-                    dashArray: isEnRoute ? '6, 8' : undefined
+                    color: '#065F46',
+                    weight: isSelected ? 8 : 6,
+                    opacity: 0.35
+                  }}
+                />
+
+                {/* Main Green Logistics Corridor Route */}
+                <Polyline
+                  positions={team.waypoints}
+                  pathOptions={{
+                    color: '#10B981',
+                    weight: isSelected ? 5 : 4,
+                    opacity: 1,
+                    dashArray: isEnRoute ? '8, 6' : undefined
                   }}
                 />
 
