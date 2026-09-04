@@ -62,6 +62,8 @@ export default function App() {
           return <AlertsPage />;
         case 'location-risk':
           return <LocationRiskPage />;
+        case 'rescue-operations':
+          return <RescueOperationsPage />;
         case 'settings':
           return <SettingsPage />;
         case 'dashboard':

@@ -236,25 +236,28 @@ export default function RescueTrackingMap({
   // Focus on selected team if provided (smoothly framing route & destination)
   useEffect(() => {
     if (selectedTeam) {
-      if (selectedTeam.waypoints && selectedTeam.waypoints.length > 1) {
-        const lats = selectedTeam.waypoints.map(w => w[0]);
-        const lngs = selectedTeam.waypoints.map(w => w[1]);
-        const midLat = (Math.min(...lats) + Math.max(...lats)) / 2;
-        const midLng = (Math.min(...lngs) + Math.max(...lngs)) / 2;
-        const latDiff = Math.max(...lats) - Math.min(...lats);
-        const lngDiff = Math.max(...lngs) - Math.min(...lngs);
-        const maxDiff = Math.max(latDiff, lngDiff);
+      if (selectedTeam.waypoints && Array.isArray(selectedTeam.waypoints) && selectedTeam.waypoints.length > 1) {
+        const validWps = selectedTeam.waypoints.filter(w => Array.isArray(w) && typeof w[0] === 'number' && typeof w[1] === 'number');
+        if (validWps.length > 1) {
+          const lats = validWps.map(w => w[0]);
+          const lngs = validWps.map(w => w[1]);
+          const midLat = (Math.min(...lats) + Math.max(...lats)) / 2;
+          const midLng = (Math.min(...lngs) + Math.max(...lngs)) / 2;
+          const latDiff = Math.max(...lats) - Math.min(...lats);
+          const lngDiff = Math.max(...lngs) - Math.min(...lngs);
+          const maxDiff = Math.max(latDiff, lngDiff);
 
-        let zoom = 11;
-        if (maxDiff > 2.0) zoom = 7;
-        else if (maxDiff > 1.0) zoom = 8;
-        else if (maxDiff > 0.4) zoom = 9;
-        else if (maxDiff > 0.15) zoom = 10;
-        else zoom = 11;
+          let zoom = 11;
+          if (maxDiff > 2.0) zoom = 7;
+          else if (maxDiff > 1.0) zoom = 8;
+          else if (maxDiff > 0.4) zoom = 9;
+          else if (maxDiff > 0.15) zoom = 10;
+          else zoom = 11;
 
-        setMapCenter([midLat, midLng]);
-        setMapZoom(zoom);
-      } else if (selectedTeam.latitude && selectedTeam.longitude) {
+          setMapCenter([midLat, midLng]);
+          setMapZoom(zoom);
+        }
+      } else if (typeof Number(selectedTeam.latitude) === 'number' && !isNaN(Number(selectedTeam.latitude)) && typeof Number(selectedTeam.longitude) === 'number' && !isNaN(Number(selectedTeam.longitude))) {
         setMapCenter([Number(selectedTeam.latitude), Number(selectedTeam.longitude)]);
         setMapZoom(11);
       }
@@ -352,7 +355,7 @@ export default function RescueTrackingMap({
           <MapFlyController center={mapCenter} zoom={mapZoom} />
 
           {/* 1. Incident & High-Risk Disaster Sectors */}
-          {locations.map((loc) => {
+          {(Array.isArray(locations) ? locations : []).filter(loc => loc && typeof loc.lat === 'number' && typeof loc.lng === 'number').map((loc) => {
             const riskLevel = loc.current_risk?.overall_level || 'MODERATE';
             const isCritical = riskLevel === 'CRITICAL';
             const isHigh = riskLevel === 'HIGH';
@@ -394,8 +397,10 @@ export default function RescueTrackingMap({
           })}
 
           {/* 2. Rescue Team Route Polylines */}
-          {teams.map((team) => {
-            if (!team.waypoints || team.waypoints.length < 2) return null;
+          {(Array.isArray(teams) ? teams : []).map((team) => {
+            if (!team) return null;
+            const validWaypoints = (team.waypoints || []).filter(w => Array.isArray(w) && typeof w[0] === 'number' && typeof w[1] === 'number');
+            if (validWaypoints.length < 2) return null;
             const isSelected = selectedTeam && (selectedTeam.id === team.id || selectedTeam.team_id === team.id || selectedTeam.id === team.team_id || selectedTeam.team_id === team.team_id);
             const isEnRoute = team.status === 'EN ROUTE';
             const isActive = ['EN ROUTE', 'ASSIGNED', 'EMERGENCY', 'ON SITE'].includes(team.status);
@@ -405,7 +410,7 @@ export default function RescueTrackingMap({
               <React.Fragment key={`route-${team.id || team.team_id}`}>
                 {/* Outer Glow Halo */}
                 <Polyline
-                  positions={team.waypoints}
+                  positions={validWaypoints}
                   pathOptions={{
                     color: '#065F46',
                     weight: isSelected ? 8 : 6,
@@ -415,7 +420,7 @@ export default function RescueTrackingMap({
 
                 {/* Main Green Logistics Corridor Route */}
                 <Polyline
-                  positions={team.waypoints}
+                  positions={validWaypoints}
                   pathOptions={{
                     color: '#10B981',
                     weight: isSelected ? 5 : 4,
@@ -425,9 +430,9 @@ export default function RescueTrackingMap({
                 />
 
                 {/* Destination Marker Flag */}
-                {team.destination_name && team.waypoints.length > 0 && (
+                {team.destination_name && validWaypoints.length > 0 && (
                   <Marker
-                    position={team.waypoints[team.waypoints.length - 1]}
+                    position={validWaypoints[validWaypoints.length - 1]}
                     icon={createDestinationIcon(team.destination_name)}
                   >
                     <Tooltip direction="bottom" offset={[0, 10]}>
@@ -442,12 +447,12 @@ export default function RescueTrackingMap({
           })}
 
           {/* 3. Rescue Team Markers */}
-          {teams.map((team) => {
+          {(Array.isArray(teams) ? teams : []).filter(t => t && typeof Number(t.latitude) === 'number' && !isNaN(Number(t.latitude)) && typeof Number(t.longitude) === 'number' && !isNaN(Number(t.longitude))).map((team) => {
             const isSelected = selectedTeam && (selectedTeam.id === team.id || selectedTeam.team_id === team.id || selectedTeam.id === team.team_id || selectedTeam.team_id === team.team_id);
             return (
               <Marker
                 key={`team-${team.id || team.team_id}`}
-                position={[team.latitude, team.longitude]}
+                position={[Number(team.latitude), Number(team.longitude)]}
                 icon={createTeamIcon(team, isSelected)}
                 eventHandlers={{
                   click: () => onSelectTeam(team)

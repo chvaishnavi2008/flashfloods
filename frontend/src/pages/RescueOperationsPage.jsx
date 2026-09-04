@@ -110,20 +110,32 @@ export default function RescueOperationsPage() {
     }
   };
 
-  const summary = rescueService.getOperationsSummary();
+  const summary = React.useMemo(() => {
+    const safeTeams = Array.isArray(teams) ? teams : [];
+    const safeMissions = Array.isArray(missions) ? missions : [];
+    return {
+      active_teams: safeTeams.filter(t => ['ASSIGNED', 'EN ROUTE', 'ON SITE', 'EMERGENCY'].includes(t?.status)).length,
+      active_incidents: safeMissions.filter(m => m?.status !== 'COMPLETED' && m?.status !== 'CANCELLED').length,
+      teams_en_route: safeTeams.filter(t => t?.status === 'EN ROUTE').length,
+      available_teams: safeTeams.filter(t => t?.status === 'AVAILABLE').length,
+      completed_missions: safeMissions.filter(m => m?.status === 'COMPLETED').length
+    };
+  }, [teams, missions]);
 
-  const filteredTeams = teams
+  const filteredTeams = (Array.isArray(teams) ? teams : [])
     .filter(team => {
+      if (!team) return false;
       if (statusFilter === 'ALL') return true;
       return team.status === statusFilter;
     })
     .filter(team => {
+      if (!team) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         return (
-          team.name.toLowerCase().includes(q) ||
-          team.team_id.toLowerCase().includes(q) ||
-          team.team_type.toLowerCase().includes(q) ||
+          (team.name && team.name.toLowerCase().includes(q)) ||
+          (team.team_id && team.team_id.toLowerCase().includes(q)) ||
+          (team.team_type && team.team_type.toLowerCase().includes(q)) ||
           (team.destination_name && team.destination_name.toLowerCase().includes(q))
         );
       }

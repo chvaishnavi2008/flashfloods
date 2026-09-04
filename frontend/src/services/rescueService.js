@@ -581,13 +581,19 @@ class RescueService {
   }
 
   getSummaryStats(teams = this.teams, missions = this.missions) {
+    const safeTeams = Array.isArray(teams) ? teams : (this.teams || []);
+    const safeMissions = Array.isArray(missions) ? missions : (this.missions || []);
     return {
-      active_teams: teams.filter(t => ['ASSIGNED', 'EN ROUTE', 'ON SITE', 'EMERGENCY'].includes(t.status)).length,
-      active_incidents: missions.filter(m => m.status !== 'COMPLETED' && m.status !== 'CANCELLED').length,
-      teams_en_route: teams.filter(t => t.status === 'EN ROUTE').length,
-      available_teams: teams.filter(t => t.status === 'AVAILABLE').length,
-      completed_missions: missions.filter(m => m.status === 'COMPLETED').length
+      active_teams: safeTeams.filter(t => ['ASSIGNED', 'EN ROUTE', 'ON SITE', 'EMERGENCY'].includes(t?.status)).length,
+      active_incidents: safeMissions.filter(m => m?.status !== 'COMPLETED' && m?.status !== 'CANCELLED').length,
+      teams_en_route: safeTeams.filter(t => t?.status === 'EN ROUTE').length,
+      available_teams: safeTeams.filter(t => t?.status === 'AVAILABLE').length,
+      completed_missions: safeMissions.filter(m => m?.status === 'COMPLETED').length
     };
+  }
+
+  getOperationsSummary(teams = this.teams, missions = this.missions) {
+    return this.getSummaryStats(teams, missions);
   }
 }
 
