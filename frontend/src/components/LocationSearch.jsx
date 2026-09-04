@@ -1,9 +1,21 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
-import { Search, MapPin, Globe, Check, ShieldAlert, AlertTriangle, ShieldCheck, Activity, Filter } from 'lucide-react';
+import { Search, MapPin, Globe, Check, ShieldAlert, AlertTriangle, ShieldCheck, Activity, Filter, Navigation, Crosshair, RefreshCw } from 'lucide-react';
 
 export default function LocationSearch({ onSearchComplete = null }) {
-  const { locations, selectedLocationId, selectLocation, setActivePage } = useApp();
+  const { 
+    locations, 
+    selectedLocationId, 
+    selectLocation, 
+    setActivePage,
+    requestUserLocation,
+    userGpsLocation,
+    locationInputMode,
+    isGpsLoading,
+    gpsError,
+    locationName
+  } = useApp();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [activeRiskFilter, setActiveRiskFilter] = useState('ALL');
   const [activeRegionFilter, setActiveRegionFilter] = useState('ALL');
@@ -60,6 +72,11 @@ export default function LocationSearch({ onSearchComplete = null }) {
     if (onSearchComplete) onSearchComplete();
   };
 
+  const handleGpsClick = () => {
+    requestUserLocation();
+    if (onSearchComplete) onSearchComplete();
+  };
+
   const getLevelBadgeClass = (level) => {
     switch (level) {
       case 'CRITICAL':
@@ -73,6 +90,8 @@ export default function LocationSearch({ onSearchComplete = null }) {
         return 'bg-[#EAF7F1] dark:bg-emerald-950/40 text-[#16855B] dark:text-emerald-300 border-[#16855B]/40 font-semibold';
     }
   };
+
+  const isGpsActive = locationInputMode === 'gps' || (userGpsLocation && userGpsLocation.active);
 
   return (
     <div className="bg-white dark:bg-[#111C35] rounded-2xl border border-[#D7E0E7] dark:border-[#1E2E4A] p-5 shadow-sm space-y-4 font-sans text-[#172B3A] dark:text-[#E2E8F0] transition-colors duration-200">
@@ -98,6 +117,22 @@ export default function LocationSearch({ onSearchComplete = null }) {
               className="w-full bg-[#F8FAFC] dark:bg-[#070F1E] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-lg pl-10 pr-4 py-2.5 text-sm text-[#172B3A] dark:text-white placeholder-[#5B6B78] dark:placeholder-slate-500 focus:outline-none focus:border-[#1769AA] font-mono"
             />
           </div>
+          
+          {/* Live GPS Button */}
+          <button
+            onClick={handleGpsClick}
+            disabled={isGpsLoading}
+            title="Locate my exact position using device GPS"
+            className={`w-full sm:w-auto px-4 py-2.5 rounded-lg font-mono text-xs font-bold uppercase tracking-wider shadow-sm transition-all shrink-0 flex items-center justify-center gap-1.5 border ${
+              isGpsActive
+                ? 'bg-cyan-600 hover:bg-cyan-700 text-white border-cyan-500 shadow-cyan-500/20'
+                : 'bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-500'
+            }`}
+          >
+            <Navigation className={`w-3.5 h-3.5 ${isGpsLoading ? 'animate-spin text-amber-200' : ''}`} />
+            <span>{isGpsLoading ? 'Getting GPS...' : (isGpsActive ? '📍 GPS Active' : '📍 Use Live GPS')}</span>
+          </button>
+
           <button
             onClick={() => {
               if (filteredLocations.length > 0) {
@@ -111,6 +146,24 @@ export default function LocationSearch({ onSearchComplete = null }) {
           </button>
         </div>
 
+        {/* GPS Active Status Banner if GPS is chosen */}
+        {isGpsActive && (
+          <div className="flex items-center justify-between p-2.5 bg-cyan-500/10 dark:bg-cyan-950/40 border border-cyan-500/40 rounded-xl text-xs font-mono text-cyan-800 dark:text-cyan-200">
+            <div className="flex items-center gap-2 truncate">
+              <Navigation className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0 animate-pulse" />
+              <span className="truncate">
+                <strong>Current Live Location:</strong> {locationName || userGpsLocation?.name || 'Live GPS Active'}
+              </span>
+            </div>
+            <button
+              onClick={handleGpsClick}
+              className="text-[10px] bg-cyan-600 hover:bg-cyan-700 text-white font-bold px-2 py-0.5 rounded ml-2 shrink-0"
+            >
+              Re-scan GPS
+            </button>
+          </div>
+        )}
+
         {/* Quick Select Place Dropdown */}
         <div className="bg-[#F8FAFC] dark:bg-[#0D162B] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl p-2.5 space-y-1">
           <div className="flex items-center justify-between text-[11px] font-mono text-[#172B3A] dark:text-white">
@@ -121,14 +174,21 @@ export default function LocationSearch({ onSearchComplete = null }) {
             <span className="text-[10px] text-[#5B6B78] dark:text-slate-400">Jump directly to any sector</span>
           </div>
           <select
-            value={selectedLocationId}
+            value={isGpsActive ? 'gps' : selectedLocationId}
             onChange={(e) => {
-              const val = Number(e.target.value);
-              handleSelect(val);
+              const val = e.target.value;
+              if (val === 'gps') {
+                handleGpsClick();
+              } else {
+                handleSelect(Number(val));
+              }
             }}
             className="w-full bg-white dark:bg-[#070F1E] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-lg px-3 py-2 text-sm text-[#172B3A] dark:text-white font-mono font-bold focus:outline-none focus:border-[#1769AA] cursor-pointer shadow-sm"
           >
-            <option value="" disabled>-- Choose a monitored sector from dropdown --</option>
+            <option value="gps" className="bg-cyan-900 text-white font-bold">
+              📍 [LIVE GPS] {isGpsActive ? `${locationName} (Active)` : 'Detect My Real-Time Device Location'}
+            </option>
+            <option value="" disabled>-- Or choose a monitored sector below --</option>
             {locations.map((loc) => {
               const hazardIcon = loc.current_risk?.dominant_hazard === 'landslide' ? '⛰️ Landslide' : (loc.current_risk?.dominant_hazard === 'heavy_rainfall' ? '🌧️ Heavy Rain' : '🌊 Flash Flood');
               const levelBadge = loc.current_risk?.overall_level === 'CRITICAL' ? '🔴 CRITICAL' : (loc.current_risk?.overall_level === 'HIGH' ? '🟠 HIGH' : (loc.current_risk?.overall_level === 'MODERATE' ? '🟡 MODERATE' : '🟢 LOW'));
@@ -203,8 +263,39 @@ export default function LocationSearch({ onSearchComplete = null }) {
 
       {/* 3. GRID OF SELECTABLE LOCATION CHIPS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 max-h-72 overflow-y-auto pr-1">
+        {/* Special Live GPS Tile */}
+        <button
+          onClick={handleGpsClick}
+          disabled={isGpsLoading}
+          className={`flex flex-col justify-between p-3 rounded-xl border text-left text-xs transition-all ${
+            isGpsActive
+              ? 'bg-cyan-500/15 dark:bg-cyan-950/50 border-2 border-cyan-500 text-[#172B3A] dark:text-white shadow-sm ring-1 ring-cyan-400/50'
+              : 'bg-emerald-50 dark:bg-emerald-950/30 border-dashed border-2 border-emerald-500/60 text-[#172B3A] dark:text-[#E2E8F0] hover:bg-emerald-100/50 dark:hover:bg-emerald-900/40'
+          }`}
+        >
+          <div className="flex items-start justify-between gap-1 w-full mb-1.5">
+            <div className="font-bold text-cyan-800 dark:text-cyan-300 truncate flex items-center gap-1.5 text-xs">
+              <Navigation className={`w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0 ${isGpsLoading ? 'animate-spin' : 'animate-pulse'}`} />
+              <span className="truncate font-mono">{isGpsActive ? (locationName || 'Live GPS Active') : '📍 Use Live GPS'}</span>
+            </div>
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono border bg-cyan-600 text-white font-bold shrink-0">
+              {isGpsLoading ? 'SCANNING' : (isGpsActive ? 'ACTIVE' : 'DETECT')}
+            </span>
+          </div>
+
+          <div className="text-[11px] font-mono text-cyan-700 dark:text-cyan-300 truncate mb-2">
+            {isGpsActive && userGpsLocation ? `Lat: ${userGpsLocation.lat.toFixed(3)}, Lng: ${userGpsLocation.lng.toFixed(3)}` : 'Auto-pinpoint your device coordinates'}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5 pt-1.5 border-t border-cyan-500/30 w-full text-[10px] font-mono">
+            <span className="px-1.5 py-0.5 rounded bg-cyan-600/20 text-cyan-800 dark:text-cyan-300 font-bold border border-cyan-500/30">
+              🛰️ Real-Time Telemetry
+            </span>
+          </div>
+        </button>
+
         {filteredLocations.map((loc) => {
-          const isSelected = loc.id === selectedLocationId;
+          const isSelected = !isGpsActive && loc.id === selectedLocationId;
           const level = loc.current_risk?.overall_level || 'LOW';
           const dominantHazard = loc.current_risk?.dominant_hazard || 'flash_flood';
           const hazardLabel = dominantHazard === 'landslide' ? '⛰️ Landslide' : (dominantHazard === 'heavy_rainfall' ? '🌧️ Heavy Rain' : '🌊 Flash Flood');

@@ -27,13 +27,38 @@ export default function CitizenHomePage() {
     locationRisk, 
     environmentalData, 
     setActivePage,
-    alerts 
+    alerts,
+    locationName,
+    locationInputMode,
+    userGpsLocation,
+    liveRisk,
+    userCoords,
+    isGpsLoading,
+    gpsError,
+    requestUserLocation
   } = useApp();
 
   const [isSosOpen, setIsSosOpen] = useState(false);
 
+  const isGpsActive = locationInputMode === 'gps' || (userGpsLocation && userGpsLocation.active);
   const activeLoc = selectedLocation || locations.find(l => l.id === selectedLocationId) || locations[0];
-  const level = activeLoc?.current_risk?.overall_level || locationRisk?.overall_level || 'LOW';
+  
+  // Real-time risk evaluation from Open-Meteo & multi-source engine or preset sector
+  const level = (isGpsActive && liveRisk?.overall_level)
+    ? liveRisk.overall_level
+    : (activeLoc?.current_risk?.overall_level || locationRisk?.overall_level || 'LOW');
+
+  const dominantHazard = (isGpsActive && liveRisk?.dominant_hazard)
+    ? liveRisk.dominant_hazard
+    : (activeLoc?.current_risk?.dominant_hazard || locationRisk?.dominant_hazard || 'FLASH FLOOD');
+
+  const overallScore = (isGpsActive && liveRisk?.overall_score !== undefined)
+    ? liveRisk.overall_score
+    : (activeLoc?.current_risk?.overall_score || locationRisk?.overall_score || 20);
+
+  const displayLocationTitle = isGpsActive
+    ? (locationName || userGpsLocation?.name || 'Your Live GPS Location')
+    : (activeLoc ? `${activeLoc.name}${activeLoc.state ? `, ${activeLoc.state}` : ''}` : 'Selected Sector');
 
   // 1. Plain-Language Status Definition
   const statusConfig = {
@@ -108,7 +133,7 @@ export default function CitizenHomePage() {
       <LocationSearch />
 
       {/* ========================================================================= */}
-      {/* 1. LIVE WEATHER & PRALAYWATCH REAL RISK TELEMETRY CARD                    */}
+      {/* 1. LIVE WEATHER & AAPDASETU REAL RISK TELEMETRY CARD                      */}
       {/* ========================================================================= */}
       <LiveWeatherRiskCard />
 
@@ -123,9 +148,18 @@ export default function CitizenHomePage() {
               {currentStatus.badgeText}
             </span>
 
-            <div className="flex items-center gap-1.5 text-xs text-[#172B3A] dark:text-white font-semibold bg-white/80 dark:bg-[#0B192C]/80 px-3 py-1.5 rounded-full border border-[#D7E0E7] dark:border-[#1E2E4A] backdrop-blur-sm">
-              <MapPin className="w-4 h-4 text-[#1769AA] dark:text-[#38BDF8]" />
-              <span>{activeLoc?.name || 'Selected Sector'}{activeLoc?.state ? `, ${activeLoc.state}` : ''}</span>
+            <div className={`flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full border backdrop-blur-sm transition-all ${
+              isGpsActive 
+                ? 'bg-cyan-500/10 dark:bg-cyan-950/80 border-cyan-500/60 text-cyan-800 dark:text-cyan-200 ring-1 ring-cyan-400/40 shadow-sm' 
+                : 'bg-white/80 dark:bg-[#0B192C]/80 border-[#D7E0E7] dark:border-[#1E2E4A] text-[#172B3A] dark:text-white'
+            }`}>
+              <MapPin className={`w-4 h-4 shrink-0 ${isGpsActive ? 'text-cyan-600 dark:text-cyan-400 animate-pulse' : 'text-[#1769AA] dark:text-[#38BDF8]'}`} />
+              <span className="font-bold">{displayLocationTitle}</span>
+              {isGpsActive && (
+                <span className="ml-1 px-1.5 py-0.2 bg-cyan-600 dark:bg-cyan-400 text-white dark:text-slate-950 text-[9px] font-black rounded uppercase tracking-wider">
+                  Live GPS
+                </span>
+              )}
             </div>
           </div>
 
@@ -141,11 +175,19 @@ export default function CitizenHomePage() {
 
           {/* Hazard & Simple Risk Level */}
           <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-[#5B6B78] dark:text-slate-400">
-            <span>Dominant Hazard: <strong className="text-[#172B3A] dark:text-white">{activeLoc?.current_risk?.dominant_hazard ? activeLoc.current_risk.dominant_hazard.replace('_', ' ').toUpperCase() : (locationRisk?.dominant_hazard ? locationRisk.dominant_hazard.replace('_', ' ').toUpperCase() : 'FLASH FLOOD')}</strong></span>
+            <span>Dominant Hazard: <strong className="text-[#172B3A] dark:text-white">{dominantHazard.replace(/_/g, ' ').toUpperCase()}</strong></span>
             <span>•</span>
             <span>Risk Level: <strong className="text-[#172B3A] dark:text-white">{level}</strong></span>
             <span>•</span>
-            <span>Score: <strong className="text-[#1769AA] dark:text-[#38BDF8] font-bold">{activeLoc?.current_risk?.overall_score || locationRisk?.overall_score || 20}/100</strong></span>
+            <span>Score: <strong className="text-[#1769AA] dark:text-[#38BDF8] font-bold">{overallScore}/100</strong></span>
+            {isGpsActive && userCoords && (
+              <>
+                <span>•</span>
+                <span className="font-mono text-[11px] text-cyan-700 dark:text-cyan-300 font-bold bg-cyan-500/10 dark:bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-500/30">
+                  📍 {userCoords.lat.toFixed(4)}°N, {userCoords.lng.toFixed(4)}°E
+                </span>
+              </>
+            )}
           </div>
         </div>
       </section>

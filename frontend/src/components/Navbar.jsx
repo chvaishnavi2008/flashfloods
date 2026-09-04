@@ -48,12 +48,18 @@ export default function Navbar() {
     setIsMobileMenuOpen,
     toggleMobileMenu,
     closeMobileMenu,
-    setIsGlobalSosOpen
+    setIsGlobalSosOpen,
+    locationInputMode,
+    locationName,
+    userGpsLocation,
+    isGpsLoading,
+    requestUserLocation
   } = useApp();
 
   const isCritical = systemRisk?.stats?.critical_zones > 0;
   const isHigh = systemRisk?.stats?.high_risk_zones > 0;
   const activeAlertsCount = systemRisk?.stats?.active_alerts || 0;
+  const isGpsActive = locationInputMode === 'gps' || (userGpsLocation && userGpsLocation.active);
 
   const citizenNavItems = [
     { id: 'dashboard', label: 'Home', tag: 'Am I safe?', icon: Home },
@@ -122,14 +128,33 @@ export default function Navbar() {
         </div>
 
         {/* Center: Desktop Location Selector (Fast Switcher) */}
-        <div className="hidden md:flex items-center gap-2 bg-[#0B2233] border border-[#294657] rounded-lg px-3 py-1.5 text-xs">
-          <MapPin className="w-3.5 h-3.5 text-[#1769AA] shrink-0" />
-          <span className="text-[#D7E0E7] font-mono text-[11px]">Sector:</span>
+        <div className={`hidden md:flex items-center gap-2 border rounded-lg px-3 py-1.5 text-xs transition-all ${
+          isGpsActive 
+            ? 'bg-cyan-950/80 border-cyan-500 text-cyan-300 ring-1 ring-cyan-400/40' 
+            : 'bg-[#0B2233] border-[#294657]'
+        }`}>
+          <MapPin className={`w-3.5 h-3.5 shrink-0 ${isGpsActive ? 'text-cyan-400 animate-pulse' : 'text-[#1769AA]'}`} />
+          <span className="text-[#D7E0E7] font-mono text-[11px]">{isGpsActive ? 'GPS:' : 'Sector:'}</span>
           <select
-            value={selectedLocationId}
-            onChange={(e) => selectLocation(Number(e.target.value))}
-            className="bg-transparent text-white font-mono font-bold focus:outline-none cursor-pointer pr-1 max-w-[180px] truncate"
+            value={isGpsActive ? 'gps' : selectedLocationId}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === 'gps') {
+                requestUserLocation();
+              } else {
+                selectLocation(Number(val));
+              }
+            }}
+            className="bg-transparent text-white font-mono font-bold focus:outline-none cursor-pointer pr-1 max-w-[200px] truncate"
           >
+            {isGpsActive && (
+              <option value="gps" className="bg-[#0B2233] text-cyan-300 font-bold">
+                📍 {locationName || 'Live GPS Active'}
+              </option>
+            )}
+            <option value="gps" className="bg-[#0B2233] text-cyan-300">
+              🛰️ Locate Me (Live GPS)
+            </option>
             {locations.map(loc => (
               <option key={loc.id} value={loc.id} className="bg-[#0B2233] text-white">
                 {loc.name} ({loc.state})

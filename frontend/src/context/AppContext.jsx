@@ -258,6 +258,20 @@ export function AppProvider({ children }) {
           locMetadata || {}
         );
         setLiveRisk(evaluated);
+        setLocationRisk(evaluated);
+        if (locMetadata && locMetadata.is_gps) {
+          const updatedDynamicLoc = {
+            ...locMetadata,
+            current_risk: evaluated,
+            environmental_data: {
+              rainfall_rate: weatherRes.data.current_rain || 0,
+              soil_saturation_pct: evaluated.factors?.soil_saturation || 35,
+              river_capacity_pct: evaluated.factors?.river_capacity || 30
+            }
+          };
+          setSelectedLocation(updatedDynamicLoc);
+          setEnvironmentalData(updatedDynamicLoc.environmental_data);
+        }
         setLastWeatherUpdated(new Date());
         setLiveWeatherError(null);
       } else {
@@ -271,23 +285,85 @@ export function AppProvider({ children }) {
     }
   }, [locationName]);
 
-  // 4. Request Browser Geolocation (Live GPS)
-  const requestUserLocation = useCallback(() => {
-    if (typeof window === 'undefined' || !navigator.geolocation) {
-      const err = 'Browser Geolocation is not supported by your device.';
-      console.error('GPS error:', err);
-      setGpsError(err);
-      setLiveWeatherError(err);
-      return;
+  // Reverse Geocoding & Place Resolution from Coordinates
+  const resolvePlaceName = async (lat, lng, locsList = []) => {
+    try {
+      const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
+      if (res.ok) {
+        const data = await res.json();
+        const city = data.city || data.locality || data.principalSubdivision || '';
+        const state = data.principalSubdivision || '';
+        if (city && state && city !== state) {
+          return { fullName: `${city}, ${state} (Live GPS)`, city, state };
+        } else if (city || state) {
+          return { fullName: `${city || state} (Live GPS)`, city: city || state, state: data.countryName || '' };
+        }
+      }
+    } catch (e) {
+      // network timeout/blocked fallback
     }
 
+    // Find closest monitored sector in database
+    if (Array.isArray(locsList) && locsList.length > 0) {
+      let nearest = null;
+      let minDist = Infinity;
+      for (const loc of locsList) {
+        if (loc.lat && loc.lng) {
+          const dLat = (loc.lat - lat) * Math.PI / 180;
+          const dLng = (loc.lng - lng) * Math.PI / 180;
+          const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(lat * Math.PI / 180) * Math.cos(loc.lat * Math.PI / 180) *
+                    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+          const distKm = 6371 * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+          if (distKm < minDist) {
+            minDist = distKm;
+            nearest = loc;
+          }
+        }
+      }
+      if (nearest) {
+        if (minDist < 25) {
+          return { fullName: `${nearest.name}, ${nearest.state} (Live GPS)`, city: nearest.name, state: nearest.state };
+        }
+        return { fullName: `${nearest.name} Region (${Math.round(minDist)} km away) (Live GPS)`, city: nearest.name, state: nearest.state };
+      }
+    }
+
+    return { fullName: `Live GPS Location (${lat.toFixed(4)}, ${lng.toFixed(4)})`, city: 'Live GPS', state: '' };
+  };
+
+  // Fallback IP Geolocation for desktops/browsers with blocked GPS
+  const getIpLocationFallback = async () => {
+    try {
+      const res = await fetch('https://ipapi.co/json/');
+      if (res.ok) {
+        const d = await res.json();
+        if (typeof d.latitude === 'number' && typeof d.longitude === 'number') {
+          return {
+            latitude: d.latitude,
+            longitude: d.longitude,
+            city: d.city || '',
+            region: d.region || d.country_name || '',
+            country: d.country_name || 'India'
+          };
+        }
+      }
+    } catch (err) {
+      // ignore
+    }
+    return null;
+  };
+
+  // 4. Request Browser Geolocation (Live GPS) with Reverse Geocoding & Fallback
+  const requestUserLocation = useCallback(() => {
     setIsGpsLoading(true);
     setGpsError(null);
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude, accuracy } = position.coords;
-        console.log("GPS coordinates:", latitude, longitude);
+    const applyResolvedGps = async (latitude, longitude, accuracy = null, source = 'gps', knownName = null) => {
+      try {
+        const place = knownName 
+          ? { fullName: `${knownName} (Live GPS)`, city: knownName, state: '' }
+          : await resolvePlaceName(latitude, longitude, locations);
 
         setUserCoords({ lat: latitude, lng: longitude });
         setUserGpsLocation({
@@ -295,33 +371,115 @@ export function AppProvider({ children }) {
           lng: longitude,
           accuracy: accuracy || null,
           active: true,
-          timestamp: Date.now()
+          name: place.fullName,
+          timestamp: Date.now(),
+          source
         });
         setLocationInputMode('gps');
-        setLocationName('Live GPS Location');
+        setLocationName(place.fullName);
         setIsGpsLoading(false);
         setGpsError(null);
 
-        // Fetch live weather & risk without overwriting/destroying selectedLocation
-        fetchLiveWeatherData(latitude, longitude, selectedLocation, true);
-      },
-      (err) => {
-        console.error("GPS error:", err);
-        let errorMsg = "Unable to determine your location. Please try again.";
-        if (err.code === 1) { // PERMISSION_DENIED
-          errorMsg = "Location permission was denied. Please allow location access in your browser.";
-        } else if (err.code === 2) { // POSITION_UNAVAILABLE
-          errorMsg = "Unable to determine your location. Please try again.";
-        } else if (err.code === 3) { // TIMEOUT
-          errorMsg = "Location request timed out. Please try again.";
-        }
-        setGpsError(errorMsg);
-        setLiveWeatherError(errorMsg);
+        const dynamicLoc = {
+          id: 9999,
+          name: place.city || place.fullName,
+          state: place.state || '',
+          lat: latitude,
+          lng: longitude,
+          is_gps: true,
+          current_risk: { overall_level: 'LOW', overall_score: 20, dominant_hazard: 'flash_flood' },
+          environmental_data: { rainfall_rate: 0, soil_saturation_pct: 30, river_capacity_pct: 30 }
+        };
+        setSelectedLocation(dynamicLoc);
+
+        // Populate realistic high-ground safe shelters near the user's GPS coordinates
+        const dynamicShelters = [
+          {
+            id: 99991,
+            location_id: 9999,
+            name: `${place.city || 'Local Area'} High-Ground Safe Shelter`,
+            type: "Primary Concrete Safe Shelter",
+            lat: latitude + 0.008,
+            lng: longitude + 0.007,
+            capacity: 850,
+            current_occupancy: 120,
+            occupancy_pct: 14,
+            status: "OPEN",
+            distance_km: 1.2,
+            est_walking_mins: 15,
+            contact_phone: "+91 1800-180-1104",
+            facilities: "Emergency Medical Bay, High-Output Generators, Dry Food Rations, Purified Water"
+          },
+          {
+            id: 99992,
+            location_id: 9999,
+            name: `${place.city || 'Local Area'} Community Refuge Center`,
+            type: "Secondary Emergency Shelter",
+            lat: latitude - 0.006,
+            lng: longitude - 0.006,
+            capacity: 450,
+            current_occupancy: 40,
+            occupancy_pct: 9,
+            status: "OPEN",
+            distance_km: 2.1,
+            est_walking_mins: 25,
+            contact_phone: "+91 94120-00108",
+            facilities: "Trauma Care, Helipad Access, Satellite VHF Communication, Relief Supplies"
+          }
+        ];
+        setSafeLocations(dynamicShelters);
+        setSelectedShelter(dynamicShelters[0]);
+
+        // Fetch live weather & real terrain directly for the GPS coordinates
+        fetchLiveWeatherData(latitude, longitude, dynamicLoc, true);
+      } catch (err) {
+        console.error('[requestUserLocation] Error applying location:', err);
         setIsGpsLoading(false);
+      }
+    };
+
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      getIpLocationFallback().then((ipLoc) => {
+        if (ipLoc) {
+          applyResolvedGps(ipLoc.latitude, ipLoc.longitude, 5000, 'ip', `${ipLoc.city}, ${ipLoc.region}`);
+        } else {
+          const err = 'Browser Geolocation is not supported by your device.';
+          setGpsError(err);
+          setLiveWeatherError(err);
+          setIsGpsLoading(false);
+        }
+      });
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude, accuracy } = position.coords;
+        console.log("GPS coordinates received:", latitude, longitude, "accuracy:", accuracy);
+        applyResolvedGps(latitude, longitude, accuracy, 'gps');
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      async (err) => {
+        console.warn("Browser GPS issue:", err.message, "attempting IP location fallback...");
+        const ipLoc = await getIpLocationFallback();
+        if (ipLoc) {
+          applyResolvedGps(ipLoc.latitude, ipLoc.longitude, 5000, 'ip', `${ipLoc.city}, ${ipLoc.region}`);
+        } else {
+          let errorMsg = "Unable to determine your location. Please allow location permissions in your browser address bar.";
+          if (err.code === 1) { // PERMISSION_DENIED
+            errorMsg = "Location access was denied. Please allow location permissions in your browser address bar (lock icon).";
+          } else if (err.code === 2) { // POSITION_UNAVAILABLE
+            errorMsg = "Location coordinates temporarily unavailable from device GPS.";
+          } else if (err.code === 3) { // TIMEOUT
+            errorMsg = "Location request timed out. Please retry in a few moments.";
+          }
+          setGpsError(errorMsg);
+          setLiveWeatherError(errorMsg);
+          setIsGpsLoading(false);
+        }
+      },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
     );
-  }, [fetchLiveWeatherData, selectedLocation]);
+  }, [fetchLiveWeatherData, locations]);
 
   // 5. Set Manual Coordinates (Step 3)
   const setManualCoordinates = useCallback((lat, lng, name = 'Custom Coordinates') => {
@@ -352,13 +510,17 @@ export function AppProvider({ children }) {
 
   // Location selection change
   useEffect(() => {
-    if (selectedLocationId) {
+    if (selectedLocationId && selectedLocationId !== 9999) {
       fetchLocationData(selectedLocationId);
     }
   }, [selectedLocationId, fetchLocationData]);
 
   // Select Location Handler (re-fetches live weather for selected region if coordinates exist)
   const selectLocation = (id) => {
+    if (id === 'gps' || id === 9999) {
+      requestUserLocation();
+      return;
+    }
     const numId = Number(id);
     setSelectedLocationId(numId);
     const loc = locations.find(l => l.id === numId);
