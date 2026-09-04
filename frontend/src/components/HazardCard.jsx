@@ -75,15 +75,15 @@ export default function HazardCard({
   };
 
   return (
-    <div className={`bg-[#1E293B] rounded-xl border ${meta.borderColor} flex flex-col justify-between overflow-hidden shadow-md transition-all hover:border-slate-500`}>
+    <div className={`bg-white dark:bg-[#1E293B] rounded-xl border ${level === 'CRITICAL' ? 'border-red-500' : 'border-[#D7E0E7] dark:border-slate-700'} flex flex-col justify-between overflow-hidden shadow-sm dark:shadow-md transition-all hover:border-slate-400 dark:hover:border-slate-500`}>
       {/* Header */}
-      <div className={`p-4 border-b border-[#334155] flex items-center justify-between ${meta.bgHeader}`}>
+      <div className={`p-4 border-b border-[#D7E0E7] dark:border-[#334155] flex items-center justify-between ${meta.bgHeader}`}>
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-lg bg-slate-900/80 border border-slate-700">
+          <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700">
             <Icon className={`w-5 h-5 ${meta.color}`} />
           </div>
           <div>
-            <h3 className="font-bold text-sm text-slate-100 uppercase tracking-wide">{title}</h3>
+            <h3 className="font-bold text-sm text-[#172B3A] dark:text-slate-100 uppercase tracking-wide">{title}</h3>
             <span className={`inline-block px-2 py-0.5 mt-0.5 rounded text-[10px] font-mono border ${getLevelBadgeClass(level)}`}>
               {level} RISK
             </span>
@@ -96,9 +96,9 @@ export default function HazardCard({
       {/* Metrics Body */}
       <div className="p-4 space-y-2.5 flex-1 flex flex-col justify-center">
         {metrics.map((m, idx) => (
-          <div key={idx} className="flex items-center justify-between text-xs py-1 border-b border-slate-800/80 last:border-0">
-            <span className="text-slate-400">{m.label}</span>
-            <span className={`font-mono font-semibold ${m.highlight ? 'text-red-400 font-bold' : 'text-slate-200'}`}>
+          <div key={idx} className="flex items-center justify-between text-xs py-1 border-b border-slate-100 dark:border-slate-800/80 last:border-0">
+            <span className="text-slate-500 dark:text-slate-400">{m.label}</span>
+            <span className={`font-mono font-semibold ${m.highlight ? 'text-red-600 dark:text-red-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
               {m.value}
             </span>
           </div>
@@ -106,11 +106,11 @@ export default function HazardCard({
       </div>
 
       {/* Trend Footer */}
-      <div className="px-4 py-2 bg-slate-900/60 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400">
+      <div className="px-4 py-2 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-500 dark:text-slate-400">
         <span>Forecast Trend:</span>
-        <span className="flex items-center gap-1 font-semibold text-slate-300">
-          {trend.includes('Rising') && <ArrowUpRight className="w-3.5 h-3.5 text-red-400" />}
-          {trend.includes('Receding') && <ArrowDownRight className="w-3.5 h-3.5 text-emerald-400" />}
+        <span className="flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-300">
+          {trend.includes('Rising') && <ArrowUpRight className="w-3.5 h-3.5 text-red-500" />}
+          {trend.includes('Receding') && <ArrowDownRight className="w-3.5 h-3.5 text-emerald-500" />}
           {trend.includes('Stable') && <Minus className="w-3.5 h-3.5 text-slate-400" />}
           {trend}
         </span>

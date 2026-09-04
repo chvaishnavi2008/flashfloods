@@ -92,38 +92,38 @@ export default function ImpactAssessmentPanel() {
   const isHigh = priorityLevel === "HIGH" || locationRisk?.overall_level === "HIGH";
 
   const priorityColor = isCritical 
-    ? "bg-red-500/20 text-red-300 border-red-500/40" 
-    : (isHigh ? "bg-orange-500/20 text-orange-300 border-orange-500/40" : "bg-amber-500/20 text-amber-300 border-amber-500/40");
+    ? "bg-[#FFF1F1] dark:bg-[#3B1219] text-[#C62828] dark:text-[#F87171] border border-[#C62828]/40" 
+    : (isHigh ? "bg-[#FFF7E6] dark:bg-[#3A280B] text-[#D99A00] dark:text-[#FBBF24] border border-[#D99A00]/40" : "bg-[#FFF7E6] dark:bg-[#3A280B] text-[#D99A00] dark:text-[#FBBF24] border border-[#D99A00]/40");
 
   return (
-    <div className="bg-[#18181c] border border-slate-700/80 rounded-2xl p-5 lg:p-6 shadow-xl relative overflow-hidden space-y-5">
+    <div className="bg-white dark:bg-[#111C35] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-2xl p-5 lg:p-6 shadow-sm relative overflow-hidden space-y-5 font-mono text-[#172B3A] dark:text-[#E2E8F0]">
       {/* Background ambient lighting */}
       <div className={`absolute top-0 right-0 w-96 h-48 blur-3xl pointer-events-none ${
         isCritical ? 'bg-red-600/10' : (isHigh ? 'bg-orange-600/10' : 'bg-blue-600/10')
       }`} />
 
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800 relative z-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D7E0E7] dark:border-[#1E2E4A] relative z-10">
         <div className="flex items-start gap-3">
           <div className={`p-3 rounded-xl border flex items-center justify-center shrink-0 ${
-            isCritical ? 'bg-red-950/80 border-red-500 text-red-400' : 'bg-slate-900 border-blue-500/40 text-blue-400'
+            isCritical ? 'bg-[#FFF1F1] dark:bg-[#3B1219] border-[#C62828]/40 text-[#C62828] dark:text-[#F87171]' : 'bg-[#F8FAFC] dark:bg-[#0B1528] border-[#1769AA]/30 text-[#1769AA] dark:text-[#38BDF8]'
           }`}>
             <ShieldAlert className="w-6 h-6" />
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-lg font-black text-white tracking-tight">
+              <h3 className="text-lg font-black text-[#172B3A] dark:text-[#F8FAFC] tracking-tight">
                 Estimated Impact Assessment
               </h3>
-              <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40 font-mono text-[10px] font-bold uppercase tracking-wider">
+              <span className="px-2 py-0.5 rounded bg-[#E8F2F8] dark:bg-[#0C2D48] text-[#1769AA] dark:text-[#38BDF8] border border-[#1769AA]/30 font-mono text-[10px] font-bold uppercase tracking-wider">
                 STAGE 4 INTELLIGENCE
               </span>
-              <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono text-[10px] font-bold">
+              <span className="px-2 py-0.5 rounded bg-[#FFF7E6] dark:bg-[#3A280B] text-[#D99A00] dark:text-[#FBBF24] border border-[#D99A00]/40 font-mono text-[10px] font-bold">
                 ESTIMATED IMPACT
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5 font-mono">
-              Sector: <strong className="text-slate-200">{selectedLocation?.name || 'Dehradun'}</strong> ({selectedLocation?.state}) • Risk Score: <strong className={isCritical ? 'text-red-400' : 'text-amber-400'}>{locationRisk?.overall_score || 72}/100</strong>
+            <p className="text-xs text-[#5B6B78] dark:text-[#94A3B8] mt-0.5 font-mono">
+              Sector: <strong className="text-[#172B3A] dark:text-[#F8FAFC]">{selectedLocation?.name || 'Dehradun'}</strong> ({selectedLocation?.state}) • Risk Score: <strong className={isCritical ? 'text-[#C62828] dark:text-[#F87171]' : 'text-[#D99A00] dark:text-[#FBBF24]'}>{locationRisk?.overall_score || 72}/100</strong>
             </p>
           </div>
         </div>
@@ -140,85 +140,85 @@ export default function ImpactAssessmentPanel() {
       {/* 1. Core Estimated Impact KPI Cards (Matching exact specification) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {/* Population at Risk */}
-        <div className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400 mb-1">
+        <div className="bg-[#F8FAFC] dark:bg-[#0B1528] border border-[#D7E0E7] dark:border-[#1E2E4A] p-3.5 rounded-xl flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[#5B6B78] dark:text-[#94A3B8] mb-1">
             <span className="text-[11px] font-mono uppercase font-semibold">Population at Risk</span>
-            <Users className="w-4 h-4 text-blue-400" />
+            <Users className="w-4 h-4 text-[#1769AA] dark:text-[#38BDF8]" />
           </div>
-          <div className="text-xl lg:text-2xl font-black font-mono text-white">
+          <div className="text-xl lg:text-2xl font-black font-mono text-[#172B3A] dark:text-[#F8FAFC]">
             {(impact.population_at_risk || impact.exposed_population || 0).toLocaleString()}
           </div>
-          <span className="text-[10px] font-mono text-slate-400 mt-1">
+          <span className="text-[10px] font-mono text-[#5B6B78] dark:text-[#94A3B8] mt-1">
             of {(impact.total_sector_population || 50000).toLocaleString()} residents ({impact.exposure_percentage || 25}%)
           </span>
         </div>
 
         {/* Schools Potentially Affected */}
-        <div className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400 mb-1">
+        <div className="bg-[#F8FAFC] dark:bg-[#0B1528] border border-[#D7E0E7] dark:border-[#1E2E4A] p-3.5 rounded-xl flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[#5B6B78] dark:text-[#94A3B8] mb-1">
             <span className="text-[11px] font-mono uppercase font-semibold">Schools</span>
-            <School className="w-4 h-4 text-amber-400" />
+            <School className="w-4 h-4 text-[#D99A00] dark:text-[#FBBF24]" />
           </div>
-          <div className="text-xl lg:text-2xl font-black font-mono text-amber-400">
+          <div className="text-xl lg:text-2xl font-black font-mono text-[#D99A00] dark:text-[#FBBF24]">
             {impact.schools || impact.schools_count || 0}
           </div>
-          <span className="text-[10px] font-mono text-slate-400 mt-1">
+          <span className="text-[10px] font-mono text-[#5B6B78] dark:text-[#94A3B8] mt-1">
             Educational Facilities
           </span>
         </div>
 
         {/* Hospitals Potentially Affected */}
-        <div className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400 mb-1">
+        <div className="bg-[#F8FAFC] dark:bg-[#0B1528] border border-[#D7E0E7] dark:border-[#1E2E4A] p-3.5 rounded-xl flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[#5B6B78] dark:text-[#94A3B8] mb-1">
             <span className="text-[11px] font-mono uppercase font-semibold">Hospitals / PHCs</span>
-            <Hospital className="w-4 h-4 text-rose-400" />
+            <Hospital className="w-4 h-4 text-[#C62828] dark:text-[#F87171]" />
           </div>
-          <div className="text-xl lg:text-2xl font-black font-mono text-rose-400">
+          <div className="text-xl lg:text-2xl font-black font-mono text-[#C62828] dark:text-[#F87171]">
             {impact.hospitals || impact.hospitals_count || 0}
           </div>
-          <span className="text-[10px] font-mono text-slate-400 mt-1">
+          <span className="text-[10px] font-mono text-[#5B6B78] dark:text-[#94A3B8] mt-1">
             Health Centers
           </span>
         </div>
 
         {/* Road Segments Potentially Affected */}
-        <div className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400 mb-1">
+        <div className="bg-[#F8FAFC] dark:bg-[#0B1528] border border-[#D7E0E7] dark:border-[#1E2E4A] p-3.5 rounded-xl flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[#5B6B78] dark:text-[#94A3B8] mb-1">
             <span className="text-[11px] font-mono uppercase font-semibold">Road Segments</span>
-            <Milestone className="w-4 h-4 text-orange-400" />
+            <Milestone className="w-4 h-4 text-[#E87516] dark:text-[#FB923C]" />
           </div>
-          <div className="text-xl lg:text-2xl font-black font-mono text-orange-400">
+          <div className="text-xl lg:text-2xl font-black font-mono text-[#E87516] dark:text-[#FB923C]">
             {impact.road_segments || impact.road_segments_count || 0}
           </div>
-          <span className="text-[10px] font-mono text-slate-400 mt-1">
+          <span className="text-[10px] font-mono text-[#5B6B78] dark:text-[#94A3B8] mt-1">
             Corridors Compromised
           </span>
         </div>
 
         {/* Bridges Potentially Affected */}
-        <div className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400 mb-1">
+        <div className="bg-[#F8FAFC] dark:bg-[#0B1528] border border-[#D7E0E7] dark:border-[#1E2E4A] p-3.5 rounded-xl flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[#5B6B78] dark:text-[#94A3B8] mb-1">
             <span className="text-[11px] font-mono uppercase font-semibold">Bridges / Culverts</span>
-            <Building2 className="w-4 h-4 text-cyan-400" />
+            <Building2 className="w-4 h-4 text-[#1769AA] dark:text-[#38BDF8]" />
           </div>
-          <div className="text-xl lg:text-2xl font-black font-mono text-cyan-400">
+          <div className="text-xl lg:text-2xl font-black font-mono text-[#1769AA] dark:text-[#38BDF8]">
             {impact.bridges || impact.bridges_count || 0}
           </div>
-          <span className="text-[10px] font-mono text-slate-400 mt-1">
+          <span className="text-[10px] font-mono text-[#5B6B78] dark:text-[#94A3B8] mt-1">
             Water Crossings
           </span>
         </div>
 
         {/* Estimated Affected Area */}
-        <div className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400 mb-1">
+        <div className="bg-[#F8FAFC] dark:bg-[#0B1528] border border-[#D7E0E7] dark:border-[#1E2E4A] p-3.5 rounded-xl flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[#5B6B78] dark:text-[#94A3B8] mb-1">
             <span className="text-[11px] font-mono uppercase font-semibold">Affected Area</span>
-            <Layers className="w-4 h-4 text-emerald-400" />
+            <Layers className="w-4 h-4 text-[#16855B] dark:text-[#34D399]" />
           </div>
-          <div className="text-xl lg:text-2xl font-black font-mono text-emerald-400">
+          <div className="text-xl lg:text-2xl font-black font-mono text-[#16855B] dark:text-[#34D399]">
             {impact.affected_area || `${impact.affected_area_sq_km || 15} sq km`}
           </div>
-          <span className="text-[10px] font-mono text-slate-400 mt-1">
+          <span className="text-[10px] font-mono text-[#5B6B78] dark:text-[#94A3B8] mt-1">
             ~{impact.affected_radius_km || 4} km Danger Radius
           </span>
         </div>
@@ -226,23 +226,23 @@ export default function ImpactAssessmentPanel() {
 
       {/* 2. Vulnerable Demographic Breakdown */}
       {impact.vulnerable_demographics && (
-        <div className="bg-slate-900/70 border border-slate-800 p-3.5 rounded-xl">
-          <div className="flex items-center gap-2 mb-2 text-xs font-mono font-bold text-slate-300">
-            <HeartHandshake className="w-4 h-4 text-rose-400" />
+        <div className="bg-[#F8FAFC] dark:bg-[#0B1528] border border-[#D7E0E7] dark:border-[#1E2E4A] p-3.5 rounded-xl">
+          <div className="flex items-center gap-2 mb-2 text-xs font-mono font-bold text-[#172B3A] dark:text-[#F8FAFC]">
+            <HeartHandshake className="w-4 h-4 text-[#C62828] dark:text-[#F87171]" />
             <span>High-Priority Demographic Vulnerability Breakdown:</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
-            <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80 flex items-center justify-between">
-              <span className="text-slate-400">Elderly (&gt;60 yrs):</span>
-              <strong className="text-amber-300 font-bold">{(impact.vulnerable_demographics.elderly_above_60 || 0).toLocaleString()} residents</strong>
+            <div className="bg-white dark:bg-[#070F1E] p-2.5 rounded-lg border border-[#D7E0E7] dark:border-[#1E2E4A] flex items-center justify-between">
+              <span className="text-[#5B6B78] dark:text-[#94A3B8]">Elderly (&gt;60 yrs):</span>
+              <strong className="text-[#D99A00] dark:text-[#FBBF24] font-bold">{(impact.vulnerable_demographics.elderly_above_60 || 0).toLocaleString()} residents</strong>
             </div>
-            <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80 flex items-center justify-between">
-              <span className="text-slate-400">Children (&lt;12 yrs):</span>
-              <strong className="text-blue-300 font-bold">{(impact.vulnerable_demographics.children_under_12 || 0).toLocaleString()} residents</strong>
+            <div className="bg-white dark:bg-[#070F1E] p-2.5 rounded-lg border border-[#D7E0E7] dark:border-[#1E2E4A] flex items-center justify-between">
+              <span className="text-[#5B6B78] dark:text-[#94A3B8]">Children (&lt;12 yrs):</span>
+              <strong className="text-[#1769AA] dark:text-[#38BDF8] font-bold">{(impact.vulnerable_demographics.children_under_12 || 0).toLocaleString()} residents</strong>
             </div>
-            <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80 flex items-center justify-between">
-              <span className="text-slate-400">Medical / Mobility Priority:</span>
-              <strong className="text-rose-400 font-bold">{(impact.vulnerable_demographics.persons_requiring_medical_assistance || 0).toLocaleString()} residents</strong>
+            <div className="bg-white dark:bg-[#070F1E] p-2.5 rounded-lg border border-[#D7E0E7] dark:border-[#1E2E4A] flex items-center justify-between">
+              <span className="text-[#5B6B78] dark:text-[#94A3B8]">Medical / Mobility Priority:</span>
+              <strong className="text-[#C62828] dark:text-[#F87171] font-bold">{(impact.vulnerable_demographics.persons_requiring_medical_assistance || 0).toLocaleString()} residents</strong>
             </div>
           </div>
         </div>
@@ -251,13 +251,13 @@ export default function ImpactAssessmentPanel() {
       {/* 3. Priority Response Locations (Ranked First Responder Targets) */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <Truck className="w-4 h-4 text-orange-400" />
+          <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#172B3A] dark:text-[#F8FAFC] flex items-center gap-2">
+            <Truck className="w-4 h-4 text-[#E87516] dark:text-[#FB923C]" />
             Priority Response Locations (SDRF / First Responder Deployment Targets):
           </span>
           <button
             onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
-            className="text-xs font-mono text-blue-400 hover:text-blue-300 flex items-center gap-1"
+            className="text-xs font-mono text-[#1769AA] dark:text-[#38BDF8] hover:underline font-bold flex items-center gap-1"
           >
             <span>{isDetailsExpanded ? 'Collapse Assets' : 'View Infrastructure Details'}</span>
             {isDetailsExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -266,24 +266,24 @@ export default function ImpactAssessmentPanel() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {(impact.priority_response_locations || []).slice(0, 2).map((target, idx) => (
-            <div key={idx} className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl space-y-2">
+            <div key={idx} className="bg-[#F8FAFC] dark:bg-[#0B1528] border border-[#D7E0E7] dark:border-[#1E2E4A] p-3.5 rounded-xl space-y-2">
               <div className="flex items-center justify-between">
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30">
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#FFF7E6] dark:bg-[#3A280B] text-[#D99A00] dark:text-[#FBBF24] border border-[#D99A00]/40">
                   RANK #{target.priority_rank || idx + 1} PRIORITY
                 </span>
-                <span className="text-[10px] font-mono text-red-400 font-semibold">
+                <span className="text-[10px] font-mono text-[#C62828] dark:text-[#F87171] font-semibold">
                   {target.urgency || "IMMEDIATE"}
                 </span>
               </div>
-              <h4 className="text-sm font-bold text-white font-mono">
+              <h4 className="text-sm font-bold text-[#172B3A] dark:text-[#F8FAFC] font-mono">
                 {target.location_name}
               </h4>
-              <p className="text-xs text-slate-300 font-mono leading-relaxed">
-                👉 <strong>Response Action:</strong> {target.recommended_response}
+              <p className="text-xs text-[#5B6B78] dark:text-[#94A3B8] font-mono leading-relaxed">
+                👉 <strong className="text-[#172B3A] dark:text-[#F8FAFC]">Response Action:</strong> {target.recommended_response}
               </p>
-              <div className="text-[11px] text-slate-400 font-mono pt-1 border-t border-slate-800 flex justify-between">
-                <span>Threat: {target.primary_threat}</span>
-                <span>Pop. at Risk: ~{(target.target_population || 0).toLocaleString()}</span>
+              <div className="text-[11px] text-[#5B6B78] dark:text-[#94A3B8] font-mono pt-1 border-t border-[#D7E0E7] dark:border-[#1E2E4A] flex justify-between">
+                <span>Threat: <strong className="text-[#172B3A] dark:text-[#F8FAFC]">{target.primary_threat}</strong></span>
+                <span>Pop. at Risk: ~<strong className="text-[#172B3A] dark:text-[#F8FAFC]">{(target.target_population || 0).toLocaleString()}</strong></span>
               </div>
             </div>
           ))}
@@ -292,37 +292,37 @@ export default function ImpactAssessmentPanel() {
 
       {/* 4. Critical Civic Infrastructure Assets & GIS Extensibility Section */}
       {isDetailsExpanded && (
-        <div className="space-y-3 pt-3 border-t border-slate-800">
-          <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-cyan-400" />
+        <div className="space-y-3 pt-3 border-t border-[#D7E0E7] dark:border-[#1E2E4A]">
+          <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#172B3A] dark:text-[#F8FAFC] flex items-center gap-2">
+            <Building2 className="w-4 h-4 text-[#1769AA] dark:text-[#38BDF8]" />
             Critical Infrastructure Lifelines Under Threat:
           </span>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {(impact.critical_infrastructure || []).map((asset, idx) => (
-              <div key={idx} className="bg-slate-950 p-3 rounded-lg border border-slate-800 text-xs font-mono space-y-1">
+              <div key={idx} className="bg-[#F8FAFC] dark:bg-[#070F1E] p-3 rounded-lg border border-[#D7E0E7] dark:border-[#1E2E4A] text-xs font-mono space-y-1">
                 <div className="flex items-center justify-between">
-                  <strong className="text-white">{asset.asset_name}</strong>
-                  <span className="text-[10px] text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded">
+                  <strong className="text-[#172B3A] dark:text-[#F8FAFC]">{asset.asset_name}</strong>
+                  <span className="text-[10px] text-[#1769AA] dark:text-[#38BDF8] border border-[#1769AA]/30 px-1.5 py-0.5 rounded">
                     {asset.asset_type}
                   </span>
                 </div>
-                <p className="text-slate-400 text-[11px]">
-                  Status: <span className="text-amber-300">{asset.risk_status}</span>
+                <p className="text-[#5B6B78] dark:text-[#94A3B8] text-[11px]">
+                  Status: <span className="text-[#D99A00] dark:text-[#FBBF24] font-semibold">{asset.risk_status}</span>
                 </p>
-                <p className="text-slate-400 text-[11px]">
-                  Mitigation: <span className="text-slate-300">{asset.mitigation_action}</span>
+                <p className="text-[#5B6B78] dark:text-[#94A3B8] text-[11px]">
+                  Mitigation: <span className="text-[#172B3A] dark:text-[#E2E8F0]">{asset.mitigation_action}</span>
                 </p>
               </div>
             ))}
           </div>
 
           {/* Extensibility schema banner */}
-          <div className="bg-blue-950/40 border border-blue-500/30 p-3 rounded-xl flex items-start gap-2.5 text-xs text-blue-200">
-            <Info className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+          <div className="bg-[#E8F2F8] dark:bg-[#0C2D48] border border-[#1769AA]/30 p-3 rounded-xl flex items-start gap-2.5 text-xs text-[#172B3A] dark:text-[#E2E8F0]">
+            <Info className="w-4 h-4 text-[#1769AA] dark:text-[#38BDF8] shrink-0 mt-0.5" />
             <div>
-              <strong className="block font-mono text-blue-300">GIS & Government Dataset Extensibility Schema Active:</strong>
-              <p className="text-[11px] text-slate-300 mt-0.5 leading-relaxed">
+              <strong className="block font-mono text-[#1769AA] dark:text-[#38BDF8]">GIS & Government Dataset Extensibility Schema Active:</strong>
+              <p className="text-[11px] text-[#5B6B78] dark:text-[#94A3B8] mt-0.5 leading-relaxed">
                 This structured impact object is designed to interface with live <strong>OpenStreetMap (OSM)</strong> road vectors, <strong>PMGSY</strong> culvert networks, and <strong>ISRO Bhuvan / NDMA Geoportals</strong> for automated raster-to-infrastructure intersection analysis.
               </p>
             </div>

@@ -646,7 +646,7 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
   return (
     <div 
       ref={containerRef}
-      className={`relative w-full rounded-2xl overflow-hidden border border-slate-300 shadow-2xl flex flex-col bg-[#E8F2F8] transition-all duration-300 ${
+      className={`relative w-full rounded-2xl overflow-hidden border border-[#D7E0E7] dark:border-slate-700 shadow-xl flex flex-col bg-[#E8F2F8] dark:bg-[#070F1E] transition-all duration-300 ${
         isFullscreen ? 'fixed inset-0 z-[9999] rounded-none h-screen w-screen' : ''
       } ${className}`}
       style={{ height: isFullscreen ? '100vh' : height }}
@@ -656,10 +656,10 @@ export default function RiskMap({ height = "520px", showRoute = true, className 
       <div className="absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 z-[400] flex flex-col xl:flex-row xl:items-center justify-between gap-2 pointer-events-none">
         {/* Left / Row 1: GIS Title Badge & Hazard Layer Filters */}
         <div className="flex flex-wrap items-center gap-2 pointer-events-auto">
-          <div className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-300 shadow-lg flex items-center gap-2 shrink-0 font-sans text-xs">
-            <span className="font-bold text-slate-800">Live Logistics GIS (NER)</span>
-            <span className="text-slate-300">|</span>
-            <span className="text-[11px] text-slate-600 font-semibold font-mono">Leaflet + OpenStreetMap</span>
+          <div className="bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 shadow-lg flex items-center gap-2 shrink-0 font-sans text-xs">
+            <span className="font-bold text-slate-800 dark:text-slate-100">Live Logistics GIS (NER)</span>
+            <span className="text-slate-300 dark:text-slate-600">|</span>
+            <span className="text-[11px] text-slate-600 dark:text-slate-400 font-semibold font-mono">Leaflet + OpenStreetMap</span>
           </div>
 
           <div className="bg-slate-950/95 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 flex items-center gap-1 shadow-2xl overflow-x-auto whitespace-nowrap scrollbar-none max-w-full">

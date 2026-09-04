@@ -22,7 +22,7 @@ export default function CitizenHomePage() {
   const { 
     locations,
     selectedLocation, 
-    selectedLocationId,
+    selectedLocationId, 
     selectedShelter,
     locationRisk, 
     environmentalData, 
@@ -42,9 +42,9 @@ export default function CitizenHomePage() {
       badgeText: '🟢 YOU ARE SAFE',
       title: 'No immediate danger in your area.',
       explanation: 'Weather and river water levels are normal. It is safe to carry on regular activities.',
-      themeBg: 'bg-[#EAF7F1] border-[#16855B]/40 text-[#172B3A]',
-      titleColor: 'text-[#172B3A]',
-      textColor: 'text-[#5B6B78]',
+      themeBg: 'bg-[#EAF7F1] dark:bg-emerald-950/40 border-[#16855B]/40 dark:border-emerald-600/40 text-[#172B3A] dark:text-emerald-100',
+      titleColor: 'text-[#172B3A] dark:text-white',
+      textColor: 'text-[#5B6B78] dark:text-emerald-200/80',
       actions: [
         'Keep emergency numbers saved on your phone',
         'Check back for updates if rain becomes heavier',
@@ -56,9 +56,9 @@ export default function CitizenHomePage() {
       badgeText: '🟡 STAY ALERT',
       title: 'Water levels and rain are rising.',
       explanation: 'Rainfall is increasing in your sector. Stay watchful near streams and low roads.',
-      themeBg: 'bg-[#FFF7E6] border-[#D99A00]/40 text-[#172B3A]',
-      titleColor: 'text-[#172B3A]',
-      textColor: 'text-[#5B6B78]',
+      themeBg: 'bg-[#FFF7E6] dark:bg-amber-950/40 border-[#D99A00]/40 dark:border-amber-600/40 text-[#172B3A] dark:text-amber-100',
+      titleColor: 'text-[#172B3A] dark:text-white',
+      textColor: 'text-[#5B6B78] dark:text-amber-200/80',
       actions: [
         'Stay away from riverbanks and swollen streams',
         'Avoid driving through water-covered roads',
@@ -71,9 +71,9 @@ export default function CitizenHomePage() {
       badgeText: '🟠 HIGH RISK — BE READY',
       title: 'Heavy rain is increasing the chance of flooding.',
       explanation: 'Rapid water rise and slope instability detected. Prepare for potential evacuation.',
-      themeBg: 'bg-[#FFF7E6] border-[#E87516]/50 text-[#172B3A]',
-      titleColor: 'text-[#172B3A]',
-      textColor: 'text-[#5B6B78]',
+      themeBg: 'bg-[#FFF7E6] dark:bg-orange-950/40 border-[#E87516]/50 dark:border-orange-600/40 text-[#172B3A] dark:text-orange-100',
+      titleColor: 'text-[#172B3A] dark:text-white',
+      textColor: 'text-[#5B6B78] dark:text-orange-200/80',
       actions: [
         'Move important belongings to higher floors',
         'Pack emergency bag with medicine, water, and documents',
@@ -86,9 +86,9 @@ export default function CitizenHomePage() {
       badgeText: '🔴 TAKE ACTION NOW',
       title: 'Dangerous flood surge and landslides imminent.',
       explanation: 'Extreme deluge has overwhelmed river channels. Immediate evacuation to high ground required.',
-      themeBg: 'bg-[#FFF1F1] border-2 border-[#C62828] text-[#172B3A]',
-      titleColor: 'text-[#C62828]',
-      textColor: 'text-[#172B3A]',
+      themeBg: 'bg-[#FFF1F1] dark:bg-red-950/50 border-2 border-[#C62828] dark:border-red-500 text-[#172B3A] dark:text-red-100',
+      titleColor: 'text-[#C62828] dark:text-red-300',
+      textColor: 'text-[#172B3A] dark:text-red-200',
       actions: [
         'Move to higher ground immediately',
         'Stay away from rivers and flooded low areas',
@@ -101,7 +101,7 @@ export default function CitizenHomePage() {
   const currentStatus = statusConfig[level] || statusConfig.LOW;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-12 text-[#172B3A]">
+    <div className="max-w-5xl mx-auto space-y-6 pb-12 text-[#172B3A] dark:text-[#E2E8F0] transition-colors duration-200">
       {/* ========================================================================= */}
       {/* 0. SEARCH & SELECT YOUR LOCATION / SECTOR (Place Selection)               */}
       {/* ========================================================================= */}
@@ -123,8 +123,8 @@ export default function CitizenHomePage() {
               {currentStatus.badgeText}
             </span>
 
-            <div className="flex items-center gap-1.5 text-xs text-[#172B3A] font-semibold bg-white/80 px-3 py-1.5 rounded-full border border-[#D7E0E7]">
-              <MapPin className="w-4 h-4 text-[#1769AA]" />
+            <div className="flex items-center gap-1.5 text-xs text-[#172B3A] dark:text-white font-semibold bg-white/80 dark:bg-[#0B192C]/80 px-3 py-1.5 rounded-full border border-[#D7E0E7] dark:border-[#1E2E4A] backdrop-blur-sm">
+              <MapPin className="w-4 h-4 text-[#1769AA] dark:text-[#38BDF8]" />
               <span>{activeLoc?.name || 'Selected Sector'}{activeLoc?.state ? `, ${activeLoc.state}` : ''}</span>
             </div>
           </div>
@@ -140,12 +140,12 @@ export default function CitizenHomePage() {
           </p>
 
           {/* Hazard & Simple Risk Level */}
-          <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-[#5B6B78]">
-            <span>Dominant Hazard: <strong className="text-[#172B3A]">{activeLoc?.current_risk?.dominant_hazard ? activeLoc.current_risk.dominant_hazard.replace('_', ' ').toUpperCase() : (locationRisk?.dominant_hazard ? locationRisk.dominant_hazard.replace('_', ' ').toUpperCase() : 'FLASH FLOOD')}</strong></span>
+          <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-[#5B6B78] dark:text-slate-400">
+            <span>Dominant Hazard: <strong className="text-[#172B3A] dark:text-white">{activeLoc?.current_risk?.dominant_hazard ? activeLoc.current_risk.dominant_hazard.replace('_', ' ').toUpperCase() : (locationRisk?.dominant_hazard ? locationRisk.dominant_hazard.replace('_', ' ').toUpperCase() : 'FLASH FLOOD')}</strong></span>
             <span>•</span>
-            <span>Risk Level: <strong className="text-[#172B3A]">{level}</strong></span>
+            <span>Risk Level: <strong className="text-[#172B3A] dark:text-white">{level}</strong></span>
             <span>•</span>
-            <span>Score: <strong className="text-[#1769AA] font-bold">{activeLoc?.current_risk?.overall_score || locationRisk?.overall_score || 20}/100</strong></span>
+            <span>Score: <strong className="text-[#1769AA] dark:text-[#38BDF8] font-bold">{activeLoc?.current_risk?.overall_score || locationRisk?.overall_score || 20}/100</strong></span>
           </div>
         </div>
       </section>
@@ -153,15 +153,15 @@ export default function CitizenHomePage() {
       {/* ========================================================================= */}
       {/* 2. WHAT SHOULD I DO? (Simple Checkbox Action Directives)                  */}
       {/* ========================================================================= */}
-      <section className="bg-white border border-[#D7E0E7] rounded-2xl p-4 sm:p-6 shadow-sm space-y-4 sm:space-y-5">
-        <div className="flex items-center justify-between pb-3 border-b border-[#D7E0E7]">
+      <section className="bg-white dark:bg-[#111C35] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-2xl p-4 sm:p-6 shadow-sm space-y-4 sm:space-y-5 transition-colors">
+        <div className="flex items-center justify-between pb-3 border-b border-[#D7E0E7] dark:border-[#1E2E4A]">
           <div className="flex items-center gap-2.5">
-            <ShieldCheck className="w-5 h-5 text-[#16855B]" />
-            <h2 className="text-base font-bold text-[#172B3A] uppercase tracking-wider">
+            <ShieldCheck className="w-5 h-5 text-[#16855B] dark:text-emerald-400" />
+            <h2 className="text-base font-bold text-[#172B3A] dark:text-white uppercase tracking-wider">
               WHAT SHOULD I DO RIGHT NOW?
             </h2>
           </div>
-          <span className="text-xs text-[#16855B] font-semibold">
+          <span className="text-xs text-[#16855B] dark:text-emerald-400 font-semibold">
             Simple Safety Steps
           </span>
         </div>
@@ -169,9 +169,9 @@ export default function CitizenHomePage() {
         {/* Action Bullet Points */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {currentStatus.actions.map((action, idx) => (
-            <div key={idx} className="p-3.5 bg-[#F8FAFC] border border-[#D7E0E7] rounded-xl flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-[#16855B] shrink-0 mt-0.5" />
-              <span className="text-xs sm:text-sm text-[#172B3A] font-medium leading-snug">{action}</span>
+            <div key={idx} className="p-3.5 bg-[#F8FAFC] dark:bg-[#0D162B] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl flex items-start gap-3">
+              <CheckCircle2 className="w-5 h-5 text-[#16855B] dark:text-emerald-400 shrink-0 mt-0.5" />
+              <span className="text-xs sm:text-sm text-[#172B3A] dark:text-slate-200 font-medium leading-snug">{action}</span>
             </div>
           ))}
         </div>
@@ -207,14 +207,14 @@ export default function CitizenHomePage() {
       {/* ========================================================================= */}
       {/* 4. EMERGENCY CONTACT NUMBERS (Quick Toll-Free Helplines)                  */}
       {/* ========================================================================= */}
-      <section className="bg-white border border-[#D7E0E7] rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <section className="bg-white dark:bg-[#111C35] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-[#E8F2F8] text-[#1769AA] border border-[#1769AA]/30 rounded-xl">
+          <div className="p-3 bg-[#E8F2F8] dark:bg-[#1769AA]/20 text-[#1769AA] dark:text-[#38BDF8] border border-[#1769AA]/30 rounded-xl">
             <PhoneCall className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-[#172B3A]">24/7 Disaster Helpline Contacts</h3>
-            <p className="text-xs text-[#5B6B78]">Direct connection to National & State Disaster Management Authorities</p>
+            <h3 className="text-sm font-bold text-[#172B3A] dark:text-white">24/7 Disaster Helpline Contacts</h3>
+            <p className="text-xs text-[#5B6B78] dark:text-slate-400">Direct connection to National & State Disaster Management Authorities</p>
           </div>
         </div>
 
@@ -227,7 +227,7 @@ export default function CitizenHomePage() {
           </a>
           <a
             href="tel:1070"
-            className="px-4 py-2 bg-white hover:bg-[#E8F2F8] text-[#1769AA] border border-[#1769AA] rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all"
+            className="px-4 py-2 bg-white dark:bg-[#070F1E] hover:bg-[#E8F2F8] dark:hover:bg-[#123047] text-[#1769AA] dark:text-[#38BDF8] border border-[#1769AA] rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all"
           >
             <span>State Disaster SDMA: 1070</span>
           </a>

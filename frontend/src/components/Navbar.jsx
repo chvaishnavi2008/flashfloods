@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import ThemeToggle from './ThemeToggle';
 import { 
   Shield, 
   Volume2, 
@@ -213,6 +214,9 @@ export default function Navbar() {
             </button>
           </div>
 
+          {/* Theme Toggle (Light / Dark) */}
+          <ThemeToggle variant="icon" />
+
           {/* Refresh button */}
           <button
             onClick={refreshData}
@@ -368,6 +372,14 @@ export default function Navbar() {
                   </button>
                 </div>
               )}
+
+              {/* Mobile Drawer Theme Switcher */}
+              <div className="pt-2 space-y-1.5">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#D7E0E7] block px-1">
+                  Color Theme:
+                </span>
+                <ThemeToggle variant="segmented" className="w-full" />
+              </div>
             </div>
 
             {/* Institutional / Demo Footer */}

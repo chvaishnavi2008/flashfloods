@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import ThemeToggle from './ThemeToggle';
 import CitizenSosModal from './CitizenSosModal';
 import { 
   Home, 
@@ -210,17 +211,24 @@ export default function Sidebar() {
         )}
       </div>
 
-      {/* Footer Info */}
-      <div className="pt-3 border-t border-[#294657] text-[10px] text-[#D7E0E7] space-y-1">
-        <div className="flex justify-between">
-          <span>Active Mode:</span>
-          <span className="text-[#16855B] font-bold">
-            {userRole === 'authority' ? 'SEOC Expert' : 'Citizen Safety'}
-          </span>
+      {/* Bottom Footer Info & Theme Switcher */}
+      <div className="pt-3 border-t border-[#294657] text-[10px] text-[#D7E0E7] space-y-2">
+        <div className="space-y-1">
+          <div className="flex justify-between">
+            <span>Active Mode:</span>
+            <span className="text-[#16855B] font-bold">
+              {userRole === 'authority' ? 'SEOC Expert' : 'Citizen Safety'}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span>Status:</span>
+            <span className="text-[#16855B] font-bold">OPERATIONAL</span>
+          </div>
         </div>
-        <div className="flex justify-between">
-          <span>Status:</span>
-          <span className="text-[#16855B] font-bold">OPERATIONAL</span>
+
+        {/* Theme Switcher in Sidebar */}
+        <div className="pt-1">
+          <ThemeToggle variant="segmented" className="w-full text-[11px]" />
         </div>
       </div>
 

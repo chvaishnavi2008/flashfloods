@@ -673,35 +673,35 @@ export default function SimulationStudioPage() {
       {/* ===================================================================== */}
       <div className="space-y-3">
         {/* Prominent Demo Indicator */}
-        <div className="bg-amber-950/80 border-2 border-amber-500/60 rounded-xl p-2.5 px-4 flex flex-wrap items-center justify-between gap-2 shadow-lg">
-          <div className="flex items-center gap-2 text-amber-300 font-mono text-xs font-bold uppercase tracking-wider">
-            <Radio className="w-4 h-4 text-amber-400 animate-pulse" />
+        <div className="bg-amber-50 dark:bg-amber-950/80 border-2 border-amber-300 dark:border-amber-500/60 rounded-xl p-2.5 px-4 flex flex-wrap items-center justify-between gap-2 shadow-sm dark:shadow-lg">
+          <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-mono text-xs font-bold uppercase tracking-wider">
+            <Radio className="w-4 h-4 text-amber-600 dark:text-amber-400 animate-pulse" />
             <span>SIMULATION MODE — DEMO DATA</span>
           </div>
-          <span className="text-[11px] text-amber-200/90 font-mono">
+          <span className="text-[11px] text-amber-700 dark:text-amber-200/90 font-mono">
             Interactive 10-Second Disaster Progression & Early Warning Walkthrough
           </span>
         </div>
 
         {/* Main Header Box */}
-        <div className="bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#0F172A] border border-slate-700/80 rounded-2xl p-5 sm:p-6 shadow-2xl space-y-4">
+        <div className="bg-white dark:bg-gradient-to-r dark:from-[#0F172A] dark:via-[#1E293B] dark:to-[#0F172A] border border-[#D7E0E7] dark:border-slate-700/80 rounded-2xl p-5 sm:p-6 shadow-sm dark:shadow-2xl space-y-4">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="space-y-1.5">
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-2.5">
+              <h1 className="text-2xl sm:text-3xl font-black text-[#172B3A] dark:text-white tracking-tight flex items-center gap-2.5">
                 <span>Disaster Scenario Simulator</span>
               </h1>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
                 See how PralayWatch detects a developing disaster, predicts risk, provides lead time, and triggers an early warning.
               </p>
               
               {/* Scenario & Location Badges */}
               <div className="flex flex-wrap items-center gap-2 pt-1 font-mono text-xs">
-                <span className="px-2.5 py-1 rounded-lg bg-blue-950/80 text-blue-300 border border-blue-500/40 font-bold flex items-center gap-1.5">
+                <span className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-500/40 font-bold flex items-center gap-1.5">
                   <span>{activeScenario.icon}</span>
                   <span>Scenario: {activeScenario.name}</span>
                 </span>
-                <span className="px-2.5 py-1 rounded-lg bg-slate-900 text-slate-300 border border-slate-700 flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-red-400" />
+                <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-red-500 dark:text-red-400" />
                   <span>Location: {activeScenario.location}</span>
                 </span>
               </div>
@@ -714,19 +714,19 @@ export default function SimulationStudioPage() {
                 onClick={toggleAudio}
                 className={`px-3 py-2 rounded-xl font-mono text-xs font-bold border transition-all flex items-center gap-1.5 ${
                   isAudioEnabled 
-                    ? 'bg-blue-950/80 border-cyan-500 text-cyan-300 hover:bg-blue-900' 
-                    : 'bg-slate-900 border-slate-700 text-slate-500 hover:text-slate-300'
+                    ? 'bg-blue-50 dark:bg-blue-950/80 border-cyan-500 text-cyan-700 dark:text-cyan-300 hover:bg-blue-100 dark:hover:bg-blue-900' 
+                    : 'bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
                 }`}
                 title="Toggle Emergency Alert Siren Audio"
               >
                 {isAudioEnabled ? (
                   <>
-                    <Volume2 className="w-4 h-4 text-cyan-400 animate-pulse" />
+                    <Volume2 className="w-4 h-4 text-cyan-600 dark:text-cyan-400 animate-pulse" />
                     <span>Siren Audio: ON</span>
                   </>
                 ) : (
                   <>
-                    <VolumeX className="w-4 h-4 text-slate-500" />
+                    <VolumeX className="w-4 h-4 text-slate-400 dark:text-slate-500" />
                     <span>Siren Audio: MUTED</span>
                   </>
                 )}
@@ -738,18 +738,18 @@ export default function SimulationStudioPage() {
                 className={`px-3 py-2 rounded-xl font-mono text-xs font-bold border transition-all flex items-center gap-1.5 ${
                   isTestingSiren
                     ? 'bg-red-600 text-white border-red-400 animate-pulse shadow-lg shadow-red-600/40'
-                    : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
+                    : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
                 }`}
                 title="Test synthesized emergency warning dual-tone siren"
               >
-                <BellRing className={`w-3.5 h-3.5 ${isTestingSiren ? 'animate-bounce text-white' : 'text-amber-400'}`} />
+                <BellRing className={`w-3.5 h-3.5 ${isTestingSiren ? 'animate-bounce text-white' : 'text-amber-500 dark:text-amber-400'}`} />
                 <span>{isTestingSiren ? 'Playing Siren...' : 'Test Siren'}</span>
               </button>
 
               {!isPlaying ? (
                 <button
                   onClick={handleStartSimulation}
-                  className="px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl font-bold font-mono text-xs sm:text-sm shadow-xl shadow-emerald-600/30 flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95"
+                  className="px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl font-bold font-mono text-xs sm:text-sm shadow-md sm:shadow-xl shadow-emerald-600/30 flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95"
                 >
                   <Play className="w-4 h-4 fill-white" />
                   <span>{currentStageIndex === 4 ? 'Replay Simulation' : 'Start Simulation'}</span>
@@ -766,7 +766,7 @@ export default function SimulationStudioPage() {
 
               <button
                 onClick={handleResetSimulation}
-                className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl font-bold font-mono text-xs sm:text-sm border border-slate-700 flex items-center gap-1.5 transition-all"
+                className="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-xl font-bold font-mono text-xs sm:text-sm border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-all"
                 title="Reset to Stage 1 (Normal)"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -780,15 +780,15 @@ export default function SimulationStudioPage() {
       {/* ===================================================================== */}
       {/* 2. SIMPLE 5-STAGE DISASTER PROGRESSION TIMELINE                       */}
       {/* ===================================================================== */}
-      <div className="bg-[#111827] border border-slate-700/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3">
+      <div className="bg-white dark:bg-[#111827] border border-[#D7E0E7] dark:border-slate-700/80 rounded-2xl p-4 sm:p-5 shadow-sm dark:shadow-xl space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-            <Activity className="w-4 h-4 text-cyan-400" />
+          <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+            <Activity className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
             <span>Disaster Progression Timeline (5 Stages)</span>
           </span>
           {isPlaying && (
-            <span className="text-xs font-mono font-bold text-cyan-400 animate-pulse flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping inline-block" />
+            <span className="text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 animate-pulse flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-ping inline-block" />
               <span>Simulating progression...</span>
             </span>
           )}
@@ -812,8 +812,8 @@ export default function SimulationStudioPage() {
                   isCurrent
                     ? `${colors.bg} ${colors.border} ring-2 ring-cyan-400/50 shadow-lg`
                     : isPassed
-                    ? 'bg-slate-900/90 border-slate-700 text-slate-300'
-                    : 'bg-slate-950/60 border-slate-800 text-slate-500 opacity-60 hover:opacity-90'
+                    ? 'bg-slate-50 dark:bg-slate-900/90 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300'
+                    : 'bg-slate-100 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 opacity-70 hover:opacity-100'
                 }`}
               >
                 {isCurrent && (
@@ -823,16 +823,16 @@ export default function SimulationStudioPage() {
                   <span className={`text-[10px] font-black uppercase px-1.5 py-0.5 rounded ${colors.badge}`}>
                     STAGE {stg.stage}
                   </span>
-                  {isPassed && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
+                  {isPassed && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />}
                 </div>
-                <div className={`text-xs font-black tracking-tight ${isCurrent ? 'text-white' : 'text-slate-300'}`}>
+                <div className={`text-xs font-black tracking-tight ${isCurrent ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}>
                   {stg.stage === 1 && '🟢 NORMAL'}
                   {stg.stage === 2 && '🟡 HEAVY RAIN'}
                   {stg.stage === 3 && '🟠 RISK INCREASING'}
                   {stg.stage === 4 && '🔴 HIGH RISK'}
                   {stg.stage === 5 && '🚨 WARNING & ACTION'}
                 </div>
-                <div className="text-[10px] text-slate-400 mt-1 truncate">
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 truncate">
                   Rain: {stg.rainfall_mm_hr} mm/h
                 </div>
               </button>
@@ -879,33 +879,33 @@ export default function SimulationStudioPage() {
       {/* ===================================================================== */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left: 4 Live Conditions Parameters (7 Cols) */}
-        <div className="lg:col-span-7 bg-[#0B1120] border border-slate-700/80 rounded-2xl p-5 shadow-xl space-y-4 font-mono">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+        <div className="lg:col-span-7 bg-white dark:bg-[#0B1120] border border-[#D7E0E7] dark:border-slate-700/80 rounded-2xl p-5 shadow-sm dark:shadow-xl space-y-4 font-mono">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-emerald-400" />
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+              <Activity className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <h3 className="text-xs font-bold text-[#172B3A] dark:text-white uppercase tracking-wider">
                 LIVE CONDITIONS PANEL
               </h3>
             </div>
-            <span className="text-[10px] bg-amber-950 text-amber-300 px-2 py-0.5 rounded border border-amber-500/40 font-bold">
+            <span className="text-[10px] bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-500/40 font-bold">
               SIMULATED DEMO DATA
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-xs">
             {/* Condition 1: Rainfall */}
-            <div className="p-3.5 bg-slate-900/90 border border-slate-800 rounded-xl space-y-1.5">
-              <div className="flex items-center justify-between text-slate-400 text-[10px] uppercase">
+            <div className="p-3.5 bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl space-y-1.5">
+              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-[10px] uppercase">
                 <span className="flex items-center gap-1">
-                  <CloudRain className="w-3.5 h-3.5 text-blue-400" />
+                  <CloudRain className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
                   <span>🌧️ Rainfall</span>
                 </span>
-                <span className="text-blue-300 font-bold">Rate</span>
+                <span className="text-blue-600 dark:text-blue-300 font-bold">Rate</span>
               </div>
-              <div className="text-xl sm:text-2xl font-black text-white">
-                {activeStageData.rainfall_mm_hr} <span className="text-xs font-normal text-slate-400">mm/hr</span>
+              <div className="text-xl sm:text-2xl font-black text-[#172B3A] dark:text-white">
+                {activeStageData.rainfall_mm_hr} <span className="text-xs font-normal text-slate-500 dark:text-slate-400">mm/hr</span>
               </div>
-              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                 <div 
                   className="bg-blue-500 h-full rounded-full transition-all duration-500"
                   style={{ width: `${Math.min(100, (activeStageData.rainfall_mm_hr / 150) * 100)}%` }}
@@ -914,18 +914,18 @@ export default function SimulationStudioPage() {
             </div>
 
             {/* Condition 2: Soil Moisture */}
-            <div className="p-3.5 bg-slate-900/90 border border-slate-800 rounded-xl space-y-1.5">
-              <div className="flex items-center justify-between text-slate-400 text-[10px] uppercase">
+            <div className="p-3.5 bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl space-y-1.5">
+              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-[10px] uppercase">
                 <span className="flex items-center gap-1">
-                  <Droplets className="w-3.5 h-3.5 text-cyan-400" />
+                  <Droplets className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
                   <span>🌱 Soil Moisture</span>
                 </span>
-                <span className="text-cyan-300 font-bold">Saturation</span>
+                <span className="text-cyan-600 dark:text-cyan-300 font-bold">Saturation</span>
               </div>
-              <div className="text-xl sm:text-2xl font-black text-white">
+              <div className="text-xl sm:text-2xl font-black text-[#172B3A] dark:text-white">
                 {activeStageData.soil_moisture_pct}%
               </div>
-              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                 <div 
                   className="bg-cyan-500 h-full rounded-full transition-all duration-500"
                   style={{ width: `${activeStageData.soil_moisture_pct}%` }}
@@ -934,18 +934,18 @@ export default function SimulationStudioPage() {
             </div>
 
             {/* Condition 3: River Level */}
-            <div className="p-3.5 bg-slate-900/90 border border-slate-800 rounded-xl space-y-1.5">
-              <div className="flex items-center justify-between text-slate-400 text-[10px] uppercase">
+            <div className="p-3.5 bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl space-y-1.5">
+              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-[10px] uppercase">
                 <span className="flex items-center gap-1">
-                  <Waves className="w-3.5 h-3.5 text-blue-400" />
+                  <Waves className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
                   <span>🌊 River Level</span>
                 </span>
-                <span className="text-blue-300 font-bold">Capacity</span>
+                <span className="text-blue-600 dark:text-blue-300 font-bold">Capacity</span>
               </div>
-              <div className="text-xl sm:text-2xl font-black text-white">
+              <div className="text-xl sm:text-2xl font-black text-[#172B3A] dark:text-white">
                 {activeStageData.river_level_pct}%
               </div>
-              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                 <div 
                   className={`h-full rounded-full transition-all duration-500 ${
                     activeStageData.river_level_pct >= 85 ? 'bg-red-500' : 'bg-blue-500'
@@ -956,18 +956,18 @@ export default function SimulationStudioPage() {
             </div>
 
             {/* Condition 4: Slope Stability */}
-            <div className="p-3.5 bg-slate-900/90 border border-slate-800 rounded-xl space-y-1.5">
-              <div className="flex items-center justify-between text-slate-400 text-[10px] uppercase">
+            <div className="p-3.5 bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl space-y-1.5">
+              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-[10px] uppercase">
                 <span className="flex items-center gap-1">
-                  <Mountain className="w-3.5 h-3.5 text-amber-400" />
+                  <Mountain className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
                   <span>⛰️ Slope Stability</span>
                 </span>
-                <span className="text-amber-300 font-bold">Equilibrium</span>
+                <span className="text-amber-600 dark:text-amber-300 font-bold">Equilibrium</span>
               </div>
-              <div className="text-xl sm:text-2xl font-black text-white">
+              <div className="text-xl sm:text-2xl font-black text-[#172B3A] dark:text-white">
                 {activeStageData.slope_stability_pct}%
               </div>
-              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                 <div 
                   className={`h-full rounded-full transition-all duration-500 ${
                     activeStageData.slope_stability_pct <= 40 ? 'bg-red-500' : 'bg-amber-500'
@@ -979,12 +979,12 @@ export default function SimulationStudioPage() {
           </div>
 
           {/* Causal Explanation Box ("Why is the risk increasing?") */}
-          <div className="p-3.5 bg-slate-950/90 border border-slate-800 rounded-xl space-y-1.5">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-300">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="p-3.5 bg-slate-50 dark:bg-slate-950/90 border border-slate-200 dark:border-slate-800 rounded-xl space-y-1.5">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-700 dark:text-cyan-300">
+              <Sparkles className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
               <span>Why is the risk changing?</span>
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed font-sans">
+            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
               {activeStageData.explanation}
             </p>
           </div>
@@ -995,81 +995,81 @@ export default function SimulationStudioPage() {
           {/* Two Large Risk Assessment Cards */}
           <div className="grid grid-cols-2 gap-3 font-mono">
             {/* Flash Flood Risk Card */}
-            <div className={`p-4 rounded-2xl border-2 shadow-xl space-y-2 flex flex-col justify-between ${
+            <div className={`p-4 rounded-2xl border-2 shadow-sm dark:shadow-xl space-y-2 flex flex-col justify-between ${
               activeStageData.flash_flood_level === 'CRITICAL'
-                ? 'bg-red-950/60 border-red-500 text-red-200'
+                ? 'bg-red-50 dark:bg-red-950/60 border-red-500 text-red-900 dark:text-red-200'
                 : activeStageData.flash_flood_level === 'HIGH'
-                ? 'bg-orange-950/50 border-orange-500 text-orange-200'
+                ? 'bg-orange-50 dark:bg-orange-950/50 border-orange-500 text-orange-900 dark:text-orange-200'
                 : activeStageData.flash_flood_level === 'MODERATE'
-                ? 'bg-yellow-950/40 border-yellow-500/60 text-yellow-200'
-                : 'bg-slate-900/90 border-slate-700 text-slate-200'
+                ? 'bg-yellow-50 dark:bg-yellow-950/40 border-yellow-500/60 text-yellow-900 dark:text-yellow-200'
+                : 'bg-white dark:bg-slate-900/90 border-[#D7E0E7] dark:border-slate-700 text-[#172B3A] dark:text-slate-200'
             }`}>
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-bold text-slate-400">🌊 FLASH FLOOD RISK</span>
+                <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">🌊 FLASH FLOOD RISK</span>
                 <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
-                  activeStageData.flash_flood_level === 'CRITICAL' ? 'bg-red-600 text-white animate-pulse' : 'bg-slate-800 text-white'
+                  activeStageData.flash_flood_level === 'CRITICAL' ? 'bg-red-600 text-white animate-pulse' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-white'
                 }`}>
                   {activeStageData.flash_flood_level}
                 </span>
               </div>
-              <div className="text-3xl sm:text-4xl font-black text-white">
+              <div className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
                 {activeStageData.flash_flood_risk}%
               </div>
-              <div className="text-[10px] text-slate-400">
+              <div className="text-[10px] text-slate-500 dark:text-slate-400">
                 Hydrological Inundation Model
               </div>
             </div>
 
             {/* Landslide Risk Card */}
-            <div className={`p-4 rounded-2xl border-2 shadow-xl space-y-2 flex flex-col justify-between ${
+            <div className={`p-4 rounded-2xl border-2 shadow-sm dark:shadow-xl space-y-2 flex flex-col justify-between ${
               activeStageData.landslide_level === 'CRITICAL'
-                ? 'bg-red-950/60 border-red-500 text-red-200'
+                ? 'bg-red-50 dark:bg-red-950/60 border-red-500 text-red-900 dark:text-red-200'
                 : activeStageData.landslide_level === 'HIGH'
-                ? 'bg-orange-950/50 border-orange-500 text-orange-200'
+                ? 'bg-orange-50 dark:bg-orange-950/50 border-orange-500 text-orange-900 dark:text-orange-200'
                 : activeStageData.landslide_level === 'MODERATE'
-                ? 'bg-yellow-950/40 border-yellow-500/60 text-yellow-200'
-                : 'bg-slate-900/90 border-slate-700 text-slate-200'
+                ? 'bg-yellow-50 dark:bg-yellow-950/40 border-yellow-500/60 text-yellow-900 dark:text-yellow-200'
+                : 'bg-white dark:bg-slate-900/90 border-[#D7E0E7] dark:border-slate-700 text-[#172B3A] dark:text-slate-200'
             }`}>
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-bold text-slate-400">⛰️ LANDSLIDE RISK</span>
+                <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">⛰️ LANDSLIDE RISK</span>
                 <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
-                  activeStageData.landslide_level === 'CRITICAL' ? 'bg-red-600 text-white animate-pulse' : 'bg-slate-800 text-white'
+                  activeStageData.landslide_level === 'CRITICAL' ? 'bg-red-600 text-white animate-pulse' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-white'
                 }`}>
                   {activeStageData.landslide_level}
                 </span>
               </div>
-              <div className="text-3xl sm:text-4xl font-black text-white">
+              <div className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
                 {activeStageData.landslide_risk}%
               </div>
-              <div className="text-[10px] text-slate-400">
+              <div className="text-[10px] text-slate-500 dark:text-slate-400">
                 Geotechnical Shear Model
               </div>
             </div>
           </div>
 
           {/* Action Directives Card */}
-          <div className={`p-4 sm:p-5 rounded-2xl border-2 shadow-2xl space-y-3 ${
+          <div className={`p-4 sm:p-5 rounded-2xl border-2 shadow-sm dark:shadow-2xl space-y-3 ${
             isCriticalOrHigh
-              ? 'bg-red-950/70 border-red-500 shadow-red-950/40'
-              : 'bg-slate-900/90 border-slate-700'
+              ? 'bg-red-50 dark:bg-red-950/70 border-red-500 dark:shadow-red-950/40'
+              : 'bg-white dark:bg-slate-900/90 border-[#D7E0E7] dark:border-slate-700'
           }`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ShieldAlert className={`w-5 h-5 ${isCriticalOrHigh ? 'text-red-400 animate-bounce' : 'text-emerald-400'}`} />
-                <h4 className="text-sm font-black text-white uppercase font-mono">
+                <ShieldAlert className={`w-5 h-5 ${isCriticalOrHigh ? 'text-red-500 dark:text-red-400 animate-bounce' : 'text-emerald-600 dark:text-emerald-400'}`} />
+                <h4 className="text-sm font-black text-[#172B3A] dark:text-white uppercase font-mono">
                   {isCriticalOrHigh ? '🚨 HIGH ALERT DIRECTIVE' : 'STATUS: NORMAL WATCH'}
                 </h4>
               </div>
               <span className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold uppercase ${
-                isCriticalOrHigh ? 'bg-red-600 text-white animate-pulse' : 'bg-emerald-950 text-emerald-300 border border-emerald-500/40'
+                isCriticalOrHigh ? 'bg-red-600 text-white animate-pulse' : 'bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40'
               }`}>
                 {isCriticalOrHigh ? 'ACTION REQUIRED' : 'STANDBY'}
               </span>
             </div>
 
-            <div className="p-3 bg-black/50 rounded-xl border border-slate-800 text-xs text-slate-200 space-y-1">
-              <div className="text-[10px] text-slate-400 uppercase font-mono font-bold">Recommended Action:</div>
-              <div className="font-bold text-white text-sm leading-snug">
+            <div className="p-3 bg-slate-50 dark:bg-black/50 rounded-xl border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-200 space-y-1">
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-mono font-bold">Recommended Action:</div>
+              <div className="font-bold text-[#172B3A] dark:text-white text-sm leading-snug">
                 {activeStageData.action_required 
                   ? activeStageData.action_text 
                   : 'Maintain standard routine monitoring. No protective action required.'}
@@ -1077,12 +1077,12 @@ export default function SimulationStudioPage() {
             </div>
 
             {/* Nearest Safe Haven & Safe Route Link */}
-            <div className="flex items-center justify-between pt-1 font-mono text-xs text-slate-300">
+            <div className="flex items-center justify-between pt-1 font-mono text-xs text-slate-600 dark:text-slate-300">
               <div className="flex items-center gap-1.5">
-                <MapPin className="w-4 h-4 text-emerald-400 shrink-0" />
+                <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                 <div>
-                  <span className="text-[10px] text-slate-400 block">Nearest Safe Zone:</span>
-                  <strong className="text-emerald-400">{nearestDistance} ({nearestHavenName})</strong>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Nearest Safe Zone:</span>
+                  <strong className="text-emerald-600 dark:text-emerald-400">{nearestDistance} ({nearestHavenName})</strong>
                 </div>
               </div>
 
@@ -1167,13 +1167,13 @@ export default function SimulationStudioPage() {
       {/* ===================================================================== */}
       {/* 6. REGIONAL SCENARIO SELECTOR ("Try Different Disaster Scenarios")    */}
       {/* ===================================================================== */}
-      <div className="bg-[#111827] border border-slate-700/80 rounded-2xl p-5 shadow-xl space-y-4">
+      <div className="bg-white dark:bg-[#111827] border border-[#D7E0E7] dark:border-slate-700/80 rounded-2xl p-5 shadow-sm dark:shadow-xl space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-white flex items-center gap-2">
-            <Compass className="w-4 h-4 text-cyan-400" />
+          <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-[#172B3A] dark:text-white flex items-center gap-2">
+            <Compass className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
             <span>Try Different Disaster Scenarios</span>
           </h3>
-          <span className="text-xs font-mono text-slate-400">
+          <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
             5 Benchmark Geo-Climatic Hotspots
           </span>
         </div>
@@ -1188,25 +1188,25 @@ export default function SimulationStudioPage() {
                 onClick={() => handleSelectScenario(idx)}
                 className={`p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between space-y-2 ${
                   isSelected
-                    ? 'bg-blue-950/90 border-cyan-400 text-white ring-2 ring-cyan-400/40 shadow-xl'
-                    : 'bg-slate-900/80 border-slate-800 text-slate-400 hover:bg-slate-850 hover:text-slate-200 hover:border-slate-700'
+                    ? 'bg-blue-50 dark:bg-blue-950/90 border-cyan-500 dark:border-cyan-400 text-slate-900 dark:text-white ring-2 ring-cyan-400/40 shadow-md sm:shadow-xl'
+                    : 'bg-slate-50 dark:bg-slate-900/80 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-850 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xl">{sc.icon}</span>
                   {isSelected && (
-                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-cyan-500 text-slate-950">
+                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-cyan-600 text-white dark:bg-cyan-500 dark:text-slate-950">
                       ACTIVE
                     </span>
                   )}
                 </div>
 
                 <div>
-                  <strong className="text-xs text-white block leading-snug">{sc.name}</strong>
-                  <span className="text-[10px] text-slate-400 block mt-0.5">{sc.location}</span>
+                  <strong className="text-xs text-[#172B3A] dark:text-white block leading-snug">{sc.name}</strong>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">{sc.location}</span>
                 </div>
 
-                <div className="text-[9px] text-cyan-400 font-bold uppercase pt-1 border-t border-slate-800">
+                <div className="text-[9px] text-cyan-700 dark:text-cyan-400 font-bold uppercase pt-1 border-t border-slate-200 dark:border-slate-800">
                   {sc.hazardType}
                 </div>
               </button>
@@ -1218,38 +1218,38 @@ export default function SimulationStudioPage() {
       {/* ===================================================================== */}
       {/* 7. COLLAPSIBLE TECHNICAL DETAILS SECTION                              */}
       {/* ===================================================================== */}
-      <div className="bg-slate-950/80 border border-slate-800 rounded-2xl overflow-hidden font-mono text-xs">
+      <div className="bg-slate-50 dark:bg-slate-950/80 border border-[#D7E0E7] dark:border-slate-800 rounded-2xl overflow-hidden font-mono text-xs">
         <button
           onClick={() => setIsTechOpen(!isTechOpen)}
-          className="w-full p-4 flex items-center justify-between text-left text-slate-400 hover:text-slate-200 transition-colors"
+          className="w-full p-4 flex items-center justify-between text-left text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"
         >
           <div className="flex items-center gap-2 font-bold">
-            <Sliders className="w-4 h-4 text-cyan-400" />
+            <Sliders className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
             <span>⚙️ Technical Details (Hydrological & Geotechnical Formula Telemetry)</span>
           </div>
           {isTechOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </button>
 
         {isTechOpen && (
-          <div className="p-4 pt-0 border-t border-slate-800 text-slate-300 space-y-3">
+          <div className="p-4 pt-0 border-t border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 space-y-3">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
-                <span className="text-[10px] text-slate-400 uppercase font-bold">Flash Flood Formula</span>
-                <p className="text-[11px] text-slate-300">
+              <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold">Flash Flood Formula</span>
+                <p className="text-[11px] text-slate-700 dark:text-slate-300">
                   $$\text{FF} = 0.35 \cdot \text{RainRate} + 0.20 \cdot \text{Accum} + 0.20 \cdot \text{RiverLevel} + 0.15 \cdot \text{Trend} + 0.05 \cdot \text{Elev} + 0.05 \cdot \text{Hist}$$
                 </p>
               </div>
 
-              <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
-                <span className="text-[10px] text-slate-400 uppercase font-bold">Landslide Formula</span>
-                <p className="text-[11px] text-slate-300">
+              <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold">Landslide Formula</span>
+                <p className="text-[11px] text-slate-700 dark:text-slate-300">
                   $$\text{LS} = 0.35 \cdot \text{SoilMoisture} + 0.30 \cdot \text{Slope} + 0.15 \cdot \text{RainRate} + 0.10 \cdot \text{Accum} + 0.05 \cdot \text{Elev} + 0.05 \cdot \text{Hist}$$
                 </p>
               </div>
 
-              <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
-                <span className="text-[10px] text-slate-400 uppercase font-bold">Lead Time Estimation</span>
-                <p className="text-[11px] text-slate-300">
+              <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold">Lead Time Estimation</span>
+                <p className="text-[11px] text-slate-700 dark:text-slate-300">
                   Derived from upstream hydrograph flood wave travel time ($t = d/v$) and soil pore-pressure saturation curve slope.
                 </p>
               </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import ThemeToggle from '../ThemeToggle';
 import { 
   ShieldAlert, 
   Activity, 
@@ -76,8 +77,9 @@ export default function AuthorityHeader() {
           </div>
         </div>
 
-        {/* Mobile Quick Refresh on Right */}
+        {/* Mobile Quick Controls on Right */}
         <div className="flex md:hidden items-center gap-1.5">
+          <ThemeToggle variant="icon" className="p-1.5" />
           <button
             onClick={refreshData}
             disabled={loading}
@@ -126,7 +128,7 @@ export default function AuthorityHeader() {
         </div>
       </div>
 
-      {/* 3. Right Controls: Siren Toggle, Role Switch to Citizen, Refresh */}
+      {/* 3. Right Controls: Siren Toggle, Role Switch to Citizen, Theme Toggle, Refresh */}
       <div className="flex items-center gap-2">
         {/* Siren Mute Toggle */}
         <button
@@ -153,6 +155,9 @@ export default function AuthorityHeader() {
           <span className="hidden sm:inline">Switch to Citizen Safety</span>
           <span className="sm:hidden">Citizen</span>
         </button>
+
+        {/* Theme Toggle Button */}
+        <ThemeToggle variant="icon" className="p-1.5" />
 
         {/* Telemetry Refresh Button */}
         <button

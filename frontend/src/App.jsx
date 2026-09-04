@@ -98,7 +98,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F5F7F9] text-[#172B3A] selection:bg-[#1769AA] selection:text-white">
+    <div className="min-h-screen flex flex-col bg-[#F5F7F9] dark:bg-[#070F1E] text-[#172B3A] dark:text-[#E2E8F0] selection:bg-[#1769AA] selection:text-white transition-colors duration-200">
       {/* Dynamic Header: Institutional AuthorityHeader vs Approved Citizen Navbar */}
       {isAuthority ? <AuthorityHeader /> : <Navbar />}
 
@@ -108,8 +108,8 @@ export default function App() {
         {isAuthority ? <AuthoritySidebar /> : <Sidebar />}
 
         {/* Scrollable Workspace Canvas */}
-        <main className={`flex-1 overflow-y-auto overflow-x-hidden ${
-          isAuthority ? 'p-3 sm:p-4 lg:p-4 bg-[#F5F7F9]' : 'p-3 sm:p-4 lg:p-8 bg-[#F5F7F9]'
+        <main className={`flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-200 ${
+          isAuthority ? 'p-3 sm:p-4 lg:p-4 bg-[#F5F7F9] dark:bg-[#070F1E]' : 'p-3 sm:p-4 lg:p-8 bg-[#F5F7F9] dark:bg-[#070F1E]'
         } pb-24 lg:pb-8`}>
           <div className={isAuthority ? 'max-w-full mx-auto' : 'max-w-7xl mx-auto'}>
             {renderActivePage()}

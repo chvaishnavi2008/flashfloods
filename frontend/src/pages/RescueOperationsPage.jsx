@@ -101,29 +101,24 @@ export default function RescueOperationsPage() {
     }
   };
 
-  const handleResetToAvailable = async (teamId) => {
-    await handleUpdateStatus(teamId, 'AVAILABLE');
+  const handleResetToAvailable = (teamId) => {
+    const updated = rescueService.resetTeamToAvailable(teamId);
+    setTeams([...rescueService.teams]);
+    setMissions([...rescueService.missions]);
+    if (selectedTeam && (selectedTeam.id === teamId || selectedTeam.team_id === teamId)) {
+      setSelectedTeam(updated);
+    }
   };
 
-  // KPIs
-  const summary = rescueService.getSummaryStats(teams, missions);
+  const summary = rescueService.getOperationsSummary();
 
-  // Filtered Teams with Active / Dispatched teams prioritized at the top
-  const filteredTeams = [...teams]
-    .sort((a, b) => {
-      const getPriority = (st) => {
-        if (st === 'EMERGENCY') return 1;
-        if (st === 'EN ROUTE') return 2;
-        if (st === 'ON SITE') return 3;
-        if (st === 'ASSIGNED') return 4;
-        if (st === 'AVAILABLE') return 5;
-        return 6;
-      };
-      return getPriority(a.status) - getPriority(b.status);
+  const filteredTeams = teams
+    .filter(team => {
+      if (statusFilter === 'ALL') return true;
+      return team.status === statusFilter;
     })
     .filter(team => {
-      if (statusFilter !== 'ALL' && team.status !== statusFilter) return false;
-      if (searchQuery) {
+      if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         return (
           team.name.toLowerCase().includes(q) ||
@@ -146,34 +141,34 @@ export default function RescueOperationsPage() {
       case 'ASSIGNED':
         return 'bg-purple-600 text-white font-bold';
       case 'COMPLETED':
-        return 'bg-slate-700 text-slate-300';
+        return 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300';
       default:
-        return 'bg-blue-600 text-white font-bold';
+        return 'bg-[#1769AA] text-white font-bold';
     }
   };
 
   return (
-    <div className="space-y-6 pb-16 font-mono">
+    <div className="space-y-6 pb-16 font-mono transition-colors duration-200">
       {/* 1. Header Banner */}
-      <div className="bg-[#0B1120] border border-slate-700/80 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+      <div className="bg-white dark:bg-[#0B1120] border border-[#D7E0E7] dark:border-slate-700/80 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4 transition-colors">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="p-3 bg-red-600/20 text-red-400 border border-red-500/40 rounded-2xl">
+            <div className="p-3 bg-red-100 dark:bg-red-600/20 text-red-600 dark:text-red-400 border border-red-300 dark:border-red-500/40 rounded-2xl">
               <Truck className="w-7 h-7" />
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-red-400">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#C62828] dark:text-red-400">
                   STATE DISASTER MANAGEMENT AUTHORITY (SDMA)
                 </span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-500/40">
                   DEMO — SIMULATED GPS
                 </span>
               </div>
-              <h1 className="text-2xl font-black text-white mt-1">
+              <h1 className="text-2xl font-black text-[#172B3A] dark:text-white mt-1">
                 🚑 Rescue Operations & Live Team Tracking
               </h1>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-[#5B6B78] dark:text-slate-400 mt-0.5">
                 Central command dispatch & real-time telemetry coordination across NDRF, SDRF, and Civil Defence columns.
               </p>
             </div>
@@ -182,7 +177,7 @@ export default function RescueOperationsPage() {
           <div className="flex flex-wrap items-center gap-2.5">
             <button
               onClick={handleToggleSimulation}
-              className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-md ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-sm ${
                 isSimulating
                   ? 'bg-amber-600 hover:bg-amber-500 text-white animate-pulse ring-2 ring-amber-400'
                   : 'bg-indigo-600 hover:bg-indigo-500 text-white'
@@ -203,7 +198,7 @@ export default function RescueOperationsPage() {
 
             <button
               onClick={() => handleOpenDispatch()}
-              className="px-5 py-2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow-lg shadow-red-600/30 transition-all"
+              className="px-5 py-2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow-md transition-all"
             >
               <Send className="w-4 h-4" />
               <span>+ Send Rescue Team</span>
@@ -214,49 +209,49 @@ export default function RescueOperationsPage() {
 
       {/* 2. Top Summary KPI Dashboard */}
       <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        <div className="p-4 bg-[#0B1120] border border-red-500/30 rounded-2xl shadow-md">
+        <div className="p-4 bg-white dark:bg-[#0B1120] border border-red-300 dark:border-red-500/30 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">Active Rescue Teams</span>
-            <Truck className="w-4 h-4 text-red-400" />
+            <span className="text-[10px] text-[#5B6B78] dark:text-slate-400 uppercase tracking-wider">Active Rescue Teams</span>
+            <Truck className="w-4 h-4 text-red-500 dark:text-red-400" />
           </div>
-          <span className="text-2xl font-black text-red-400 mt-1 block">{summary.active_teams}</span>
-          <span className="text-[10px] text-slate-500">In Field / Assigned</span>
+          <span className="text-2xl font-black text-red-600 dark:text-red-400 mt-1 block">{summary.active_teams}</span>
+          <span className="text-[10px] text-[#5B6B78] dark:text-slate-500">In Field / Assigned</span>
         </div>
 
-        <div className="p-4 bg-[#0B1120] border border-rose-500/30 rounded-2xl shadow-md">
+        <div className="p-4 bg-white dark:bg-[#0B1120] border border-rose-300 dark:border-rose-500/30 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">Active Incidents</span>
-            <ShieldAlert className="w-4 h-4 text-rose-400" />
+            <span className="text-[10px] text-[#5B6B78] dark:text-slate-400 uppercase tracking-wider">Active Incidents</span>
+            <ShieldAlert className="w-4 h-4 text-rose-500 dark:text-rose-400" />
           </div>
-          <span className="text-2xl font-black text-rose-300 mt-1 block">{summary.active_incidents}</span>
-          <span className="text-[10px] text-slate-500">Target Disasters</span>
+          <span className="text-2xl font-black text-rose-600 dark:text-rose-300 mt-1 block">{summary.active_incidents}</span>
+          <span className="text-[10px] text-[#5B6B78] dark:text-slate-500">Target Disasters</span>
         </div>
 
-        <div className="p-4 bg-[#0B1120] border border-amber-500/30 rounded-2xl shadow-md">
+        <div className="p-4 bg-white dark:bg-[#0B1120] border border-amber-300 dark:border-amber-500/30 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">Teams En Route</span>
-            <Navigation className="w-4 h-4 text-amber-400" />
+            <span className="text-[10px] text-[#5B6B78] dark:text-slate-400 uppercase tracking-wider">Teams En Route</span>
+            <Navigation className="w-4 h-4 text-amber-500 dark:text-amber-400" />
           </div>
-          <span className="text-2xl font-black text-amber-300 mt-1 block">{summary.teams_en_route}</span>
-          <span className="text-[10px] text-slate-500">Transit in progress</span>
+          <span className="text-2xl font-black text-amber-600 dark:text-amber-300 mt-1 block">{summary.teams_en_route}</span>
+          <span className="text-[10px] text-[#5B6B78] dark:text-slate-500">Transit in progress</span>
         </div>
 
-        <div className="p-4 bg-[#0B1120] border border-emerald-500/30 rounded-2xl shadow-md">
+        <div className="p-4 bg-white dark:bg-[#0B1120] border border-emerald-300 dark:border-emerald-500/30 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">Available Teams</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <span className="text-[10px] text-[#5B6B78] dark:text-slate-400 uppercase tracking-wider">Available Teams</span>
+            <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
           </div>
-          <span className="text-2xl font-black text-emerald-400 mt-1 block">{summary.available_teams}</span>
-          <span className="text-[10px] text-slate-500">Standby at bases</span>
+          <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1 block">{summary.available_teams}</span>
+          <span className="text-[10px] text-[#5B6B78] dark:text-slate-500">Standby at bases</span>
         </div>
 
-        <div className="p-4 bg-[#0B1120] border border-slate-700/80 rounded-2xl shadow-md col-span-2 sm:col-span-1">
+        <div className="p-4 bg-white dark:bg-[#0B1120] border border-[#D7E0E7] dark:border-slate-700/80 rounded-2xl shadow-sm col-span-2 sm:col-span-1">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">Completed Missions</span>
-            <Activity className="w-4 h-4 text-blue-400" />
+            <span className="text-[10px] text-[#5B6B78] dark:text-slate-400 uppercase tracking-wider">Completed Missions</span>
+            <Activity className="w-4 h-4 text-[#1769AA] dark:text-blue-400" />
           </div>
-          <span className="text-2xl font-black text-white mt-1 block">{summary.completed_missions}</span>
-          <span className="text-[10px] text-slate-500">Successful rescues</span>
+          <span className="text-2xl font-black text-[#172B3A] dark:text-white mt-1 block">{summary.completed_missions}</span>
+          <span className="text-[10px] text-[#5B6B78] dark:text-slate-500">Successful rescues</span>
         </div>
       </section>
 
@@ -266,12 +261,12 @@ export default function RescueOperationsPage() {
         <div className="xl:col-span-7 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Radio className="w-4 h-4 text-rose-400" />
-              <h2 className="text-xs font-bold uppercase tracking-wider text-white">
+              <Radio className="w-4 h-4 text-[#C62828] dark:text-rose-400" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#172B3A] dark:text-white">
                 LIVE RESCUE TELEMETRY TRACKING MAP
               </h2>
             </div>
-            <span className="text-[11px] text-slate-400">Click any team marker or sector to interact</span>
+            <span className="text-[11px] text-[#5B6B78] dark:text-slate-400">Click any team marker or sector to interact</span>
           </div>
 
           <RescueTrackingMap
@@ -289,16 +284,16 @@ export default function RescueOperationsPage() {
         {/* Right Column (xl:5): Rescue Teams Management & Lifecycle Controls */}
         <div className="xl:col-span-5 space-y-4">
           {/* Filter & Search Bar */}
-          <div className="p-4 bg-[#0B1120] border border-slate-700/80 rounded-2xl space-y-3">
+          <div className="p-4 bg-white dark:bg-[#0B1120] border border-[#D7E0E7] dark:border-slate-700/80 rounded-2xl space-y-3 shadow-sm">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                <Users className="w-4 h-4 text-blue-400" />
+              <span className="text-xs font-bold uppercase tracking-wider text-[#172B3A] dark:text-white flex items-center gap-2">
+                <Users className="w-4 h-4 text-[#1769AA] dark:text-blue-400" />
                 <span>Rescue Forces ({filteredTeams.length})</span>
               </span>
 
               <button
                 onClick={() => handleOpenDispatch()}
-                className="px-2.5 py-1 bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/40 rounded-lg text-[11px] font-bold transition-all"
+                className="px-2.5 py-1 bg-red-100 dark:bg-red-600/20 hover:bg-red-200 dark:hover:bg-red-600/30 text-[#C62828] dark:text-red-300 border border-red-300 dark:border-red-500/40 rounded-lg text-[11px] font-bold transition-all"
               >
                 + Dispatch
               </button>
@@ -312,8 +307,8 @@ export default function RescueOperationsPage() {
                   onClick={() => setStatusFilter(st)}
                   className={`px-2 py-1 rounded-md font-bold transition-all ${
                     statusFilter === st
-                      ? 'bg-blue-600 text-white shadow'
-                      : 'bg-slate-900 text-slate-400 hover:text-white'
+                      ? 'bg-[#1769AA] text-white shadow-sm'
+                      : 'bg-[#F8FAFC] dark:bg-slate-900 border border-[#D7E0E7] dark:border-slate-800 text-[#5B6B78] dark:text-slate-400 hover:text-[#172B3A] dark:hover:text-white'
                   }`}
                 >
                   {st}
@@ -323,13 +318,13 @@ export default function RescueOperationsPage() {
 
             {/* Search Input */}
             <div className="relative">
-              <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-3.5 h-3.5 text-[#5B6B78] dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search team name, ID, sector, or mission..."
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#F8FAFC] dark:bg-slate-950 border border-[#D7E0E7] dark:border-slate-800 rounded-xl pl-8 pr-3 py-2 text-xs text-[#172B3A] dark:text-white placeholder-[#5B6B78] dark:placeholder-slate-500 focus:outline-none focus:border-[#1769AA]"
               />
             </div>
           </div>
@@ -344,20 +339,20 @@ export default function RescueOperationsPage() {
                   onClick={() => setSelectedTeam(team)}
                   className={`p-4 rounded-2xl border transition-all cursor-pointer space-y-3 ${
                     isSelected
-                      ? 'bg-slate-900 border-blue-500 shadow-lg ring-1 ring-blue-500/50'
-                      : 'bg-[#0B1120] border-slate-800 hover:border-slate-700'
+                      ? 'bg-[#E8F2F8] dark:bg-slate-900 border-[#1769AA] dark:border-blue-500 shadow-md ring-1 ring-[#1769AA]/50'
+                      : 'bg-white dark:bg-[#0B1120] border-[#D7E0E7] dark:border-slate-800 hover:border-[#1769AA]'
                   }`}
                 >
                   {/* Card Header */}
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-black text-white text-sm">{team.name}</span>
-                        <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                        <span className="font-black text-[#172B3A] dark:text-white text-sm">{team.name}</span>
+                        <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-[#1769AA]/10 dark:bg-blue-500/20 text-[#1769AA] dark:text-blue-300 border border-[#1769AA]/30">
                           {team.team_id}
                         </span>
                       </div>
-                      <span className="text-[11px] text-slate-400 block mt-0.5">
+                      <span className="text-[11px] text-[#5B6B78] dark:text-slate-400 block mt-0.5">
                         {team.team_type} • <strong>{team.members_count} Personnel</strong>
                       </span>
                     </div>
@@ -368,45 +363,45 @@ export default function RescueOperationsPage() {
                   </div>
 
                   {/* Mission & Telemetry Data */}
-                  <div className="grid grid-cols-2 gap-2 p-2.5 bg-slate-950/80 rounded-xl text-[11px] text-slate-300 border border-slate-900">
+                  <div className="grid grid-cols-2 gap-2 p-2.5 bg-[#F8FAFC] dark:bg-slate-950/80 rounded-xl text-[11px] text-[#172B3A] dark:text-slate-300 border border-[#D7E0E7] dark:border-slate-900">
                     <div>
-                      <span className="text-[10px] text-slate-500 uppercase block">Destination:</span>
-                      <strong className="text-amber-300 truncate block">{team.destination_name || 'Standby at Base'}</strong>
+                      <span className="text-[10px] text-[#5B6B78] dark:text-slate-500 uppercase block">Destination:</span>
+                      <strong className="text-amber-600 dark:text-amber-300 truncate block">{team.destination_name || 'Standby at Base'}</strong>
                     </div>
 
                     <div>
-                      <span className="text-[10px] text-slate-500 uppercase block">Mission:</span>
-                      <span className="text-white font-bold block">{team.mission_type || 'None Assigned'}</span>
+                      <span className="text-[10px] text-[#5B6B78] dark:text-slate-500 uppercase block">Mission:</span>
+                      <span className="text-[#172B3A] dark:text-white font-bold block">{team.mission_type || 'None Assigned'}</span>
                     </div>
 
                     <div>
-                      <span className="text-[10px] text-slate-500 uppercase block">ETA / Dist:</span>
-                      <span className="font-bold text-emerald-400">
+                      <span className="text-[10px] text-[#5B6B78] dark:text-slate-500 uppercase block">ETA / Dist:</span>
+                      <span className="font-bold text-[#16855B] dark:text-emerald-400">
                         {team.eta_minutes > 0 ? `${team.eta_minutes} min` : (team.status === 'ON SITE' ? 'On Site' : 'Standby')} ({team.distance_km} km)
                       </span>
                     </div>
 
                     <div>
-                      <span className="text-[10px] text-slate-500 uppercase block">Base Station:</span>
-                      <span className="text-slate-400 truncate block">{team.base_station}</span>
+                      <span className="text-[10px] text-[#5B6B78] dark:text-slate-500 uppercase block">Base Station:</span>
+                      <span className="text-[#5B6B78] dark:text-slate-400 truncate block">{team.base_station}</span>
                     </div>
                   </div>
 
                   {team.notes && (
-                    <p className="text-[11px] text-slate-400 italic line-clamp-2">
+                    <p className="text-[11px] text-[#5B6B78] dark:text-slate-400 italic line-clamp-2">
                       "{team.notes}"
                     </p>
                   )}
 
                   {/* Mission Lifecycle Buttons */}
-                  <div className="pt-2 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-1.5 text-[10px]">
+                  <div className="pt-2 border-t border-[#D7E0E7] dark:border-slate-800/80 flex flex-wrap items-center justify-between gap-1.5 text-[10px]">
                     {team.status === 'AVAILABLE' && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleOpenDispatch(team);
                         }}
-                        className="w-full py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-1"
+                        className="w-full py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-1 shadow-sm"
                       >
                         <Send className="w-3.5 h-3.5" />
                         <span>Dispatch on Mission</span>
@@ -419,7 +414,7 @@ export default function RescueOperationsPage() {
                           e.stopPropagation();
                           handleUpdateStatus(team.id || team.team_id, 'EN ROUTE');
                         }}
-                        className="flex-1 py-1.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-1"
+                        className="flex-1 py-1.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-1 shadow-sm"
                       >
                         <Navigation className="w-3.5 h-3.5" />
                         <span>Start Transit (En Route)</span>
@@ -432,7 +427,7 @@ export default function RescueOperationsPage() {
                           e.stopPropagation();
                           handleUpdateStatus(team.id || team.team_id, 'ON SITE');
                         }}
-                        className="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-1"
+                        className="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-1 shadow-sm"
                       >
                         <MapPin className="w-3.5 h-3.5" />
                         <span>Mark On Site</span>
@@ -445,7 +440,7 @@ export default function RescueOperationsPage() {
                           e.stopPropagation();
                           handleUpdateStatus(team.id || team.team_id, 'COMPLETED');
                         }}
-                        className="flex-1 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-1"
+                        className="flex-1 py-1.5 bg-[#1769AA] hover:bg-[#125890] text-white font-bold rounded-lg transition-all flex items-center justify-center gap-1 shadow-sm"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         <span>Mark Mission Completed</span>
@@ -454,7 +449,7 @@ export default function RescueOperationsPage() {
 
                     {team.status === 'COMPLETED' && (
                       <div className="flex items-center justify-between w-full">
-                        <span className="text-emerald-400 font-bold flex items-center gap-1">
+                        <span className="text-[#16855B] dark:text-emerald-400 font-bold flex items-center gap-1">
                           <CheckCircle2 className="w-3.5 h-3.5" /> Mission Completed
                         </span>
                         <button
@@ -462,7 +457,7 @@ export default function RescueOperationsPage() {
                             e.stopPropagation();
                             handleResetToAvailable(team.id || team.team_id);
                           }}
-                          className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-lg transition-all flex items-center gap-1"
+                          className="px-3 py-1 bg-[#F8FAFC] dark:bg-slate-800 hover:bg-[#E8F2F8] dark:hover:bg-slate-700 text-[#172B3A] dark:text-slate-300 border border-[#D7E0E7] dark:border-slate-700 font-bold rounded-lg transition-all flex items-center gap-1"
                         >
                           <RotateCcw className="w-3 h-3" />
                           <span>Reset to Available</span>
@@ -477,7 +472,7 @@ export default function RescueOperationsPage() {
                           e.stopPropagation();
                           handleUpdateStatus(team.id || team.team_id, 'EMERGENCY');
                         }}
-                        className="px-2.5 py-1.5 bg-rose-950/80 hover:bg-rose-900 border border-rose-500/50 text-rose-300 rounded-lg font-bold"
+                        className="px-2.5 py-1.5 bg-rose-100 dark:bg-rose-950/80 hover:bg-rose-200 dark:hover:bg-rose-900 border border-rose-300 dark:border-rose-500/50 text-rose-700 dark:text-rose-300 rounded-lg font-bold"
                         title="Escalate to Emergency SOS Status"
                       >
                         🚨 SOS Alert
@@ -492,20 +487,20 @@ export default function RescueOperationsPage() {
       </div>
 
       {/* 4. Dispatched Missions Operational Log */}
-      <section className="bg-[#0B1120] border border-slate-700/80 rounded-2xl p-5 shadow-xl space-y-3">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+      <section className="bg-white dark:bg-[#0B1120] border border-[#D7E0E7] dark:border-slate-700/80 rounded-2xl p-5 shadow-sm space-y-3 transition-colors">
+        <div className="flex items-center justify-between pb-2 border-b border-[#D7E0E7] dark:border-slate-800">
           <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-emerald-400" />
-            <h2 className="text-xs font-bold uppercase tracking-wider text-white">
+            <Activity className="w-4 h-4 text-[#16855B] dark:text-emerald-400" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-[#172B3A] dark:text-white">
               DISPATCHED RESCUE MISSIONS AUDIT TRAIL
             </h2>
           </div>
-          <span className="text-[11px] text-slate-500">{missions.length} Missions Logged</span>
+          <span className="text-[11px] text-[#5B6B78] dark:text-slate-500">{missions.length} Missions Logged</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
-            <thead className="bg-slate-900 text-slate-400 uppercase text-[10px] border-b border-slate-800">
+            <thead className="bg-[#F8FAFC] dark:bg-slate-900 text-[#5B6B78] dark:text-slate-400 uppercase text-[10px] border-b border-[#D7E0E7] dark:border-slate-800">
               <tr>
                 <th className="p-3">Mission ID</th>
                 <th className="p-3">Assigned Team</th>
@@ -517,18 +512,18 @@ export default function RescueOperationsPage() {
                 <th className="p-3">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80 text-slate-300">
+            <tbody className="divide-y divide-[#D7E0E7] dark:divide-slate-800/80 text-[#172B3A] dark:text-slate-300">
               {missions.map((m) => (
-                <tr key={m.id || m.mission_id} className="hover:bg-slate-900/50">
-                  <td className="p-3 font-mono font-bold text-white">{m.mission_id || m.id}</td>
-                  <td className="p-3 font-bold text-amber-300">{m.team_name}</td>
+                <tr key={m.id || m.mission_id} className="hover:bg-[#F8FAFC] dark:hover:bg-slate-900/50">
+                  <td className="p-3 font-mono font-bold text-[#172B3A] dark:text-white">{m.mission_id || m.id}</td>
+                  <td className="p-3 font-bold text-[#1769AA] dark:text-amber-300">{m.team_name}</td>
                   <td className="p-3">{m.destination_name}</td>
                   <td className="p-3">{m.mission_type}</td>
                   <td className="p-3">
                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                      m.priority === 'CRITICAL' ? 'bg-red-600/20 text-red-400 border border-red-500/30' :
-                      m.priority === 'HIGH' ? 'bg-orange-600/20 text-orange-400 border border-orange-500/30' :
-                      'bg-slate-800 text-slate-300'
+                      m.priority === 'CRITICAL' ? 'bg-red-100 dark:bg-red-600/20 text-[#C62828] dark:text-red-400 border border-red-300 dark:border-red-500/30' :
+                      m.priority === 'HIGH' ? 'bg-orange-100 dark:bg-orange-600/20 text-[#E87516] dark:text-orange-400 border border-orange-300 dark:border-orange-500/30' :
+                      'bg-[#F8FAFC] dark:bg-slate-800 text-[#5B6B78] dark:text-slate-300 border border-[#D7E0E7] dark:border-slate-700'
                     }`}>
                       {m.priority}
                     </span>
@@ -538,17 +533,17 @@ export default function RescueOperationsPage() {
                       {m.status}
                     </span>
                   </td>
-                  <td className="p-3 text-slate-400">{m.dispatched_at}</td>
+                  <td className="p-3 text-[#5B6B78] dark:text-slate-400">{m.dispatched_at}</td>
                   <td className="p-3">
                     {m.status !== 'COMPLETED' ? (
                       <button
                         onClick={() => handleUpdateStatus(m.team_id, 'COMPLETED')}
-                        className="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded text-[10px] transition-all"
+                        className="px-2.5 py-1 bg-[#1769AA] hover:bg-[#125890] text-white font-bold rounded text-[10px] transition-all shadow-sm"
                       >
                         Complete
                       </button>
                     ) : (
-                      <span className="text-emerald-400 text-[10px] font-bold">Done</span>
+                      <span className="text-[#16855B] dark:text-emerald-400 text-[10px] font-bold">Done</span>
                     )}
                   </td>
                 </tr>

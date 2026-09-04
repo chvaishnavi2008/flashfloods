@@ -336,26 +336,26 @@ export default function AiMapStudioPage() {
       {/* ===================================================================== */}
       {/* 1. TOP HEADER & STUDIO CONTROLS                                       */}
       {/* ===================================================================== */}
-      <div className="bg-gradient-to-r from-[#0B1120] via-[#111827] to-[#0B1120] border border-cyan-500/40 rounded-2xl p-4 sm:p-5 shadow-2xl space-y-4">
+      <div className="bg-white dark:bg-gradient-to-r dark:from-[#0B1120] dark:via-[#111827] dark:to-[#0B1120] border border-[#D7E0E7] dark:border-cyan-500/40 rounded-2xl p-4 sm:p-5 shadow-sm dark:shadow-2xl space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-cyan-600/20 text-cyan-300 border border-cyan-500/40 flex items-center gap-1.5 shadow-sm">
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-spin" />
+              <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-cyan-50 dark:bg-cyan-600/20 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-500/40 flex items-center gap-1.5 shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 animate-spin" />
                 AI HAZARD MAP STUDIO & SPATIAL SYNTHESIZER
               </span>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-500 dark:text-slate-400">
                 Click anywhere on the map to analyze terrain, weather & hazard vectors
               </span>
             </div>
 
-            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-black text-[#172B3A] dark:text-white tracking-tight flex items-center gap-2">
               <span>Interactive AI Spatial Intelligence Canvas</span>
             </h1>
           </div>
 
           {/* Quick Basemap Selector */}
-          <div className="flex flex-wrap items-center gap-1.5 bg-slate-950/80 p-1.5 rounded-xl border border-slate-800">
+          <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 dark:bg-slate-950/80 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800">
             {Object.entries(BASEMAP_PROVIDERS).map(([key, provider]) => (
               <button
                 key={key}
@@ -363,7 +363,7 @@ export default function AiMapStudioPage() {
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
                   activeBasemap === key
                     ? 'bg-blue-600 text-white shadow'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800'
                 }`}
               >
                 <span>{provider.icon}</span>
@@ -374,9 +374,9 @@ export default function AiMapStudioPage() {
         </div>
 
         {/* 2. Benchmark Preset Jump Buttons */}
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800">
-          <span className="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1 shrink-0">
-            <Compass className="w-3 h-3 text-cyan-400" />
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 shrink-0">
+            <Compass className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
             <span>AI Hotspot Presets:</span>
           </span>
           <div className="flex flex-wrap gap-1.5">
@@ -386,8 +386,8 @@ export default function AiMapStudioPage() {
                 onClick={() => handlePresetSelect(p)}
                 className={`px-2.5 py-1 rounded text-xs font-bold border transition-all flex items-center gap-1 ${
                   inspectedPoint.name.includes(p.name)
-                    ? 'bg-cyan-600 text-white border-cyan-400 shadow-md'
-                    : 'bg-slate-900/90 hover:bg-slate-800 text-slate-300 border-slate-700'
+                    ? 'bg-cyan-600 text-white border-cyan-500 shadow-md'
+                    : 'bg-slate-100 dark:bg-slate-900/90 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                 }`}
               >
                 <span>{p.icon}</span>
@@ -403,58 +403,58 @@ export default function AiMapStudioPage() {
       {/* ===================================================================== */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Left: Interactive GIS Map Canvas (8 Cols) */}
-        <div className="lg:col-span-8 bg-[#0B1120] border border-slate-700/80 rounded-2xl overflow-hidden shadow-2xl flex flex-col relative h-[560px] sm:h-[620px]">
+        <div className="lg:col-span-8 bg-white dark:bg-[#0B1120] border border-[#D7E0E7] dark:border-slate-700/80 rounded-2xl overflow-hidden shadow-sm dark:shadow-2xl flex flex-col relative h-[560px] sm:h-[620px]">
           {/* Map Layer Toolbar Bar */}
-          <div className="p-3 bg-slate-950/90 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 z-10 text-xs">
+          <div className="p-3 bg-slate-50 dark:bg-slate-950/90 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 z-10 text-xs">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-slate-400 text-[10px] font-bold uppercase flex items-center gap-1">
-                <Layers className="w-3.5 h-3.5 text-blue-400" />
+              <span className="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase flex items-center gap-1">
+                <Layers className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                 <span>Layers:</span>
               </span>
 
-              <label className="flex items-center gap-1.5 cursor-pointer bg-slate-900 px-2 py-1 rounded border border-slate-800 hover:border-slate-700">
+              <label className="flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-900 px-2 py-1 rounded border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700">
                 <input
                   type="checkbox"
                   checked={showFloodZones}
                   onChange={(e) => setShowFloodZones(e.target.checked)}
                   className="rounded text-blue-500 focus:ring-0 w-3.5 h-3.5"
                 />
-                <span className="text-blue-300 font-bold">🌊 Flood Corridors</span>
+                <span className="text-blue-700 dark:text-blue-300 font-bold">🌊 Flood Corridors</span>
               </label>
 
-              <label className="flex items-center gap-1.5 cursor-pointer bg-slate-900 px-2 py-1 rounded border border-slate-800 hover:border-slate-700">
+              <label className="flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-900 px-2 py-1 rounded border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700">
                 <input
                   type="checkbox"
                   checked={showLandslideZones}
                   onChange={(e) => setShowLandslideZones(e.target.checked)}
                   className="rounded text-orange-500 focus:ring-0 w-3.5 h-3.5"
                 />
-                <span className="text-orange-300 font-bold">⛰️ Landslide Slopes</span>
+                <span className="text-orange-700 dark:text-orange-300 font-bold">⛰️ Landslide Slopes</span>
               </label>
 
-              <label className="flex items-center gap-1.5 cursor-pointer bg-slate-900 px-2 py-1 rounded border border-slate-800 hover:border-slate-700">
+              <label className="flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-900 px-2 py-1 rounded border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700">
                 <input
                   type="checkbox"
                   checked={showRainRadar}
                   onChange={(e) => setShowRainRadar(e.target.checked)}
                   className="rounded text-cyan-500 focus:ring-0 w-3.5 h-3.5"
                 />
-                <span className="text-cyan-300 font-bold">📡 Live Radar Sweep</span>
+                <span className="text-cyan-700 dark:text-cyan-300 font-bold">📡 Live Radar Sweep</span>
               </label>
 
-              <label className="flex items-center gap-1.5 cursor-pointer bg-slate-900 px-2 py-1 rounded border border-slate-800 hover:border-slate-700">
+              <label className="flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-900 px-2 py-1 rounded border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700">
                 <input
                   type="checkbox"
                   checked={showSafeHavens}
                   onChange={(e) => setShowSafeHavens(e.target.checked)}
                   className="rounded text-emerald-500 focus:ring-0 w-3.5 h-3.5"
                 />
-                <span className="text-emerald-300 font-bold">🟢 Safe Shelters</span>
+                <span className="text-emerald-700 dark:text-emerald-300 font-bold">🟢 Safe Shelters</span>
               </label>
             </div>
 
-            <div className="text-[10px] text-slate-400 font-mono flex items-center gap-1">
-              <Crosshair className="w-3 h-3 text-cyan-400" />
+            <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-1">
+              <Crosshair className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
               <span>Target: {inspectedPoint.lat.toFixed(3)}°N, {inspectedPoint.lng.toFixed(3)}°E</span>
             </div>
           </div>
@@ -609,11 +609,11 @@ export default function AiMapStudioPage() {
         {/* Right: AI Spatial Risk Synthesis Panel (4 Cols) */}
         <div className="lg:col-span-4 space-y-4">
           {/* AI Inspector Synthesis Card */}
-          <div className="bg-[#111827] border border-cyan-500/30 rounded-2xl p-4 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="bg-white dark:bg-[#111827] border border-[#D7E0E7] dark:border-cyan-500/30 rounded-2xl p-4 shadow-sm dark:shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <div className="flex items-center gap-2">
-                <Bot className="w-5 h-5 text-cyan-400" />
-                <h3 className="text-sm font-black text-white uppercase tracking-wider">
+                <Bot className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                <h3 className="text-sm font-black text-[#172B3A] dark:text-white uppercase tracking-wider">
                   AI SPATIAL SYNTHESIS
                 </h3>
               </div>
@@ -625,75 +625,75 @@ export default function AiMapStudioPage() {
             </div>
 
             {/* Target Location Metadata */}
-            <div className="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800 text-xs space-y-1">
-              <div className="text-white font-bold flex items-center gap-1 truncate">
-                <MapPin className="w-3.5 h-3.5 text-red-400 shrink-0" />
+            <div className="p-2.5 bg-slate-50 dark:bg-slate-950/80 rounded-xl border border-slate-200 dark:border-slate-800 text-xs space-y-1">
+              <div className="text-[#172B3A] dark:text-white font-bold flex items-center gap-1 truncate">
+                <MapPin className="w-3.5 h-3.5 text-red-500 dark:text-red-400 shrink-0" />
                 <span>{inspectedPoint.name}</span>
               </div>
-              <div className="text-[11px] text-slate-400 flex justify-between font-mono">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 flex justify-between font-mono">
                 <span>Coordinates:</span>
-                <span className="text-slate-200">{inspectedPoint.lat.toFixed(4)}°N, {inspectedPoint.lng.toFixed(4)}°E</span>
+                <span className="text-slate-800 dark:text-slate-200">{inspectedPoint.lat.toFixed(4)}°N, {inspectedPoint.lng.toFixed(4)}°E</span>
               </div>
             </div>
 
             {/* Core 4 Multi-Source Parameters Grid */}
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="p-2.5 bg-slate-950/70 border border-slate-800 rounded-xl space-y-0.5">
-                <span className="text-[10px] text-slate-400 uppercase block">⛰️ Elevation</span>
-                <span className="text-base font-black text-white">{analysisResult?.terrain?.elevation_m || '--'} m</span>
-                <span className="text-[9px] text-blue-400 block truncate">Copernicus DEM</span>
+              <div className="p-2.5 bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 rounded-xl space-y-0.5">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase block">⛰️ Elevation</span>
+                <span className="text-base font-black text-[#172B3A] dark:text-white">{analysisResult?.terrain?.elevation_m || '--'} m</span>
+                <span className="text-[9px] text-blue-600 dark:text-blue-400 block truncate">Copernicus DEM</span>
               </div>
 
-              <div className="p-2.5 bg-slate-950/70 border border-slate-800 rounded-xl space-y-0.5">
-                <span className="text-[10px] text-slate-400 uppercase block">📐 Slope</span>
-                <span className="text-base font-black text-white">{analysisResult?.terrain?.estimated_slope_deg || '--'}°</span>
-                <span className="text-[9px] text-amber-400 block truncate">Estimated terrain slope</span>
+              <div className="p-2.5 bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 rounded-xl space-y-0.5">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase block">📐 Slope</span>
+                <span className="text-base font-black text-[#172B3A] dark:text-white">{analysisResult?.terrain?.estimated_slope_deg || '--'}°</span>
+                <span className="text-[9px] text-amber-600 dark:text-amber-400 block truncate">Estimated terrain slope</span>
               </div>
 
-              <div className="p-2.5 bg-slate-950/70 border border-slate-800 rounded-xl space-y-0.5">
-                <span className="text-[10px] text-slate-400 uppercase block">🌧️ Live Rain</span>
-                <span className="text-base font-black text-white">
+              <div className="p-2.5 bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 rounded-xl space-y-0.5">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase block">🌧️ Live Rain</span>
+                <span className="text-base font-black text-[#172B3A] dark:text-white">
                   {analysisResult?.weather?.precipitation_display || (analysisResult?.weather?.precipitation_mm_hr !== null && analysisResult?.weather?.precipitation_mm_hr !== undefined ? `${analysisResult.weather.precipitation_mm_hr} mm/hr` : 'Unavailable')}
                 </span>
-                <span className="text-[9px] text-cyan-400 block truncate">Open-Meteo Live</span>
+                <span className="text-[9px] text-cyan-600 dark:text-cyan-400 block truncate">Open-Meteo Live</span>
               </div>
 
-              <div className="p-2.5 bg-slate-950/70 border border-slate-800 rounded-xl space-y-0.5">
-                <span className="text-[10px] text-slate-400 uppercase block">💧 Soil Sat</span>
-                <span className="text-base font-black text-white">{analysisResult?.weather?.soil_saturation_pct || 30}%</span>
-                <span className="text-[9px] text-emerald-400 block truncate">Pore Moisture</span>
+              <div className="p-2.5 bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 rounded-xl space-y-0.5">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase block">💧 Soil Sat</span>
+                <span className="text-base font-black text-[#172B3A] dark:text-white">{analysisResult?.weather?.soil_saturation_pct || 30}%</span>
+                <span className="text-[9px] text-emerald-600 dark:text-emerald-400 block truncate">Pore Moisture</span>
               </div>
             </div>
 
             {/* AI Narrative Box */}
-            <div className="p-3 bg-slate-950/90 border border-slate-800 rounded-xl space-y-1.5 text-xs">
-              <div className="flex items-center gap-1 text-[11px] font-bold text-cyan-300">
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+            <div className="p-3 bg-slate-50 dark:bg-slate-950/90 border border-slate-200 dark:border-slate-800 rounded-xl space-y-1.5 text-xs">
+              <div className="flex items-center gap-1 text-[11px] font-bold text-cyan-700 dark:text-cyan-300">
+                <Sparkles className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
                 <span>AI Risk Assessment & Vectors</span>
               </div>
-              <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
+              <p className="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
                 {analysisResult?.aiNarrative || 'Calculating multi-source telemetry vectors...'}
               </p>
             </div>
 
             {/* Historical Vulnerability Context */}
-            <div className="p-2.5 bg-slate-950/60 rounded-xl border border-purple-500/20 text-[11px] space-y-1 text-slate-300">
+            <div className="p-2.5 bg-purple-50 dark:bg-slate-950/60 rounded-xl border border-purple-200 dark:border-purple-500/20 text-[11px] space-y-1 text-slate-700 dark:text-slate-300">
               <div className="flex items-center justify-between">
-                <span className="text-purple-300 font-bold flex items-center gap-1">
-                  <BookOpen className="w-3 h-3 text-purple-400" />
+                <span className="text-purple-700 dark:text-purple-300 font-bold flex items-center gap-1">
+                  <BookOpen className="w-3 h-3 text-purple-600 dark:text-purple-400" />
                   <span>Historical Susceptibility</span>
                 </span>
-                <span className="text-[9px] px-1.5 py-0.2 rounded bg-purple-950 text-purple-300 border border-purple-500/30">
+                <span className="text-[9px] px-1.5 py-0.2 rounded bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-500/30">
                   IFI & ISRO Atlas
                 </span>
               </div>
               <div className="flex justify-between text-[10px]">
                 <span>Historical Flood Events:</span>
-                <strong className="text-white">{analysisResult?.historical?.historical_flood?.events_nearby || 0} recorded</strong>
+                <strong className="text-slate-900 dark:text-white">{analysisResult?.historical?.historical_flood?.events_nearby || 0} recorded</strong>
               </div>
               <div className="flex justify-between text-[10px]">
                 <span>Landslide Density / Rank:</span>
-                <strong className="text-white">
+                <strong className="text-slate-900 dark:text-white">
                   {analysisResult?.historical?.historical_landslide?.national_rank 
                     ? `#${analysisResult?.historical?.historical_landslide?.national_rank} in India`
                     : `${analysisResult?.historical?.historical_landslide?.landslides_nearby || 0} cataloged`}
@@ -704,49 +704,49 @@ export default function AiMapStudioPage() {
 
           {/* AI Evacuation Route Directives Card */}
           {evacuationRoute && (
-            <div className="bg-[#111827] border border-emerald-500/40 rounded-2xl p-4 shadow-2xl space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                <div className="flex items-center gap-1.5 text-emerald-400">
+            <div className="bg-white dark:bg-[#111827] border border-emerald-300 dark:border-emerald-500/40 rounded-2xl p-4 shadow-sm dark:shadow-2xl space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
                   <Navigation className="w-4 h-4" />
-                  <h4 className="text-xs font-black uppercase tracking-wider text-white">
+                  <h4 className="text-xs font-black uppercase tracking-wider text-[#172B3A] dark:text-white">
                     AI SAFE EVACUATION PATH
                   </h4>
                 </div>
-                <span className="text-[10px] bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30 font-bold">
+                <span className="text-[10px] bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-500/30 font-bold">
                   High Ground Safe Haven
                 </span>
               </div>
 
               <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="p-2 bg-slate-950/80 rounded-lg border border-slate-800 text-center">
-                  <span className="text-[10px] text-slate-400 block">Distance</span>
-                  <strong className="text-sm text-emerald-400">{evacuationRoute.distance_km} km</strong>
+                <div className="p-2 bg-slate-50 dark:bg-slate-950/80 rounded-lg border border-slate-200 dark:border-slate-800 text-center">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Distance</span>
+                  <strong className="text-sm text-emerald-600 dark:text-emerald-400">{evacuationRoute.distance_km} km</strong>
                 </div>
-                <div className="p-2 bg-slate-950/80 rounded-lg border border-slate-800 text-center">
-                  <span className="text-[10px] text-slate-400 block">Est. Time</span>
-                  <strong className="text-sm text-emerald-400">{evacuationRoute.estimated_minutes} mins</strong>
+                <div className="p-2 bg-slate-50 dark:bg-slate-950/80 rounded-lg border border-slate-200 dark:border-slate-800 text-center">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Est. Time</span>
+                  <strong className="text-sm text-emerald-600 dark:text-emerald-400">{evacuationRoute.estimated_minutes} mins</strong>
                 </div>
-                <div className="p-2 bg-slate-950/80 rounded-lg border border-slate-800 text-center">
-                  <span className="text-[10px] text-slate-400 block">Elev. Gain</span>
-                  <strong className="text-sm text-blue-400">+{evacuationRoute.elevation_diff_m} m</strong>
+                <div className="p-2 bg-slate-50 dark:bg-slate-950/80 rounded-lg border border-slate-200 dark:border-slate-800 text-center">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Elev. Gain</span>
+                  <strong className="text-sm text-blue-600 dark:text-blue-400">+{evacuationRoute.elevation_diff_m} m</strong>
                 </div>
               </div>
 
-              <div className="p-2.5 bg-slate-950/90 rounded-lg border border-slate-800 text-xs space-y-1">
-                <div className="text-white font-bold flex items-center gap-1">
-                  <Building2 className="w-3.5 h-3.5 text-emerald-400" />
+              <div className="p-2.5 bg-slate-50 dark:bg-slate-950/90 rounded-lg border border-slate-200 dark:border-slate-800 text-xs space-y-1">
+                <div className="text-[#172B3A] dark:text-white font-bold flex items-center gap-1">
+                  <Building2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Destination: {evacuationRoute.target_haven.name}</span>
                 </div>
-                <div className="text-[11px] text-slate-400">
+                <div className="text-[11px] text-slate-500 dark:text-slate-400">
                   Capacity: {evacuationRoute.target_haven.capacity} persons • Elevation: {evacuationRoute.target_haven.elevation_m}m
                 </div>
               </div>
 
               <div className="space-y-1.5 pt-1 text-xs">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block">Safe Waypoint Directives:</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold block">Safe Waypoint Directives:</span>
                 {evacuationRoute.directives.map((step, idx) => (
-                  <div key={idx} className="flex items-start gap-1.5 text-[11px] text-slate-300">
-                    <span className="text-emerald-400 font-bold shrink-0">{idx + 1}.</span>
+                  <div key={idx} className="flex items-start gap-1.5 text-[11px] text-slate-700 dark:text-slate-300">
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold shrink-0">{idx + 1}.</span>
                     <span>{step}</span>
                   </div>
                 ))}

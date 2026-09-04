@@ -20,47 +20,47 @@ export default function CitizenDangerMapPage() {
   const level = locationRisk?.overall_level || 'LOW';
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-12">
+    <div className="max-w-5xl mx-auto space-y-6 pb-12 transition-colors duration-200">
       {/* Header Banner */}
-      <div className="bg-[#1E293B] border border-slate-700 rounded-2xl p-6 shadow-xl space-y-3">
+      <div className="bg-white dark:bg-[#111C35] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-2xl p-6 shadow-sm space-y-3 transition-colors">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-blue-600/20 text-blue-400 border border-blue-500/40 rounded-xl">
+            <div className="p-3 bg-[#E8F2F8] dark:bg-[#1769AA]/20 text-[#1769AA] dark:text-[#38BDF8] border border-[#1769AA]/30 rounded-xl">
               <Map className="w-7 h-7" />
             </div>
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#1769AA] dark:text-[#38BDF8] font-mono">
                 NEIGHBORHOOD HAZARD VIEWER
               </span>
-              <h1 className="text-2xl font-black text-white mt-0.5">
+              <h1 className="text-2xl font-black text-[#172B3A] dark:text-white mt-0.5">
                 🗺️ Danger Map — {selectedLocation?.name || 'My Area'}
               </h1>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className={`px-3 py-1 rounded-full text-xs font-black uppercase ${
-              level === 'CRITICAL' ? 'bg-red-600 text-white' : (level === 'HIGH' ? 'bg-orange-500 text-white' : (level === 'MODERATE' ? 'bg-amber-500 text-black' : 'bg-emerald-600 text-white'))
+            <span className={`px-3 py-1 rounded-full text-xs font-black uppercase shadow-sm ${
+              level === 'CRITICAL' ? 'bg-[#C62828] text-white' : (level === 'HIGH' ? 'bg-[#E87516] text-white' : (level === 'MODERATE' ? 'bg-[#D99A00] text-white' : 'bg-[#16855B] text-white'))
             }`}>
               {level} RISK LEVEL
             </span>
           </div>
         </div>
 
-        <p className="text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#5B6B78] dark:text-slate-300 max-w-3xl leading-relaxed">
           See which roads, riverbanks, and hillside areas in your sector are at risk of flooding or landslides.
         </p>
       </div>
 
       {/* Danger Map Canvas */}
-      <section className="bg-[#1E293B] border border-slate-700 rounded-2xl p-5 shadow-xl space-y-4">
+      <section className="bg-white dark:bg-[#111C35] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-2xl p-5 shadow-sm space-y-4 transition-colors">
         {/* Simple Layer Toggles */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
-          <div className="flex items-center gap-2 text-xs text-slate-300 font-semibold">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#D7E0E7] dark:border-[#1E2E4A]">
+          <div className="flex items-center gap-2 text-xs text-[#172B3A] dark:text-slate-300 font-semibold font-mono">
             <span>Filter map by:</span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 text-xs">
+          <div className="flex flex-wrap items-center gap-1.5 text-xs font-mono">
             {[
               { id: 'all', label: 'All Hazards' },
               { id: 'flood', label: '🌊 Rivers & Floods' },
@@ -72,8 +72,8 @@ export default function CitizenDangerMapPage() {
                 onClick={() => setSelectedLayer(l.id)}
                 className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
                   selectedLayer === l.id 
-                    ? 'bg-blue-600 text-white shadow-md' 
-                    : 'bg-slate-900 text-slate-400 hover:text-white'
+                    ? 'bg-[#1769AA] text-white shadow-sm' 
+                    : 'bg-[#F8FAFC] dark:bg-[#0D162B] border border-[#D7E0E7] dark:border-[#1E2E4A] text-[#5B6B78] dark:text-slate-300 hover:text-[#172B3A] dark:hover:text-white'
                 }`}
               >
                 {l.label}
@@ -86,26 +86,26 @@ export default function CitizenDangerMapPage() {
         <RiskMap height="500px" showRoute={true} />
 
         {/* Simple Plain-English Legend */}
-        <div className="bg-slate-900/90 p-3 sm:p-4 rounded-xl border border-slate-800 space-y-2">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+        <div className="bg-[#F8FAFC] dark:bg-[#0D162B] p-3 sm:p-4 rounded-xl border border-[#D7E0E7] dark:border-[#1E2E4A] space-y-2">
+          <span className="text-xs font-bold text-[#5B6B78] dark:text-slate-400 uppercase tracking-wider block font-mono">
             Map Colors Meaning:
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
             <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-emerald-500 shrink-0" />
-              <span className="text-slate-300"><strong>Safe Area:</strong> Normal conditions</span>
+              <span className="w-3 h-3 rounded-full bg-[#16855B] shrink-0" />
+              <span className="text-[#172B3A] dark:text-slate-200"><strong>Safe Area:</strong> Normal conditions</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-amber-400 shrink-0" />
-              <span className="text-slate-300"><strong>Watch:</strong> Rising water</span>
+              <span className="w-3 h-3 rounded-full bg-[#D99A00] shrink-0" />
+              <span className="text-[#172B3A] dark:text-slate-200"><strong>Watch:</strong> Rising water</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-orange-500 shrink-0" />
-              <span className="text-slate-300"><strong>High Risk:</strong> Evacuation likely</span>
+              <span className="w-3 h-3 rounded-full bg-[#E87516] shrink-0" />
+              <span className="text-[#172B3A] dark:text-slate-200"><strong>High Risk:</strong> Evacuation likely</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-red-500 shrink-0" />
-              <span className="text-slate-300"><strong>Danger:</strong> Stay away</span>
+              <span className="w-3 h-3 rounded-full bg-[#C62828] shrink-0" />
+              <span className="text-[#172B3A] dark:text-slate-200"><strong>Danger:</strong> Stay away</span>
             </div>
           </div>
         </div>

@@ -32,7 +32,7 @@ export default function LocationRiskPage() {
 
   if (!selectedLocation || !locationRisk) {
     return (
-      <div className="p-8 text-center text-slate-400 font-mono">
+      <div className="p-8 text-center text-[#5B6B78] dark:text-[#94A3B8] font-mono">
         Loading location risk telemetry...
       </div>
     );
@@ -48,36 +48,36 @@ export default function LocationRiskPage() {
   const getLevelColor = (lvl) => {
     switch (lvl) {
       case 'CRITICAL':
-        return 'text-red-400 border-red-500/40 bg-red-500/10';
+        return 'text-[#C62828] dark:text-[#F87171] border-[#C62828]/40 bg-[#FFF1F1] dark:bg-[#3B1219]/60';
       case 'HIGH':
-        return 'text-orange-400 border-orange-500/40 bg-orange-500/10';
+        return 'text-[#E87516] dark:text-[#FB923C] border-[#E87516]/40 bg-[#FFF7E6] dark:bg-[#3A280B]/60';
       case 'MODERATE':
-        return 'text-amber-400 border-amber-500/40 bg-amber-500/10';
+        return 'text-[#D99A00] dark:text-[#FBBF24] border-[#D99A00]/40 bg-[#FFF7E6] dark:bg-[#3A280B]/60';
       default:
-        return 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10';
+        return 'text-[#16855B] dark:text-[#34D399] border-[#16855B]/40 bg-[#EAF7F1] dark:bg-[#0B3322]/60';
     }
   };
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 pb-12 font-mono text-xs text-[#172B3A] dark:text-[#E2E8F0]">
       {/* Back Button & Location Hero */}
-      <div className="bg-[#1E293B] border border-slate-700 rounded-2xl p-6 shadow-xl space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-700 pb-4">
+      <div className="bg-white dark:bg-[#111C35] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-2xl p-6 shadow-sm space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#D7E0E7] dark:border-[#1E2E4A] pb-4">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setActivePage('dashboard')}
-              className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-lg text-slate-300 transition-colors"
+              className="p-2 bg-[#F8FAFC] dark:bg-[#0B1528] hover:bg-[#E8F2F8] dark:hover:bg-[#172B4D] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-lg text-[#5B6B78] dark:text-[#94A3B8] transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <div className="text-xs font-mono uppercase tracking-wider text-blue-400 font-bold">
+              <div className="text-xs font-mono uppercase tracking-wider text-[#1769AA] dark:text-[#38BDF8] font-bold">
                 LOCATION RISK ASSESSMENT
               </div>
-              <h2 className="text-2xl font-black text-white">
+              <h2 className="text-2xl font-black text-[#172B3A] dark:text-[#F8FAFC]">
                 {selectedLocation.name}
               </h2>
-              <p className="text-xs text-slate-400 font-mono">
+              <p className="text-xs text-[#5B6B78] dark:text-[#94A3B8] font-mono">
                 {selectedLocation.state}, {selectedLocation.country} • Elevation: {selectedLocation.elevation}m • Population: {selectedLocation.population?.toLocaleString()}
               </p>
             </div>
@@ -87,7 +87,7 @@ export default function LocationRiskPage() {
             <button
               onClick={() => triggerSimulation('combined_emergency')}
               disabled={isSimulating}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-md transition-all"
+              className="px-4 py-2 bg-[#C62828] hover:bg-[#a82222] text-white rounded-lg font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all"
             >
               <Flame className="w-4 h-4" />
               <span>Simulate Emergency</span>
@@ -95,7 +95,7 @@ export default function LocationRiskPage() {
 
             <button
               onClick={() => setActivePage('safe-locations')}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-md transition-all"
+              className="px-4 py-2 bg-[#16855B] hover:bg-[#126d4a] text-white rounded-lg font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all"
             >
               <Navigation className="w-4 h-4" />
               <span>Safe Evacuation</span>
@@ -106,16 +106,16 @@ export default function LocationRiskPage() {
         {/* Big Overall Risk Breakdown Header Card */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           {/* Overall Composite Score */}
-          <div className="md:col-span-2 bg-slate-900/90 border border-slate-700 rounded-xl p-5 flex items-center justify-around">
+          <div className="md:col-span-2 bg-[#F8FAFC] dark:bg-[#0B1528] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl p-5 flex items-center justify-around">
             <div className="space-y-1">
-              <span className="text-xs font-mono uppercase text-slate-400 block font-bold">
+              <span className="text-xs font-mono uppercase text-[#5B6B78] dark:text-[#94A3B8] block font-bold">
                 OVERALL COMPOSITE RISK
               </span>
               <div className={`inline-block px-3 py-1 rounded-md text-sm font-mono font-black border ${getLevelColor(locationRisk.overall_level)}`}>
                 {locationRisk.overall_level} RISK
               </div>
-              <p className="text-xs text-slate-400 font-mono mt-1">
-                Estimated Lead Time: <strong className="text-white">{locationRisk.lead_time_minutes} mins</strong>
+              <p className="text-xs text-[#5B6B78] dark:text-[#94A3B8] font-mono mt-1">
+                Estimated Lead Time: <strong className="text-[#172B3A] dark:text-[#F8FAFC]">{locationRisk.lead_time_minutes} mins</strong>
               </p>
             </div>
             <RiskGauge score={locationRisk.overall_score} level={locationRisk.overall_level} size="lg" />
@@ -123,33 +123,33 @@ export default function LocationRiskPage() {
 
           {/* 4 Multi-Hazard Breakdown Summary Tiles */}
           <div className="md:col-span-3 grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-            <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-center flex flex-col justify-between">
-              <span className="text-[11px] font-mono text-slate-400">Flash Flood</span>
-              <span className="text-lg font-bold font-mono text-white my-1">{locationRisk.flash_flood?.score || 0}%</span>
+            <div className="bg-[#F8FAFC] dark:bg-[#0B1528] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl p-3 text-center flex flex-col justify-between">
+              <span className="text-[11px] font-mono text-[#5B6B78] dark:text-[#94A3B8]">Flash Flood</span>
+              <span className="text-lg font-bold font-mono text-[#172B3A] dark:text-[#F8FAFC] my-1">{locationRisk.flash_flood?.score || 0}%</span>
               <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono border ${getLevelColor(locationRisk.flash_flood?.level)}`}>
                 {locationRisk.flash_flood?.level}
               </span>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-center flex flex-col justify-between">
-              <span className="text-[11px] font-mono text-slate-400">River Flood</span>
-              <span className="text-lg font-bold font-mono text-white my-1">{locationRisk.flood?.score || 0}%</span>
+            <div className="bg-[#F8FAFC] dark:bg-[#0B1528] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl p-3 text-center flex flex-col justify-between">
+              <span className="text-[11px] font-mono text-[#5B6B78] dark:text-[#94A3B8]">River Flood</span>
+              <span className="text-lg font-bold font-mono text-[#172B3A] dark:text-[#F8FAFC] my-1">{locationRisk.flood?.score || 0}%</span>
               <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono border ${getLevelColor(locationRisk.flood?.level)}`}>
                 {locationRisk.flood?.level}
               </span>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-center flex flex-col justify-between">
-              <span className="text-[11px] font-mono text-slate-400">Landslide</span>
-              <span className="text-lg font-bold font-mono text-white my-1">{locationRisk.landslide?.score || 0}%</span>
+            <div className="bg-[#F8FAFC] dark:bg-[#0B1528] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl p-3 text-center flex flex-col justify-between">
+              <span className="text-[11px] font-mono text-[#5B6B78] dark:text-[#94A3B8]">Landslide</span>
+              <span className="text-lg font-bold font-mono text-[#172B3A] dark:text-[#F8FAFC] my-1">{locationRisk.landslide?.score || 0}%</span>
               <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono border ${getLevelColor(locationRisk.landslide?.level)}`}>
                 {locationRisk.landslide?.level}
               </span>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-center flex flex-col justify-between">
-              <span className="text-[11px] font-mono text-slate-400">Heavy Rain</span>
-              <span className="text-lg font-bold font-mono text-white my-1">{locationRisk.heavy_rainfall?.score || 0}%</span>
+            <div className="bg-[#F8FAFC] dark:bg-[#0B1528] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl p-3 text-center flex flex-col justify-between">
+              <span className="text-[11px] font-mono text-[#5B6B78] dark:text-[#94A3B8]">Heavy Rain</span>
+              <span className="text-lg font-bold font-mono text-[#172B3A] dark:text-[#F8FAFC] my-1">{locationRisk.heavy_rainfall?.score || 0}%</span>
               <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono border ${getLevelColor(locationRisk.heavy_rainfall?.level)}`}>
                 {locationRisk.heavy_rainfall?.level}
               </span>
@@ -158,16 +158,16 @@ export default function LocationRiskPage() {
         </div>
 
         {/* Risk Factors Checklist Box */}
-        <div className="bg-slate-900/90 border border-slate-700 rounded-xl p-5 space-y-3">
-          <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <div className="bg-[#F8FAFC] dark:bg-[#0B1528] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl p-5 space-y-3">
+          <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#172B3A] dark:text-[#F8FAFC] flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-[#16855B] dark:text-[#34D399]" />
             <span>Contributing Environmental Risk Factors:</span>
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {factors.map((f, i) => (
-              <div key={i} className="flex items-center gap-2 text-sm text-slate-200 bg-slate-800/80 px-3 py-2 rounded-lg border border-slate-700">
-                <span className="text-emerald-400 font-bold">✓</span>
+              <div key={i} className="flex items-center gap-2 text-sm text-[#172B3A] dark:text-[#E2E8F0] bg-white dark:bg-[#070F1E] px-3 py-2 rounded-lg border border-[#D7E0E7] dark:border-[#1E2E4A]">
+                <span className="text-[#16855B] dark:text-[#34D399] font-bold">✓</span>
                 <span>{f}</span>
               </div>
             ))}
@@ -179,35 +179,35 @@ export default function LocationRiskPage() {
       <WhatShouldIDoPanel />
 
       {/* Environmental Telemetry Raw Metrics Table */}
-      <section className="bg-[#1E293B] border border-slate-700 rounded-xl p-5 shadow-lg space-y-4">
-        <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-          <Activity className="w-4 h-4 text-blue-400" />
+      <section className="bg-white dark:bg-[#111C35] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl p-5 shadow-sm space-y-4">
+        <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#172B3A] dark:text-[#F8FAFC] flex items-center gap-2">
+          <Activity className="w-4 h-4 text-[#1769AA] dark:text-[#38BDF8]" />
           <span>Real-Time Environmental Telemetry Readings</span>
         </h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-3 bg-slate-900 rounded-lg border border-slate-800">
-            <span className="text-[10px] font-mono text-slate-400 uppercase">Rainfall Rate</span>
-            <div className="text-lg font-bold font-mono text-white">{environmentalData?.rainfall_rate} mm/hr</div>
-            <span className="text-[10px] font-mono text-slate-500">Intensity: {environmentalData?.rainfall_intensity}</span>
+          <div className="p-3 bg-[#F8FAFC] dark:bg-[#0B1528] rounded-lg border border-[#D7E0E7] dark:border-[#1E2E4A]">
+            <span className="text-[10px] font-mono text-[#5B6B78] dark:text-[#94A3B8] uppercase">Rainfall Rate</span>
+            <div className="text-lg font-bold font-mono text-[#172B3A] dark:text-[#F8FAFC]">{environmentalData?.rainfall_rate} mm/hr</div>
+            <span className="text-[10px] font-mono text-[#5B6B78] dark:text-[#94A3B8]">Intensity: {environmentalData?.rainfall_intensity}</span>
           </div>
 
-          <div className="p-3 bg-slate-900 rounded-lg border border-slate-800">
-            <span className="text-[10px] font-mono text-slate-400 uppercase">24h Rainfall</span>
-            <div className="text-lg font-bold font-mono text-white">{environmentalData?.rainfall_mm} mm</div>
-            <span className="text-[10px] font-mono text-slate-500">Accumulated</span>
+          <div className="p-3 bg-[#F8FAFC] dark:bg-[#0B1528] rounded-lg border border-[#D7E0E7] dark:border-[#1E2E4A]">
+            <span className="text-[10px] font-mono text-[#5B6B78] dark:text-[#94A3B8] uppercase">24h Rainfall</span>
+            <div className="text-lg font-bold font-mono text-[#172B3A] dark:text-[#F8FAFC]">{environmentalData?.rainfall_mm} mm</div>
+            <span className="text-[10px] font-mono text-[#5B6B78] dark:text-[#94A3B8]">Accumulated</span>
           </div>
 
-          <div className="p-3 bg-slate-900 rounded-lg border border-slate-800">
-            <span className="text-[10px] font-mono text-slate-400 uppercase">River Capacity</span>
-            <div className="text-lg font-bold font-mono text-white">{environmentalData?.river_capacity_pct}%</div>
-            <span className="text-[10px] font-mono text-slate-500">Trend: {environmentalData?.river_trend}</span>
+          <div className="p-3 bg-[#F8FAFC] dark:bg-[#0B1528] rounded-lg border border-[#D7E0E7] dark:border-[#1E2E4A]">
+            <span className="text-[10px] font-mono text-[#5B6B78] dark:text-[#94A3B8] uppercase">River Capacity</span>
+            <div className="text-lg font-bold font-mono text-[#172B3A] dark:text-[#F8FAFC]">{environmentalData?.river_capacity_pct}%</div>
+            <span className="text-[10px] font-mono text-[#5B6B78] dark:text-[#94A3B8]">Trend: {environmentalData?.river_trend}</span>
           </div>
 
-          <div className="p-3 bg-slate-900 rounded-lg border border-slate-800">
-            <span className="text-[10px] font-mono text-slate-400 uppercase">Soil Saturation</span>
-            <div className="text-lg font-bold font-mono text-white">{environmentalData?.soil_saturation_pct}%</div>
-            <span className="text-[10px] font-mono text-slate-500">Slope: {environmentalData?.slope_deg}°</span>
+          <div className="p-3 bg-[#F8FAFC] dark:bg-[#0B1528] rounded-lg border border-[#D7E0E7] dark:border-[#1E2E4A]">
+            <span className="text-[10px] font-mono text-[#5B6B78] dark:text-[#94A3B8] uppercase">Soil Saturation</span>
+            <div className="text-lg font-bold font-mono text-[#172B3A] dark:text-[#F8FAFC]">{environmentalData?.soil_saturation_pct}%</div>
+            <span className="text-[10px] font-mono text-[#5B6B78] dark:text-[#94A3B8]">Slope: {environmentalData?.slope_deg}°</span>
           </div>
         </div>
       </section>

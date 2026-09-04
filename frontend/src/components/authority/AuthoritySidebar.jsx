@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import ThemeToggle from '../ThemeToggle';
 import { 
   LayoutDashboard, 
   Map, 
@@ -95,15 +96,20 @@ export default function AuthoritySidebar() {
           </nav>
         </div>
 
-        {/* Institutional Footer */}
-        <div className="pt-3 border-t border-[#294657] text-[10px] text-[#D7E0E7] space-y-1">
-          <div className="flex justify-between">
-            <span>Command Level:</span>
-            <span className="text-white font-bold">STATE SEOC</span>
+        {/* Institutional Footer & Theme Switcher */}
+        <div className="pt-3 border-t border-[#294657] text-[10px] text-[#D7E0E7] space-y-2">
+          <div className="space-y-1">
+            <div className="flex justify-between">
+              <span>Command Level:</span>
+              <span className="text-white font-bold">STATE SEOC</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Protocol:</span>
+              <span className="text-[#D7E0E7] font-bold">CAP v1.2 XML</span>
+            </div>
           </div>
-          <div className="flex justify-between">
-            <span>Protocol:</span>
-            <span className="text-[#D7E0E7] font-bold">CAP v1.2 XML</span>
+          <div className="pt-1">
+            <ThemeToggle variant="segmented" className="w-full text-[11px]" />
           </div>
         </div>
       </aside>
@@ -173,6 +179,14 @@ export default function AuthoritySidebar() {
                   );
                 })}
               </nav>
+
+              {/* Mobile Drawer Theme Switcher */}
+              <div className="pt-2 space-y-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#D7E0E7] block px-1">
+                  Color Theme:
+                </span>
+                <ThemeToggle variant="segmented" className="w-full" />
+              </div>
             </div>
 
             <div className="pt-3 border-t border-[#294657] text-[10px] text-[#D7E0E7] space-y-1">

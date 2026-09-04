@@ -122,38 +122,38 @@ export default function LiveWeatherRiskCard() {
   };
 
   return (
-    <div className="bg-white border border-[#D7E0E7] rounded-2xl p-5 shadow-sm space-y-5 font-mono text-[#172B3A] transition-all">
+    <div className="bg-white dark:bg-[#111C35] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-2xl p-5 shadow-sm space-y-5 font-mono text-[#172B3A] dark:text-[#E2E8F0] transition-colors duration-200">
       {/* ===================================================================== */}
       {/* 1. HEADER STRIP: Location, Mode, Presets & Refresh                    */}
       {/* ===================================================================== */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-[#D7E0E7]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-[#D7E0E7] dark:border-[#1E2E4A]">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#E8F2F8] text-[#1769AA] border border-[#1769AA]/40 flex items-center gap-1.5">
+            <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#E8F2F8] dark:bg-[#1769AA]/20 text-[#1769AA] dark:text-[#38BDF8] border border-[#1769AA]/40 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#1769AA]" />
               MULTI-SOURCE DISASTER INTELLIGENCE PIPELINE
             </span>
-            <span className="text-[11px] text-[#5B6B78]">
+            <span className="text-[11px] text-[#5B6B78] dark:text-slate-400">
               Auto-refreshes every 10 mins
             </span>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 pt-0.5">
-            <h2 className="text-lg font-black text-[#172B3A] flex items-center gap-1.5">
+            <h2 className="text-lg font-black text-[#172B3A] dark:text-white flex items-center gap-1.5">
               <MapPin className="w-4 h-4 text-[#C62828] shrink-0" />
               <span>📍 {locationName}</span>
             </h2>
-            <span className="text-xs text-[#172B3A] bg-[#F8FAFC] px-2 py-0.5 rounded border border-[#D7E0E7] font-mono font-bold">
+            <span className="text-xs text-[#172B3A] dark:text-slate-200 bg-[#F8FAFC] dark:bg-[#070F1E] px-2 py-0.5 rounded border border-[#D7E0E7] dark:border-[#1E2E4A] font-mono font-bold">
               Your Location: {userCoords.lat.toFixed(4)}, {userCoords.lng.toFixed(4)}
             </span>
             {locationInputMode === 'gps' && (
-              <span className="px-2 py-0.5 rounded text-[10px] bg-[#E8F2F8] text-[#1769AA] border border-[#1769AA] font-bold flex items-center gap-1">
+              <span className="px-2 py-0.5 rounded text-[10px] bg-[#E8F2F8] dark:bg-[#1769AA]/30 text-[#1769AA] dark:text-[#38BDF8] border border-[#1769AA] font-bold flex items-center gap-1">
                 <Navigation className="w-3 h-3 text-[#1769AA]" />
                 Live GPS Active
               </span>
             )}
             {isGpsLoading && (
-              <span className="px-2 py-0.5 rounded text-[10px] bg-[#FFF7E6] text-[#D99A00] border border-[#D99A00] font-bold flex items-center gap-1">
+              <span className="px-2 py-0.5 rounded text-[10px] bg-[#FFF7E6] dark:bg-amber-950/40 text-[#D99A00] dark:text-amber-300 border border-[#D99A00] font-bold flex items-center gap-1">
                 <RefreshCw className="w-3 h-3 text-[#D99A00] animate-spin" />
                 Getting your location...
               </span>
@@ -169,8 +169,8 @@ export default function LiveWeatherRiskCard() {
             title="Request real-time browser GPS location"
             className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 border transition-all ${
               locationInputMode === 'gps'
-                ? 'bg-[#E8F2F8] text-[#1769AA] border-[#1769AA]'
-                : 'bg-[#F8FAFC] hover:bg-[#E8F2F8] text-[#172B3A] border-[#D7E0E7]'
+                ? 'bg-[#E8F2F8] dark:bg-[#1769AA]/30 text-[#1769AA] dark:text-[#38BDF8] border-[#1769AA]'
+                : 'bg-[#F8FAFC] dark:bg-[#070F1E] hover:bg-[#E8F2F8] dark:hover:bg-[#1769AA]/20 text-[#172B3A] dark:text-slate-200 border-[#D7E0E7] dark:border-[#1E2E4A]'
             }`}
           >
             <Crosshair className={`w-3.5 h-3.5 ${isGpsLoading ? 'animate-spin text-[#D99A00]' : 'text-[#1769AA]'}`} />
@@ -355,88 +355,88 @@ export default function LiveWeatherRiskCard() {
         {/* 4 Core Metrics Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
           {/* Card 1: Elevation */}
-          <div className="p-3.5 bg-white border border-[#D7E0E7] rounded-xl space-y-1.5">
+          <div className="p-3.5 bg-white dark:bg-[#070F1E] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] text-[#5B6B78] flex items-center gap-1">
+              <span className="text-[11px] text-[#5B6B78] dark:text-slate-400 flex items-center gap-1">
                 <span>⛰️ Elevation</span>
               </span>
-              <span className="text-[9px] px-1.5 py-0.2 bg-[#E8F2F8] text-[#1769AA] rounded border border-[#1769AA]/30">
+              <span className="text-[9px] px-1.5 py-0.2 bg-[#E8F2F8] dark:bg-[#1769AA]/20 text-[#1769AA] dark:text-[#38BDF8] rounded border border-[#1769AA]/30">
                 Copernicus DEM
               </span>
             </div>
-            <div className="text-2xl font-black text-[#172B3A] tracking-tight">
+            <div className="text-2xl font-black text-[#172B3A] dark:text-white tracking-tight">
               {elevationVal} m
             </div>
-            <div className="text-[10px] text-[#5B6B78] flex items-center justify-between pt-0.5 border-t border-[#D7E0E7]">
+            <div className="text-[10px] text-[#5B6B78] dark:text-slate-400 flex items-center justify-between pt-0.5 border-t border-[#D7E0E7] dark:border-[#1E2E4A]">
               <span>Terrain Tier:</span>
-              <strong className="text-[#1769AA] font-bold">
+              <strong className="text-[#1769AA] dark:text-[#38BDF8] font-bold">
                 {elevationVal >= 1200 ? 'High Alpine' : (elevationVal >= 600 ? 'Sub-Himalayan' : 'Lowland / Basin')}
               </strong>
             </div>
           </div>
 
           {/* Card 2: Estimated Slope */}
-          <div className="p-3.5 bg-white border border-[#D7E0E7] rounded-xl space-y-1.5">
+          <div className="p-3.5 bg-white dark:bg-[#070F1E] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] text-[#5B6B78] flex items-center gap-1">
+              <span className="text-[11px] text-[#5B6B78] dark:text-slate-400 flex items-center gap-1">
                 <span>📐 Estimated Slope</span>
               </span>
               <span className={`text-[9px] px-1.5 py-0.2 rounded border font-bold ${
-                terrainRisk === 'HIGH' ? 'bg-[#FFF7E6] text-[#E87516] border-[#E87516]/40' : (terrainRisk === 'MODERATE' ? 'bg-[#FFF7E6] text-[#D99A00] border-[#D99A00]/40' : 'bg-[#EAF7F1] text-[#16855B] border-[#16855B]/40')
+                terrainRisk === 'HIGH' ? 'bg-[#FFF7E6] dark:bg-orange-950/40 text-[#E87516] dark:text-orange-300 border-[#E87516]/40' : (terrainRisk === 'MODERATE' ? 'bg-[#FFF7E6] dark:bg-amber-950/40 text-[#D99A00] dark:text-amber-300 border-[#D99A00]/40' : 'bg-[#EAF7F1] dark:bg-emerald-950/40 text-[#16855B] dark:text-emerald-300 border-[#16855B]/40')
               }`}>
                 {terrainRisk} RISK
               </span>
             </div>
-            <div className="text-2xl font-black text-[#172B3A] tracking-tight">
+            <div className="text-2xl font-black text-[#172B3A] dark:text-white tracking-tight">
               {slopeVal}°
             </div>
-            <div className="text-[10px] text-[#5B6B78] flex items-center justify-between pt-0.5 border-t border-[#D7E0E7]">
-              <span className="text-[9px] text-[#5B6B78] italic">Estimated terrain slope</span>
-              <strong className="text-[#172B3A]">
+            <div className="text-[10px] text-[#5B6B78] dark:text-slate-400 flex items-center justify-between pt-0.5 border-t border-[#D7E0E7] dark:border-[#1E2E4A]">
+              <span className="text-[9px] text-[#5B6B78] dark:text-slate-400 italic">Estimated terrain slope</span>
+              <strong className="text-[#172B3A] dark:text-slate-200">
                 {slopeVal >= 30 ? 'Steep Escarpment' : (slopeVal >= 15 ? 'Moderate Incline' : 'Gentle / Valley')}
               </strong>
             </div>
           </div>
 
           {/* Card 3: Historical Flood Exposure */}
-          <div className="p-3.5 bg-white border border-[#D7E0E7] rounded-xl space-y-1.5">
+          <div className="p-3.5 bg-white dark:bg-[#070F1E] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] text-[#5B6B78] flex items-center gap-1">
+              <span className="text-[11px] text-[#5B6B78] dark:text-slate-400 flex items-center gap-1">
                 <span>📚 Historical Flood Exposure</span>
               </span>
               <span className={`text-[9px] px-1.5 py-0.2 rounded font-bold border ${
-                histFloodExposure === 'HIGH' ? 'bg-[#FFF1F1] text-[#C62828] border-[#C62828]/40' : (histFloodExposure === 'MODERATE' ? 'bg-[#FFF7E6] text-[#D99A00] border-[#D99A00]/40' : 'bg-[#EAF7F1] text-[#16855B] border-[#16855B]/40')
+                histFloodExposure === 'HIGH' ? 'bg-[#FFF1F1] dark:bg-red-950/40 text-[#C62828] dark:text-red-300 border-[#C62828]/40' : (histFloodExposure === 'MODERATE' ? 'bg-[#FFF7E6] dark:bg-amber-950/40 text-[#D99A00] dark:text-amber-300 border-[#D99A00]/40' : 'bg-[#EAF7F1] dark:bg-emerald-950/40 text-[#16855B] dark:text-emerald-300 border-[#16855B]/40')
               }`}>
                 {histFloodExposure}
               </span>
             </div>
-            <div className="text-2xl font-black text-[#172B3A] tracking-tight">
+            <div className="text-2xl font-black text-[#172B3A] dark:text-white tracking-tight">
               {histFloodExposure}
             </div>
-            <div className="text-[10px] text-[#5B6B78] flex items-center justify-between pt-0.5 border-t border-[#D7E0E7]">
+            <div className="text-[10px] text-[#5B6B78] dark:text-slate-400 flex items-center justify-between pt-0.5 border-t border-[#D7E0E7] dark:border-[#1E2E4A]">
               <span>Historical events nearby:</span>
-              <strong className="text-[#1769AA] font-bold">{histFloodEvents} events</strong>
+              <strong className="text-[#1769AA] dark:text-[#38BDF8] font-bold">{histFloodEvents} events</strong>
             </div>
           </div>
 
           {/* Card 4: Historical Landslide Exposure */}
-          <div className="p-3.5 bg-white border border-[#D7E0E7] rounded-xl space-y-1.5">
+          <div className="p-3.5 bg-white dark:bg-[#070F1E] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] text-[#5B6B78] flex items-center gap-1">
+              <span className="text-[11px] text-[#5B6B78] dark:text-slate-400 flex items-center gap-1">
                 <span>📚 Historical Landslide Exposure</span>
               </span>
               <span className={`text-[9px] px-1.5 py-0.2 rounded font-bold border ${
-                histLandslideSusceptibility === 'HIGH' ? 'bg-[#FFF1F1] text-[#C62828] border-[#C62828]/40' : (histLandslideSusceptibility === 'MODERATE' ? 'bg-[#FFF7E6] text-[#D99A00] border-[#D99A00]/40' : 'bg-[#EAF7F1] text-[#16855B] border-[#16855B]/40')
+                histLandslideSusceptibility === 'HIGH' ? 'bg-[#FFF1F1] dark:bg-red-950/40 text-[#C62828] dark:text-red-300 border-[#C62828]/40' : (histLandslideSusceptibility === 'MODERATE' ? 'bg-[#FFF7E6] dark:bg-amber-950/40 text-[#D99A00] dark:text-amber-300 border-[#D99A00]/40' : 'bg-[#EAF7F1] dark:bg-emerald-950/40 text-[#16855B] dark:text-emerald-300 border-[#16855B]/40')
               }`}>
                 {histLandslideSusceptibility}
               </span>
             </div>
-            <div className="text-2xl font-black text-[#172B3A] tracking-tight">
+            <div className="text-2xl font-black text-[#172B3A] dark:text-white tracking-tight">
               {histLandslideSusceptibility}
             </div>
-            <div className="text-[10px] text-[#5B6B78] flex items-center justify-between pt-0.5 border-t border-[#D7E0E7]">
+            <div className="text-[10px] text-[#5B6B78] dark:text-slate-400 flex items-center justify-between pt-0.5 border-t border-[#D7E0E7] dark:border-[#1E2E4A]">
               <span>Atlas Density / Rank:</span>
-              <strong className="text-[#1769AA] font-bold">
+              <strong className="text-[#1769AA] dark:text-[#38BDF8] font-bold">
                 {histLandslideRank ? `#${histLandslideRank} in India` : `${histLandslidesCount} cataloged`}
               </strong>
             </div>
@@ -444,7 +444,7 @@ export default function LiveWeatherRiskCard() {
         </div>
 
         {/* Historical Occurrence Disclaimer */}
-        <p className="text-[10px] text-[#5B6B78] italic bg-white p-2 rounded-lg border border-[#D7E0E7]">
+        <p className="text-[10px] text-[#5B6B78] dark:text-slate-400 italic bg-white dark:bg-[#070F1E] p-2 rounded-lg border border-[#D7E0E7] dark:border-[#1E2E4A]">
           ⚠️ <strong>Note:</strong> Historical flood and landslide occurrences provide empirical baseline susceptibility context and do NOT automatically indicate that a disaster is currently taking place.
         </p>
       </div>
@@ -553,40 +553,40 @@ export default function LiveWeatherRiskCard() {
       {/* ===================================================================== */}
       {/* 7. GROUNDED RISK FACTORS & DATA TRANSPARENCY                          */}
       {/* ===================================================================== */}
-      <div className="p-4 bg-[#F8FAFC] border border-[#D7E0E7] rounded-xl space-y-3">
-        <div className="flex items-center justify-between border-b border-[#D7E0E7] pb-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-[#172B3A] flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[#16855B]" />
+      <div className="p-4 bg-[#F8FAFC] dark:bg-[#0D162B] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl space-y-3">
+        <div className="flex items-center justify-between border-b border-[#D7E0E7] dark:border-[#1E2E4A] pb-2">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#172B3A] dark:text-white flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-[#16855B] dark:text-emerald-400" />
             <span>Corroborated Telemetry & Susceptibility Factors</span>
           </span>
-          <span className="text-[10px] text-[#5B6B78]">Multi-Layer Grounded</span>
+          <span className="text-[10px] text-[#5B6B78] dark:text-slate-400">Multi-Layer Grounded</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
           {(liveRisk?.factors || ['Environmental metrics within nominal baseline limits']).map((factor, idx) => (
-            <div key={idx} className="flex items-start gap-2 p-2 bg-white rounded-lg border border-[#D7E0E7] text-[#172B3A]">
-              <span className="text-[#16855B] font-bold shrink-0 mt-0.5">•</span>
+            <div key={idx} className="flex items-start gap-2 p-2 bg-white dark:bg-[#070F1E] rounded-lg border border-[#D7E0E7] dark:border-[#1E2E4A] text-[#172B3A] dark:text-slate-200">
+              <span className="text-[#16855B] dark:text-emerald-400 font-bold shrink-0 mt-0.5">•</span>
               <span className="leading-snug">{factor}</span>
             </div>
           ))}
         </div>
 
         {/* Data Sources Transparency Matrix */}
-        <div className="pt-2 border-t border-[#D7E0E7] text-[10px] text-[#5B6B78] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-          <div className="p-2 bg-white rounded border border-[#D7E0E7]">
-            <strong className="text-[#16855B] block mb-0.5">Live Weather:</strong>
+        <div className="pt-2 border-t border-[#D7E0E7] dark:border-[#1E2E4A] text-[10px] text-[#5B6B78] dark:text-slate-400 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+          <div className="p-2 bg-white dark:bg-[#070F1E] rounded border border-[#D7E0E7] dark:border-[#1E2E4A]">
+            <strong className="text-[#16855B] dark:text-emerald-400 block mb-0.5">Live Weather:</strong>
             <span>Open-Meteo Live Forecast API</span>
           </div>
-          <div className="p-2 bg-white rounded border border-[#D7E0E7]">
-            <strong className="text-[#1769AA] block mb-0.5">Terrain / Slope:</strong>
+          <div className="p-2 bg-white dark:bg-[#070F1E] rounded border border-[#D7E0E7] dark:border-[#1E2E4A]">
+            <strong className="text-[#1769AA] dark:text-[#38BDF8] block mb-0.5">Terrain / Slope:</strong>
             <span>Open-Meteo Elevation API / Copernicus DEM (90m)</span>
           </div>
-          <div className="p-2 bg-white rounded border border-[#D7E0E7]">
-            <strong className="text-[#D99A00] block mb-0.5">Historical Flood:</strong>
+          <div className="p-2 bg-white dark:bg-[#070F1E] rounded border border-[#D7E0E7] dark:border-[#1E2E4A]">
+            <strong className="text-[#D99A00] dark:text-amber-400 block mb-0.5">Historical Flood:</strong>
             <span>India Flood Inventory (IFI-Impacts 1967–2023)</span>
           </div>
-          <div className="p-2 bg-white rounded border border-[#D7E0E7]">
-            <strong className="text-[#E87516] block mb-0.5">Historical Landslide:</strong>
+          <div className="p-2 bg-white dark:bg-[#070F1E] rounded border border-[#D7E0E7] dark:border-[#1E2E4A]">
+            <strong className="text-[#E87516] dark:text-orange-400 block mb-0.5">Historical Landslide:</strong>
             <span>ISRO / NRSC Landslide Atlas of India</span>
           </div>
         </div>
@@ -596,36 +596,36 @@ export default function LiveWeatherRiskCard() {
       {/* 8. MANUAL LATITUDE / LONGITUDE MODAL                                  */}
       {/* ===================================================================== */}
       {isManualModalOpen && (
-        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white border border-[#D7E0E7] rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl text-[#172B3A]">
-            <div className="flex items-center justify-between border-b border-[#D7E0E7] pb-2">
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#111C35] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl text-[#172B3A] dark:text-[#E2E8F0]">
+            <div className="flex items-center justify-between border-b border-[#D7E0E7] dark:border-[#1E2E4A] pb-2">
               <div className="flex items-center gap-2">
                 <Sliders className="w-4 h-4 text-[#D99A00]" />
-                <h3 className="text-sm font-bold text-[#172B3A] uppercase">
+                <h3 className="text-sm font-bold text-[#172B3A] dark:text-white uppercase">
                   ENTER LOCATION COORDINATES
                 </h3>
               </div>
               <button 
                 onClick={() => setIsManualModalOpen(false)}
-                className="text-[#5B6B78] hover:text-[#172B3A] font-bold"
+                className="text-[#5B6B78] dark:text-slate-400 hover:text-[#172B3A] dark:hover:text-white font-bold"
               >
                 ✕
               </button>
             </div>
 
-            <p className="text-xs text-[#5B6B78]">
+            <p className="text-xs text-[#5B6B78] dark:text-slate-300">
               Enter custom coordinates to query live Open-Meteo weather, retrieve real Copernicus DEM elevation & slope gradient, and analyze historical flood/landslide exposure.
             </p>
 
             <form onSubmit={handleManualSubmit} className="space-y-3 text-xs">
               <div>
-                <label className="block text-[#172B3A] mb-1 font-semibold">Location / Sector Label</label>
+                <label className="block text-[#172B3A] dark:text-slate-200 mb-1 font-semibold">Location / Sector Label</label>
                 <input
                   type="text"
                   value={manualName}
                   onChange={(e) => setManualName(e.target.value)}
                   placeholder="e.g. Chamoli Sector or Wayanad Hills"
-                  className="w-full bg-[#F8FAFC] border border-[#D7E0E7] rounded-lg p-2.5 text-[#172B3A] focus:outline-none focus:border-[#1769AA]"
+                  className="w-full bg-[#F8FAFC] dark:bg-[#070F1E] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-lg p-2.5 text-[#172B3A] dark:text-white focus:outline-none focus:border-[#1769AA]"
                 />
               </div>
 

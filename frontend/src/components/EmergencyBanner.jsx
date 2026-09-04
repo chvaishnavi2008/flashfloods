@@ -24,8 +24,8 @@ export default function EmergencyBanner() {
       aria-label="Emergency Hazard Warning"
       className={`w-full border-y px-4 py-2.5 flex flex-col md:flex-row items-center justify-between gap-3 shadow-sm transition-all ${
         isCritical
-          ? 'bg-[#FFF1F1] border-[#C62828] text-[#172B3A]'
-          : 'bg-[#FFF7E6] border-[#E87516] text-[#172B3A]'
+          ? 'bg-[#FFF1F1] dark:bg-red-950/70 border-[#C62828] text-[#172B3A] dark:text-red-100'
+          : 'bg-[#FFF7E6] dark:bg-orange-950/70 border-[#E87516] text-[#172B3A] dark:text-orange-100'
       }`}
     >
       <div className="flex items-center gap-3 w-full md:w-auto">
@@ -39,11 +39,11 @@ export default function EmergencyBanner() {
             }`}>
               {isCritical ? 'CRITICAL EMERGENCY WARNING' : 'HIGH DISASTER THREAT'}
             </span>
-            <span className="text-xs font-mono text-[#5B6B78] hidden sm:inline">
+            <span className="text-xs font-mono text-[#5B6B78] dark:text-slate-300 hidden sm:inline">
               Sector: {selectedLocation?.name || 'Vulnerable Zone'}
             </span>
           </div>
-          <p className="text-xs md:text-sm font-medium mt-0.5 text-[#172B3A]">
+          <p className="text-xs md:text-sm font-medium mt-0.5 text-[#172B3A] dark:text-white">
             {activeAlert?.title || `Rapid multi-hazard escalation detected. Immediate evacuation recommended to nearest safe zones.`}
           </p>
         </div>
@@ -52,9 +52,9 @@ export default function EmergencyBanner() {
       <div className="flex items-center gap-2 w-full md:w-auto justify-end">
         <button
           onClick={toggleSiren}
-          className="px-2.5 py-1.5 bg-white hover:bg-[#F8FAFC] border border-[#D7E0E7] text-[#172B3A] rounded text-xs font-mono flex items-center gap-1.5"
+          className="px-2.5 py-1.5 bg-white dark:bg-[#070F1E] hover:bg-[#F8FAFC] dark:hover:bg-[#123047] border border-[#D7E0E7] dark:border-[#1E2E4A] text-[#172B3A] dark:text-slate-200 rounded text-xs font-mono flex items-center gap-1.5"
         >
-          {isSirenMuted ? <VolumeX className="w-3.5 h-3.5 text-[#5B6B78]" /> : <Volume2 className="w-3.5 h-3.5 text-[#C62828]" />}
+          {isSirenMuted ? <VolumeX className="w-3.5 h-3.5 text-[#5B6B78] dark:text-slate-400" /> : <Volume2 className="w-3.5 h-3.5 text-[#C62828] dark:text-red-400" />}
           <span className="hidden lg:inline">{isSirenMuted ? 'Unmute Siren' : 'Mute Siren'}</span>
         </button>
 
