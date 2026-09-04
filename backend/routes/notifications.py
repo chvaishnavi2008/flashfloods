@@ -42,7 +42,7 @@ def send_notification():
     notif = Notification(
         user_id=user.id,
         phone=phone,
-        title="Subscription Confirmed: PralayWatch Early Warning",
+        title="Subscription Confirmed: AapdaSetu Early Warning",
         message=f"You are now subscribed to automated multi-hazard alerts for your sector. Stay safe.",
         hazard_type="System",
         severity="LOW",

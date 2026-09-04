@@ -47,7 +47,7 @@ export default function EarlyWarningAlertModal() {
       const perm = await Notification.requestPermission();
       setBrowserPerm(perm);
       if (perm === 'granted') {
-        new Notification("PralayWatch Multi-Hazard Alert", {
+        new Notification("AapdaSetu Multi-Hazard Alert", {
           body: activeAlert ? activeAlert.message : "Immediate multi-hazard alert triggered.",
           icon: "/favicon.ico"
         });
@@ -271,7 +271,7 @@ export default function EarlyWarningAlertModal() {
                 <div className="bg-[#123047] dark:bg-[#0B2233] text-white p-3.5 rounded-xl rounded-tl-none text-xs leading-relaxed max-w-lg space-y-2 border border-[#294657]">
                   <div className="flex items-center gap-2 font-bold text-[#D7E0E7]">
                     <ShieldAlert className="w-4 h-4 text-[#E87516]" />
-                    <span>PralayWatch Verified Citizen Advisory</span>
+                    <span>AapdaSetu Verified Citizen Advisory</span>
                   </div>
                   <p>
                     🚨 <strong>{activeAlert.title || 'EMERGENCY RED ALERT'}</strong> in {activeAlert.location_name || 'Chamoli, Uttarakhand'}.
@@ -318,7 +318,7 @@ export default function EarlyWarningAlertModal() {
               </div>
 
               <p className="text-[#5B6B78] dark:text-slate-300 text-xs leading-relaxed font-sans">
-                Enable desktop and mobile browser notifications to receive immediate audible warnings even when the PralayWatch tab is running in the background.
+                Enable desktop and mobile browser notifications to receive immediate audible warnings even when the AapdaSetu tab is running in the background.
               </p>
 
               {browserPerm !== 'granted' && (

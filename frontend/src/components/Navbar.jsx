@@ -107,14 +107,14 @@ export default function Navbar() {
                 onClick={() => setActivePage(userRole === 'authority' ? 'authority' : 'dashboard')}
                 className="font-bold text-lg sm:text-xl tracking-tight text-white flex items-center gap-1.5 cursor-pointer truncate"
               >
-                PralayWatch
+                AapdaSetu
               </h1>
               <span className="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#1769AA]/20 text-[#D7E0E7] border border-[#1769AA]/40 whitespace-nowrap">
                 v1.0 SIH PROTOTYPE
               </span>
             </div>
             <p className="text-[10px] sm:text-[11px] text-[#D7E0E7] font-mono tracking-wider truncate hidden md:block">
-              AI-POWERED MULTI-HAZARD EARLY WARNING & RISK INTELLIGENCE
+              AI-POWERED MULTI-HAZARD EARLY WARNING & EMERGENCY RESPONSE
             </p>
           </div>
         </div>
@@ -247,7 +247,7 @@ export default function Navbar() {
                     <Shield className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="font-bold text-base text-white">PralayWatch</h2>
+                    <h2 className="font-bold text-base text-white">AapdaSetu</h2>
                     <span className="text-[10px] font-mono text-[#D7E0E7]">Navigation Menu</span>
                   </div>
                 </div>

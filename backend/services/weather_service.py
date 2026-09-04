@@ -42,7 +42,7 @@ class WeatherService:
                 "&hourly=temperature_2m,relative_humidity_2m,precipitation,rain,showers,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,wind_speed_10m,weather_code"
                 "&forecast_days=2&timezone=auto"
             )
-            req = urllib.request.Request(url, headers={"User-Agent": "PralayWatch/1.0"})
+            req = urllib.request.Request(url, headers={"User-Agent": "AapdaSetu/1.0"})
             with urllib.request.urlopen(req, timeout=8) as response:
                 data = json.loads(response.read().decode("utf-8"))
                 

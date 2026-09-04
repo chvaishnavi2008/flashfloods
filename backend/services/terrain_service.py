@@ -56,7 +56,7 @@ class TerrainService:
             lngs = [lng, lng, lng, lng + d_lng, lng - d_lng]
             
             url = f"{OPEN_METEO_ELEVATION_URL}?latitude={','.join(f'{x:.5f}' for x in lats)}&longitude={','.join(f'{x:.5f}' for x in lngs)}"
-            req = urllib.request.Request(url, headers={'User-Agent': 'PralayWatch/2.0'})
+            req = urllib.request.Request(url, headers={'User-Agent': 'AapdaSetu/2.0'})
             with urllib.request.urlopen(req, timeout=5) as response:
                 payload = json.loads(response.read().decode('utf-8'))
                 

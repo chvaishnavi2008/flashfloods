@@ -276,7 +276,7 @@ export default function SihDisasterDemoTheater() {
             <span>Real Calculation Guarantee</span>
           </div>
           <p className="text-[10px] text-slate-400">
-            Telemetry recalculated live by PralayWatch engine.
+            Telemetry recalculated live by AapdaSetu engine.
           </p>
         </div>
       </div>

@@ -239,7 +239,7 @@ def seed_database():
         radius_km=25.0,
         status="Active",
         lead_time_min=30,
-        issued_by="PralayWatch Real-Time AI Simulation Core",
+        issued_by="AapdaSetu Real-Time AI Simulation Core",
         created_at=datetime.utcnow() - timedelta(minutes=15)
     )
     db.session.add(alert1)
@@ -254,7 +254,7 @@ def seed_database():
         radius_km=18.0,
         status="Active",
         lead_time_min=45,
-        issued_by="PralayWatch Real-Time AI Simulation Core",
+        issued_by="AapdaSetu Real-Time AI Simulation Core",
         created_at=datetime.utcnow() - timedelta(minutes=28)
     )
     db.session.add(alert2)

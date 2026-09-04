@@ -57,11 +57,11 @@ export default function AuthorityHeader() {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-1 sm:gap-2">
               <h1 className="font-bold text-sm sm:text-base tracking-wider text-white uppercase truncate">
-                PRALAYWATCH
+                AAPDASETU
               </h1>
               <span className="text-[#D7E0E7] font-bold hidden sm:inline">•</span>
               <span className="text-[10px] sm:text-[11px] text-[#D7E0E7] font-semibold uppercase tracking-tight hidden sm:inline">
-                MULTI-HAZARD EARLY WARNING & RISK INTELLIGENCE
+                AI-POWERED MULTI-HAZARD EARLY WARNING & EMERGENCY RESPONSE
               </span>
             </div>
 

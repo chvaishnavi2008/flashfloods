@@ -66,7 +66,7 @@ def create_app(config_class=Config):
             return app.send_static_file('index.html')
         
         return jsonify({
-            "platform": "PralayWatch - AI-Powered Multi-Hazard Early Warning & Risk Intelligence",
+            "platform": "AapdaSetu - AI-Powered Multi-Hazard Early Warning & Emergency Response",
             "version": "1.0.0-SIH-Phase1",
             "status": "OPERATIONAL",
             "endpoints": [

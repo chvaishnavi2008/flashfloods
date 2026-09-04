@@ -691,7 +691,7 @@ export default function SimulationStudioPage() {
                 <span>Disaster Scenario Simulator</span>
               </h1>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
-                See how PralayWatch detects a developing disaster, predicts risk, provides lead time, and triggers an early warning.
+                See how AapdaSetu detects a developing disaster, predicts risk, provides lead time, and triggers an early warning.
               </p>
               
               {/* Scenario & Location Badges */}
@@ -868,7 +868,7 @@ export default function SimulationStudioPage() {
           <div className="p-3 bg-black/40 rounded-xl border border-slate-700/60 font-mono text-xs space-y-1.5 shrink-0 max-w-xs">
             <div className="text-slate-400 text-[10px] uppercase font-bold">Why Lead Time Matters:</div>
             <div className="text-slate-200 text-[11px] leading-relaxed">
-              PralayWatch uses upstream soil pore saturation & rainfall rates to issue warnings <strong className="text-cyan-300">before</strong> river crests reach settlements.
+              AapdaSetu uses upstream soil pore saturation & rainfall rates to issue warnings <strong className="text-cyan-300">before</strong> river crests reach settlements.
             </div>
           </div>
         </div>

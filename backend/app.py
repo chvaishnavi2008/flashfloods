@@ -56,7 +56,7 @@ def create_app(config_class=Config):
             return app.send_static_file('index.html')
         
         return jsonify({
-            "platform": "PralayWatch - AI-Powered Multi-Hazard Early Warning & Risk Intelligence",
+            "platform": "AapdaSetu - AI-Powered Multi-Hazard Early Warning & Emergency Response",
             "version": "1.0.0-SIH-Phase1",
             "status": "OPERATIONAL",
             "endpoints": [
@@ -84,7 +84,7 @@ app = create_app()
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     print(f"================================================================")
-    print(f"  PralayWatch - Backend Early Warning API Server Online")
+    print(f"  AapdaSetu - Backend Early Warning API Server Online")
     print(f"  Listening on: http://127.0.0.1:{port}")
     print(f"================================================================")
     app.run(host='0.0.0.0', port=port, debug=True)

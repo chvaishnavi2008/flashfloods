@@ -74,7 +74,7 @@ export default function AiRiskEnginePage() {
         </div>
 
         <p className="text-xs text-slate-300 max-w-3xl leading-relaxed">
-          Provides complete mathematical explainability and transparent feature attribution behind PralayWatch multi-hazard composite risk calculations.
+          Provides complete mathematical explainability and transparent feature attribution behind AapdaSetu multi-hazard composite risk calculations.
         </p>
       </div>
 
@@ -131,7 +131,7 @@ export default function AiRiskEnginePage() {
           <div className="w-0.5 h-4 bg-purple-500" />
           <div className="px-4 py-1.5 bg-purple-950/80 border border-purple-500 rounded-lg text-xs font-bold text-purple-300 flex items-center gap-2">
             <Cpu className="w-3.5 h-3.5" />
-            <span>PRALAYWATCH RISK INTELLIGENCE ENGINE</span>
+            <span>AAPDASETU RISK INTELLIGENCE ENGINE</span>
           </div>
           <div className="w-0.5 h-4 bg-purple-500" />
         </div>

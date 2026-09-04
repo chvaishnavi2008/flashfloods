@@ -226,7 +226,7 @@ export default function LiveWeatherRiskCard() {
         <div className="space-y-1.5">
           <div className="flex flex-wrap items-center gap-2">
             <span className={`px-2.5 py-0.5 rounded text-[11px] uppercase tracking-wider ${getBadgeColor(overallLvl)}`}>
-              ⚠️ PralayWatch Risk Assessment: {overallLvl} ({overallScore}/100)
+              ⚠️ AapdaSetu Risk Assessment: {overallLvl} ({overallScore}/100)
             </span>
             <span className="text-xs px-2 py-0.5 bg-white/80 rounded border border-[#D7E0E7] font-bold text-[#172B3A]">
               🔥 Dominant Hazard: <strong className="text-[#172B3A]">{dominantHazard}</strong>

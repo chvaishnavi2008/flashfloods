@@ -551,7 +551,7 @@ class SimulationEngine:
                 message=f"[DEMO SIMULATION] Torrential cloudburst precipitation detected in {target_loc.name}. Immediate high-ground evacuation ordered.",
                 radius_km=25.0,
                 lead_time_min=25,
-                issued_by="PralayWatch Real-Time AI Simulation Core"
+                issued_by="AapdaSetu Real-Time AI Simulation Core"
             )
 
         return {
@@ -654,7 +654,7 @@ class SimulationEngine:
                 message=f"[DEMO SIMULATION] Severe {scenario['hazard']} escalation active in {target_loc.name}, {target_loc.state}. Life-safety measures activated.",
                 radius_km=30.0,
                 lead_time_min=30,
-                issued_by="PralayWatch Real-Time AI Simulation Core"
+                issued_by="AapdaSetu Real-Time AI Simulation Core"
             )
 
         return {

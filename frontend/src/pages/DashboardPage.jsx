@@ -151,7 +151,7 @@ export default function DashboardPage() {
             </h1>
 
             <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
-              Real-time multi-hazard assessment powered by the PralayWatch early warning intelligence engine. Continuous monitoring across weather stations and river hydrometry.
+              Real-time multi-hazard assessment powered by the AapdaSetu early warning intelligence engine. Continuous monitoring across weather stations and river hydrometry.
             </p>
           </div>
 

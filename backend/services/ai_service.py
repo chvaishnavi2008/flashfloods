@@ -81,7 +81,7 @@ class AiIntelligenceService:
     def _call_gemini_api(cls, api_key, location_name, rainfall_rate, river_cap, soil_sat, slope_deg, level, score, factors):
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
         prompt = (
-            f"You are the AI Risk Intelligence Engine for PralayWatch disaster warning system. "
+            f"You are the AI Risk Intelligence Engine for AapdaSetu multi-hazard early warning & emergency response system. "
             f"Write a concise 2-3 sentence grounded explanation for why {location_name} is currently at {level} risk (Score {score}/100). "
             f"Strictly use only these provided telemetry facts without inventing sensor numbers: "
             f"Rainfall: {rainfall_rate} mm/hr, River Gauge: {river_cap}% capacity, Soil Saturation: {soil_sat}%, Slope: {slope_deg} degrees. "

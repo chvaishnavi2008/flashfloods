@@ -1,4 +1,4 @@
-# PralayWatch — Deployment Guide 🚀
+# AapdaSetu — Deployment Guide 🚀
 
 This repository is ready to be deployed to the cloud for free using any of the following methods:
 
@@ -6,23 +6,23 @@ This repository is ready to be deployed to the cloud for free using any of the f
 
 ## ⚡ Option 1: Render.com (Recommended — 100% Free Full-Stack Single Link)
 
-Render allows you to host the entire React Frontend + Python Backend as a **single web service** with an automatic HTTPS URL (`https://pralaywatch.onrender.com`).
+Render allows you to host the entire React Frontend + Python Backend as a **single web service** with an automatic HTTPS URL (`https://aapdasetu.onrender.com`).
 
 ### Steps:
 1. **Push your code to GitHub**:
    ```bash
    git init
    git add .
-   git commit -m "Deploy PralayWatch prototype"
+   git commit -m "Deploy AapdaSetu prototype"
    git branch -M main
-   git remote add origin https://github.com/YOUR_USERNAME/pralaywatch.git
+   git remote add origin https://github.com/YOUR_USERNAME/aapdasetu.git
    git push -u origin main
    ```
 2. Go to **[render.com](https://render.com/)** and sign in with GitHub.
 3. Click **"New +"** $\rightarrow$ **"Web Service"**.
-4. Select your **`pralaywatch`** GitHub repository.
+4. Select your **`aapdasetu`** GitHub repository.
 5. Configure the settings:
-   * **Name**: `pralaywatch`
+   * **Name**: `aapdasetu`
    * **Runtime**: `Python 3`
    * **Build Command**:
      ```bash

@@ -1488,7 +1488,7 @@ export const FALLBACK_ALERTS = [
     radius_km: 25.0,
     status: "Active",
     lead_time_min: 30,
-    issued_by: "PralayWatch Real-Time AI Simulation Core",
+    issued_by: "AapdaSetu Real-Time AI Simulation Core",
     created_at: "15 mins ago"
   },
   {

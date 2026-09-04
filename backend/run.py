@@ -1,5 +1,5 @@
 """
-PralayWatch - Backend Server Entrypoint
+AapdaSetu - Backend Server Entrypoint
 Run this script to launch the Flask REST API server:
     python run.py
 """
@@ -16,7 +16,7 @@ from app import app
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     print("=" * 66)
-    print("  🚀 PralayWatch Multi-Hazard Early Warning Backend Running")
+    print("  🚀 AapdaSetu Multi-Hazard Early Warning Backend Running")
     print(f"  📍 Local API Address: http://127.0.0.1:{port}")
     print("  📖 Endpoints: /api/risk-assessment | /api/locations | /api/alerts")
     print("=" * 66)

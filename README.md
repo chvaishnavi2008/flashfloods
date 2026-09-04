@@ -1,6 +1,6 @@
-# PralayWatch — AI-Powered Multi-Hazard Early Warning & Risk Intelligence
+# AapdaSetu — AI-Powered Multi-Hazard Early Warning & Emergency Response
 
-PralayWatch is a full-stack disaster risk intelligence platform for predicting flash floods, landslides, extreme cloudbursts, and riverine inundation across vulnerable Himalayan and Western Ghats sectors.
+AapdaSetu is a full-stack disaster risk intelligence platform for predicting flash floods, landslides, extreme cloudbursts, and riverine inundation across vulnerable Himalayan and Western Ghats sectors.
 
 ---
 
