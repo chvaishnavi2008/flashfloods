@@ -77,6 +77,7 @@ export const weatherService = {
         'wind_speed_10m',
         'weather_code'
       ].join(','));
+      url.searchParams.set('past_hours', '24');
       url.searchParams.set('forecast_days', '2');
       url.searchParams.set('timezone', 'auto');
 
@@ -118,16 +119,28 @@ export const weatherService = {
   },
 
   /**
-   * Parse and structure raw Open-Meteo API payload into PralayWatch-compatible telemetry
+   * Helper to safely sum a range of hourly values (preserving null when all values are missing)
+   */
+  sumHourlySlice(arr, startIdx, endIdx) {
+    if (!Array.isArray(arr) || arr.length === 0) return null;
+    const start = Math.max(0, startIdx);
+    const end = Math.min(arr.length, endIdx);
+    if (start >= end) return null;
+    const slice = arr.slice(start, end);
+    const valid = slice.filter(v => typeof v === 'number' && !isNaN(v));
+    if (valid.length === 0) return null;
+    return Math.round(valid.reduce((sum, v) => sum + v, 0) * 10) / 10;
+  },
+
+  /**
+   * Parse and structure raw Open-Meteo API payload into AapdaSetu-compatible telemetry
    */
   parseOpenMeteoPayload(json, lat, lng, requestUrl = '') {
     const current = json.current || {};
     const hourly = json.hourly || {};
     const times = hourly.time || [];
 
-    // 1. Precise Current Hour Index Matching (Not defaulting blindly to hourly[0])
-    // Open-Meteo current.time is formatted e.g. "2026-09-02T20:45"
-    // hourly.time entries are formatted e.g. "2026-09-02T20:00"
+    // 1. Precise Current Hour Index Matching (Matched to current local ISO timestamp)
     const currentTimeStr = current.time || '';
     const currentHourPrefix = currentTimeStr.length >= 13 ? currentTimeStr.slice(0, 13) : '';
     let currentIdx = times.findIndex(t => t.startsWith(currentHourPrefix));
@@ -147,40 +160,57 @@ export const weatherService = {
     }
     if (currentIdx < 0) currentIdx = 0;
 
-    // 2. Verified Rainfall Fields Extraction (Do NOT convert null/missing to 0)
-    let rawPrecip = null;
-    let fieldSource = null;
-
-    if (typeof current.precipitation === 'number') {
-      rawPrecip = current.precipitation;
-      fieldSource = 'current.precipitation';
-    } else if (typeof current.rain === 'number' || typeof current.showers === 'number') {
-      const r = typeof current.rain === 'number' ? current.rain : 0;
-      const s = typeof current.showers === 'number' ? current.showers : 0;
-      rawPrecip = r + s;
-      fieldSource = 'current.rain + current.showers';
-    } else if (currentIdx >= 0 && typeof hourly.precipitation?.[currentIdx] === 'number') {
-      rawPrecip = hourly.precipitation[currentIdx];
-      fieldSource = `hourly.precipitation[${currentIdx}]`;
-    } else if (currentIdx >= 0 && (typeof hourly.rain?.[currentIdx] === 'number' || typeof hourly.showers?.[currentIdx] === 'number')) {
-      const hr = typeof hourly.rain?.[currentIdx] === 'number' ? hourly.rain[currentIdx] : 0;
-      const hs = typeof hourly.showers?.[currentIdx] === 'number' ? hourly.showers[currentIdx] : 0;
-      rawPrecip = hr + hs;
-      fieldSource = `hourly.rain[${currentIdx}] + hourly.showers[${currentIdx}]`;
-    }
-
+    // 2. Verified Current Rain & Precipitation Extraction (Do NOT convert null/missing to 0)
     const currentRain = typeof current.rain === 'number'
       ? current.rain
       : (currentIdx >= 0 && typeof hourly.rain?.[currentIdx] === 'number' ? hourly.rain[currentIdx] : null);
+
+    const currentPrecip = typeof current.precipitation === 'number'
+      ? current.precipitation
+      : (currentIdx >= 0 && typeof hourly.precipitation?.[currentIdx] === 'number' ? hourly.precipitation[currentIdx] : null);
 
     const currentShowers = typeof current.showers === 'number'
       ? current.showers
       : (currentIdx >= 0 && typeof hourly.showers?.[currentIdx] === 'number' ? hourly.showers[currentIdx] : null);
 
-    const precipitation_mm_hr = rawPrecip !== null ? Math.round(rawPrecip * 10) / 10 : null;
-    const precipitation_display = precipitation_mm_hr !== null ? `${precipitation_mm_hr} mm/hr` : 'Unavailable';
+    // Primary current rain rate (mm/hr)
+    const rain_mm_hr = currentRain !== null ? Math.round(currentRain * 10) / 10 : null;
+    const precipitation_mm_hr = currentPrecip !== null ? Math.round(currentPrecip * 10) / 10 : (rain_mm_hr !== null ? rain_mm_hr : null);
+    const showers_mm_hr = currentShowers !== null ? Math.round(currentShowers * 10) / 10 : null;
 
-    // 3. Temperature, Wind, Humidity
+    // 3. Historical / Recent Rainfall Accumulations (Preceding and including the current hour)
+    // - Last 1 hour: current hourly index
+    // - Last 3 hours: currentIdx - 2 through currentIdx (3 hours)
+    // - Last 6 hours: currentIdx - 5 through currentIdx (6 hours)
+    // - Last 24 hours: currentIdx - 23 through currentIdx (24 hours)
+    const accum1hRain = this.sumHourlySlice(hourly.rain, currentIdx, currentIdx + 1) ?? rain_mm_hr;
+    const accum3hRain = this.sumHourlySlice(hourly.rain, currentIdx - 2, currentIdx + 1);
+    const accum6hRain = this.sumHourlySlice(hourly.rain, currentIdx - 5, currentIdx + 1);
+    const accum24hRain = this.sumHourlySlice(hourly.rain, currentIdx - 23, currentIdx + 1);
+
+    const accum1hPrecip = this.sumHourlySlice(hourly.precipitation, currentIdx, currentIdx + 1) ?? precipitation_mm_hr;
+    const accum3hPrecip = this.sumHourlySlice(hourly.precipitation, currentIdx - 2, currentIdx + 1);
+    const accum6hPrecip = this.sumHourlySlice(hourly.precipitation, currentIdx - 5, currentIdx + 1);
+    const accum24hPrecip = this.sumHourlySlice(hourly.precipitation, currentIdx - 23, currentIdx + 1);
+
+    // 4. Next 24 Hours Cumulative Forecast (Future from currentIdx)
+    const forecast24hRain = this.sumHourlySlice(hourly.rain, currentIdx, currentIdx + 24);
+    const forecast24hPrecip = this.sumHourlySlice(hourly.precipitation, currentIdx, currentIdx + 24);
+
+    // 5. Console Debugging Telemetry
+    console.log('🌧️ [AapdaSetu Weather Telemetry]');
+    console.log('  📍 Selected latitude:', lat);
+    console.log('  📍 Selected longitude:', lng);
+    console.log('  💧 Current rain:', currentRain !== null ? `${currentRain} mm/hr` : 'Unavailable');
+    console.log('  💧 Current precipitation:', currentPrecip !== null ? `${currentPrecip} mm/hr` : 'Unavailable');
+    console.log('  📊 Hourly rain values:', hourly.rain ? hourly.rain.slice(Math.max(0, currentIdx - 23), currentIdx + 24) : 'Unavailable');
+    console.log('  ⏱️ Last 1h rainfall:', accum1hRain !== null ? `${accum1hRain} mm` : 'Unavailable');
+    console.log('  ⏱️ Last 3h rainfall:', accum3hRain !== null ? `${accum3hRain} mm` : 'Unavailable');
+    console.log('  ⏱️ Last 6h rainfall:', accum6hRain !== null ? `${accum6hRain} mm` : 'Unavailable');
+    console.log('  ⏱️ Last 24h rainfall (accumulated):', accum24hRain !== null ? `${accum24hRain} mm` : 'Unavailable');
+    console.log('  🔮 Next 24h rainfall (forecast):', forecast24hRain !== null ? `${forecast24hRain} mm` : 'Unavailable');
+
+    // 6. Temperature, Wind, Humidity
     const temperature = typeof current.temperature_2m === 'number'
       ? current.temperature_2m
       : (currentIdx >= 0 && typeof hourly.temperature_2m?.[currentIdx] === 'number' ? hourly.temperature_2m[currentIdx] : null);
@@ -193,42 +223,24 @@ export const weatherService = {
       ? current.relative_humidity_2m
       : (currentIdx >= 0 && typeof hourly.relative_humidity_2m?.[currentIdx] === 'number' ? hourly.relative_humidity_2m[currentIdx] : null);
 
-    // 4. Soil Moisture from Open-Meteo Land Surface Model
+    // 7. Soil Moisture from Open-Meteo Land Surface Model
     const sm0_1 = hourly.soil_moisture_0_to_1cm?.[currentIdx] ?? null;
     const sm1_3 = hourly.soil_moisture_1_to_3cm?.[currentIdx] ?? sm0_1;
     const sm3_9 = hourly.soil_moisture_3_to_9cm?.[currentIdx] ?? sm1_3;
     const avgSoilMoistureM3 = sm0_1 !== null ? (sm0_1 + (sm1_3 ?? sm0_1) + (sm3_9 ?? sm1_3 ?? sm0_1)) / 3 : 0.30;
     const soilSaturationPct = Math.min(100, Math.max(0, Math.round((avgSoilMoistureM3 / 0.48) * 100)));
 
-    // 5. Next 24 Hours Cumulative Precipitation Forecast (Starting from currentIdx)
-    let next24hPrecipitation = null;
-    if (hourly.precipitation && hourly.precipitation.length > 0) {
-      const next24 = hourly.precipitation.slice(currentIdx, currentIdx + 24);
-      const valid = next24.filter(v => typeof v === 'number');
-      if (valid.length > 0) {
-        next24hPrecipitation = Math.round(valid.reduce((sum, v) => sum + v, 0) * 10) / 10;
-      }
-    }
-
-    let next24hRain = null;
-    if (hourly.rain && hourly.rain.length > 0) {
-      const next24 = hourly.rain.slice(currentIdx, currentIdx + 24);
-      const valid = next24.filter(v => typeof v === 'number');
-      if (valid.length > 0) {
-        next24hRain = Math.round(valid.reduce((sum, v) => sum + v, 0) * 10) / 10;
-      }
-    }
-
-    // 6. Intensity Label
-    const effectiveRate = precipitation_mm_hr !== null ? precipitation_mm_hr : 0.0;
-    let intensityLabel = 'Light';
+    // 8. Intensity Label
+    const effectiveRate = rain_mm_hr !== null ? rain_mm_hr : (precipitation_mm_hr !== null ? precipitation_mm_hr : 0.0);
+    let intensityLabel = 'Light / Dry';
     if (effectiveRate >= 100) intensityLabel = 'Cloudburst / Torrential';
     else if (effectiveRate >= 50) intensityLabel = 'Extremely Heavy';
     else if (effectiveRate >= 30) intensityLabel = 'Heavy';
     else if (effectiveRate >= 10) intensityLabel = 'Moderate';
-    else if (precipitation_mm_hr === null) intensityLabel = 'Unavailable';
+    else if (effectiveRate > 0) intensityLabel = 'Light Rain';
+    else if (rain_mm_hr === null && precipitation_mm_hr === null) intensityLabel = 'Unavailable';
 
-    // 7. Forecast Trend
+    // 9. Forecast Trend
     const next3hSum = (hourly.precipitation || [])
       .slice(currentIdx, currentIdx + 3)
       .reduce((s, v) => s + (typeof v === 'number' ? v : 0), 0);
@@ -240,28 +252,34 @@ export const weatherService = {
     if (effectiveRate >= 50 || next3hSum >= 70) rainfallTrend = 'Peaking';
     else if (next3hSum > prev3hSum && next3hSum > 5) rainfallTrend = 'Rising Rapidly';
     else if (next3hSum > 2) rainfallTrend = 'Rising';
-    else if (prev3hSum > next3hSum) rainfallTrend = 'Falling';
+    else if (prev3hSum > next3hSum && prev3hSum > 0.5) rainfallTrend = 'Falling';
 
-    // 8. Estimated Surface Runoff (Hydrological rational derivation)
+    // 10. Estimated Surface Runoff
     const estimatedRunoffCoeff = Math.min(0.95, (soilSaturationPct / 100) * 0.85 + (effectiveRate > 25 ? 0.15 : 0.05));
-    const estimatedSurfaceRunoffMm = precipitation_mm_hr !== null
+    const estimatedSurfaceRunoffMm = (rain_mm_hr !== null || precipitation_mm_hr !== null)
       ? Math.round(effectiveRate * estimatedRunoffCoeff * 10) / 10
       : null;
 
-    // 9. Grounded Risk Factors
+    // 11. Grounded Risk Factors
     const riskFactors = [];
-    if (precipitation_mm_hr !== null && precipitation_mm_hr >= 50) {
-      riskFactors.push(`Torrential precipitation rate detected (${precipitation_mm_hr.toFixed(1)} mm/hr)`);
-    } else if (precipitation_mm_hr !== null && precipitation_mm_hr >= 25) {
-      riskFactors.push(`Heavy rainfall rate active (${precipitation_mm_hr.toFixed(1)} mm/hr)`);
-    } else if (precipitation_mm_hr !== null && precipitation_mm_hr >= 10) {
-      riskFactors.push(`Moderate rainfall active (${precipitation_mm_hr.toFixed(1)} mm/hr)`);
+    if (rain_mm_hr !== null && rain_mm_hr >= 50) {
+      riskFactors.push(`Torrential rainfall rate detected (${rain_mm_hr.toFixed(1)} mm/hr)`);
+    } else if (rain_mm_hr !== null && rain_mm_hr >= 25) {
+      riskFactors.push(`Heavy rainfall rate active (${rain_mm_hr.toFixed(1)} mm/hr)`);
+    } else if (rain_mm_hr !== null && rain_mm_hr >= 10) {
+      riskFactors.push(`Moderate rainfall active (${rain_mm_hr.toFixed(1)} mm/hr)`);
     }
 
-    if (next24hPrecipitation !== null && next24hPrecipitation >= 75) {
-      riskFactors.push(`High 24h accumulated rainfall expected (${next24hPrecipitation.toFixed(1)} mm)`);
-    } else if (next24hPrecipitation !== null && next24hPrecipitation >= 40) {
-      riskFactors.push(`Elevated 24h rainfall forecast (${next24hPrecipitation.toFixed(1)} mm)`);
+    if (accum24hRain !== null && accum24hRain >= 75) {
+      riskFactors.push(`High 24h accumulated rainfall recorded (${accum24hRain.toFixed(1)} mm)`);
+    } else if (accum24hRain !== null && accum24hRain >= 40) {
+      riskFactors.push(`Elevated 24h rainfall accumulation (${accum24hRain.toFixed(1)} mm)`);
+    }
+
+    if (forecast24hRain !== null && forecast24hRain >= 75) {
+      riskFactors.push(`High 24h rainfall forecast expected (${forecast24hRain.toFixed(1)} mm)`);
+    } else if (forecast24hRain !== null && forecast24hRain >= 40) {
+      riskFactors.push(`Elevated 24h rainfall forecast (${forecast24hRain.toFixed(1)} mm)`);
     }
 
     if (soilSaturationPct >= 75) {
@@ -292,7 +310,7 @@ export const weatherService = {
       matched_hourly_index: currentIdx,
       matched_hourly_time: times[currentIdx] || null,
       request_url: requestUrl,
-      field_source: fieldSource,
+      field_source: currentRain !== null ? 'current.rain' : (currentPrecip !== null ? 'current.precipitation' : `hourly.rain[${currentIdx}]`),
       fetched_at: new Date().toISOString(),
 
       // Raw Current vs Hourly Readings
@@ -308,17 +326,33 @@ export const weatherService = {
       },
 
       // Processed Telemetry (No fake 0s for missing values)
+      rain_mm_hr: rain_mm_hr,
+      rain_display: rain_mm_hr !== null ? `${rain_mm_hr} mm/hr` : 'Unavailable',
       precipitation_mm_hr: precipitation_mm_hr,
-      precipitation_display: precipitation_display,
-      rain_mm_hr: currentRain !== null ? Math.round(currentRain * 10) / 10 : null,
-      showers_mm_hr: currentShowers !== null ? Math.round(currentShowers * 10) / 10 : null,
+      precipitation_display: precipitation_mm_hr !== null ? `${precipitation_mm_hr} mm/hr` : 'Unavailable',
+      showers_mm_hr: showers_mm_hr,
+
+      // Recent Accumulations (Observed Past Periods)
+      accum_1h_rain_mm: accum1hRain,
+      accum_3h_rain_mm: accum3hRain,
+      accum_6h_rain_mm: accum6hRain,
+      accum_24h_rain_mm: accum24hRain,
+
+      accum_1h_precipitation_mm: accum1hPrecip,
+      accum_3h_precipitation_mm: accum3hPrecip,
+      accum_6h_precipitation_mm: accum6hPrecip,
+      accum_24h_precipitation_mm: accum24hPrecip,
+
+      // Future Forecast Accumulations (Next 24 Hours)
+      forecast_24h_rain_mm: forecast24hRain,
+      forecast_24h_precipitation_mm: forecast24hPrecip,
+
+      // Classification & Atmosphere
+      rainfall_intensity: intensityLabel,
+      rainfall_forecast_trend: rainfallTrend,
       temperature_c: temperature !== null ? Math.round(temperature * 10) / 10 : null,
       wind_speed_kmh: windSpeed !== null ? Math.round(windSpeed * 10) / 10 : null,
       relative_humidity_pct: relativeHumidity !== null ? Math.round(relativeHumidity) : null,
-      forecast_24h_precipitation_mm: next24hPrecipitation,
-      forecast_24h_rain_mm: next24hRain,
-      rainfall_intensity: intensityLabel,
-      rainfall_forecast_trend: rainfallTrend,
 
       // Soil moisture from Open-Meteo
       soil_moisture_m3: Math.round(avgSoilMoistureM3 * 1000) / 1000,

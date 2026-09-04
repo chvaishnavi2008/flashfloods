@@ -270,62 +270,92 @@ export default function LiveWeatherRiskCard() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-          {/* Metric 1: Rainfall */}
-          <div className="p-3.5 bg-[#F8FAFC] border border-[#D7E0E7] rounded-xl space-y-1">
-            <span className="text-[10px] uppercase text-[#5B6B78] flex items-center gap-1">
-              <CloudRain className="w-3.5 h-3.5 text-[#1769AA]" />
-              <span>🌧️ Rainfall Telemetry</span>
-            </span>
-            <div className="text-lg font-black text-[#172B3A]">
-              {liveWeather ? (liveWeather.precipitation_mm_hr !== null && liveWeather.precipitation_mm_hr !== undefined ? `${liveWeather.precipitation_mm_hr} mm/hr` : 'Unavailable') : '--'}
+          {/* Metric 1: Rainfall Telemetry */}
+          <div className="p-3.5 bg-[#F8FAFC] dark:bg-[#070F1E] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl space-y-1.5 transition-colors">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] uppercase font-bold text-[#5B6B78] dark:text-slate-400 flex items-center gap-1">
+                <CloudRain className="w-3.5 h-3.5 text-[#1769AA] dark:text-[#38BDF8]" />
+                <span>🌧️ Rainfall Telemetry</span>
+              </span>
+              {liveWeather?.rainfall_intensity && (
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#E8F2F8] dark:bg-[#1769AA]/20 text-[#1769AA] dark:text-[#38BDF8] font-bold border border-[#1769AA]/30">
+                  {liveWeather.rainfall_intensity}
+                </span>
+              )}
             </div>
-            <div className="text-[10px] text-[#5B6B78] flex justify-between">
-              <span>24h Forecast:</span>
-              <strong className="text-[#172B3A]">{liveWeather ? (liveWeather.forecast_24h_precipitation_mm !== null && liveWeather.forecast_24h_precipitation_mm !== undefined ? `${liveWeather.forecast_24h_precipitation_mm} mm` : 'Unavailable') : '--'}</strong>
+
+            <div className="flex items-baseline justify-between pt-0.5">
+              <span className="text-xs text-[#5B6B78] dark:text-slate-400 font-semibold">Current:</span>
+              <span className="text-lg font-black text-[#172B3A] dark:text-white font-mono">
+                {liveWeather ? (liveWeather.rain_mm_hr !== null && liveWeather.rain_mm_hr !== undefined ? `${liveWeather.rain_mm_hr} mm/hr` : (liveWeather.precipitation_mm_hr !== null && liveWeather.precipitation_mm_hr !== undefined ? `${liveWeather.precipitation_mm_hr} mm/hr` : 'Unavailable')) : '--'}
+              </span>
+            </div>
+
+            <div className="pt-1 border-t border-[#D7E0E7] dark:border-[#1E2E4A] space-y-1 text-[11px]">
+              <div className="flex justify-between items-center text-[#5B6B78] dark:text-slate-400">
+                <span>Recent:</span>
+                <strong className="text-[#172B3A] dark:text-slate-200 font-mono">
+                  {liveWeather ? (liveWeather.accum_3h_rain_mm !== null && liveWeather.accum_3h_rain_mm !== undefined ? `${liveWeather.accum_3h_rain_mm} mm (last 3h)` : (liveWeather.accum_3h_precipitation_mm !== null && liveWeather.accum_3h_precipitation_mm !== undefined ? `${liveWeather.accum_3h_precipitation_mm} mm (last 3h)` : 'Unavailable')) : '--'}
+                </strong>
+              </div>
+
+              <div className="flex justify-between items-center text-[#5B6B78] dark:text-slate-400">
+                <span>24h Accumulated:</span>
+                <strong className="text-[#172B3A] dark:text-slate-200 font-mono">
+                  {liveWeather ? (liveWeather.accum_24h_rain_mm !== null && liveWeather.accum_24h_rain_mm !== undefined ? `${liveWeather.accum_24h_rain_mm} mm` : (liveWeather.accum_24h_precipitation_mm !== null && liveWeather.accum_24h_precipitation_mm !== undefined ? `${liveWeather.accum_24h_precipitation_mm} mm` : 'Unavailable')) : '--'}
+                </strong>
+              </div>
+
+              <div className="flex justify-between items-center text-[#5B6B78] dark:text-slate-400">
+                <span>24h Forecast:</span>
+                <strong className="text-[#1769AA] dark:text-[#38BDF8] font-mono">
+                  {liveWeather ? (liveWeather.forecast_24h_rain_mm !== null && liveWeather.forecast_24h_rain_mm !== undefined ? `${liveWeather.forecast_24h_rain_mm} mm` : (liveWeather.forecast_24h_precipitation_mm !== null && liveWeather.forecast_24h_precipitation_mm !== undefined ? `${liveWeather.forecast_24h_precipitation_mm} mm` : 'Unavailable')) : '--'}
+                </strong>
+              </div>
             </div>
           </div>
 
           {/* Metric 2: Soil Moisture */}
-          <div className="p-3.5 bg-[#F8FAFC] border border-[#D7E0E7] rounded-xl space-y-1">
-            <span className="text-[10px] uppercase text-[#5B6B78] flex items-center gap-1">
-              <Droplets className="w-3.5 h-3.5 text-[#1769AA]" />
+          <div className="p-3.5 bg-[#F8FAFC] dark:bg-[#070F1E] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl space-y-1.5 transition-colors">
+            <span className="text-[10px] uppercase font-bold text-[#5B6B78] dark:text-slate-400 flex items-center gap-1">
+              <Droplets className="w-3.5 h-3.5 text-[#1769AA] dark:text-[#38BDF8]" />
               <span>💧 Soil Moisture</span>
             </span>
-            <div className="text-lg font-black text-[#172B3A]">
+            <div className="text-lg font-black text-[#172B3A] dark:text-white font-mono">
               {liveWeather ? `${liveWeather.soil_saturation_pct}%` : '--'}
             </div>
-            <div className="text-[10px] text-[#5B6B78] flex justify-between">
+            <div className="pt-1 border-t border-[#D7E0E7] dark:border-[#1E2E4A] text-[11px] text-[#5B6B78] dark:text-slate-400 flex justify-between">
               <span>Volumetric:</span>
-              <strong className="text-[#172B3A]">{liveWeather ? `${liveWeather.soil_moisture_m3} m³/m³` : '--'}</strong>
+              <strong className="text-[#172B3A] dark:text-slate-200 font-mono">{liveWeather ? `${liveWeather.soil_moisture_m3} m³/m³` : '--'}</strong>
             </div>
           </div>
 
           {/* Metric 3: Surface Runoff */}
-          <div className="p-3.5 bg-[#F8FAFC] border border-[#D7E0E7] rounded-xl space-y-1">
-            <span className="text-[10px] uppercase text-[#5B6B78] flex items-center gap-1">
-              <Compass className="w-3.5 h-3.5 text-[#D99A00]" />
+          <div className="p-3.5 bg-[#F8FAFC] dark:bg-[#070F1E] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl space-y-1.5 transition-colors">
+            <span className="text-[10px] uppercase font-bold text-[#5B6B78] dark:text-slate-400 flex items-center gap-1">
+              <Compass className="w-3.5 h-3.5 text-[#D99A00] dark:text-amber-400" />
               <span>Surface Runoff</span>
             </span>
-            <div className="text-lg font-black text-[#172B3A]">
+            <div className="text-lg font-black text-[#172B3A] dark:text-white font-mono">
               {liveWeather?.surface_runoff ? `${liveWeather.surface_runoff.value_mm_hr} mm/hr` : '--'}
             </div>
-            <div className="text-[9px] text-[#5B6B78] truncate" title="Estimated from Open-Meteo precipitation & soil moisture">
+            <div className="pt-1 border-t border-[#D7E0E7] dark:border-[#1E2E4A] text-[11px] text-[#5B6B78] dark:text-slate-400 truncate" title="Estimated from Open-Meteo precipitation & soil moisture">
               (Derived runoff)
             </div>
           </div>
 
           {/* Metric 4: Ambient / Wind */}
-          <div className="p-3.5 bg-[#F8FAFC] border border-[#D7E0E7] rounded-xl space-y-1">
-            <span className="text-[10px] uppercase text-[#5B6B78] flex items-center gap-1">
-              <Wind className="w-3.5 h-3.5 text-[#16855B]" />
+          <div className="p-3.5 bg-[#F8FAFC] dark:bg-[#070F1E] border border-[#D7E0E7] dark:border-[#1E2E4A] rounded-xl space-y-1.5 transition-colors">
+            <span className="text-[10px] uppercase font-bold text-[#5B6B78] dark:text-slate-400 flex items-center gap-1">
+              <Wind className="w-3.5 h-3.5 text-[#16855B] dark:text-emerald-400" />
               <span>Wind & Temp</span>
             </span>
-            <div className="text-lg font-black text-[#172B3A]">
+            <div className="text-lg font-black text-[#172B3A] dark:text-white font-mono">
               {liveWeather ? `${liveWeather.temperature_c}°C` : '--'}
             </div>
-            <div className="text-[10px] text-[#5B6B78] flex justify-between">
+            <div className="pt-1 border-t border-[#D7E0E7] dark:border-[#1E2E4A] text-[11px] text-[#5B6B78] dark:text-slate-400 flex justify-between">
               <span>Wind:</span>
-              <strong className="text-[#172B3A]">{liveWeather ? `${liveWeather.wind_speed_kmh} km/h` : '--'}</strong>
+              <strong className="text-[#172B3A] dark:text-slate-200 font-mono">{liveWeather ? `${liveWeather.wind_speed_kmh} km/h` : '--'}</strong>
             </div>
           </div>
         </div>

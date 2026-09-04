@@ -40,7 +40,7 @@ class WeatherService:
                 f"{cls.OPEN_METEO_BASE_URL}?latitude={lat}&longitude={lng}"
                 "&current=temperature_2m,relative_humidity_2m,precipitation,rain,showers,weather_code,wind_speed_10m"
                 "&hourly=temperature_2m,relative_humidity_2m,precipitation,rain,showers,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,wind_speed_10m,weather_code"
-                "&forecast_days=2&timezone=auto"
+                "&past_hours=24&forecast_days=2&timezone=auto"
             )
             req = urllib.request.Request(url, headers={"User-Agent": "AapdaSetu/1.0"})
             with urllib.request.urlopen(req, timeout=8) as response:
@@ -60,33 +60,37 @@ class WeatherService:
                 if curr_idx < 0:
                     curr_idx = 0
                     
-                # Read current precipitation, rain, showers (Do NOT convert null to 0)
+                # Read current rain and precipitation (Do NOT convert null to 0)
                 raw_precip = current.get("precipitation")
                 raw_rain = current.get("rain")
                 raw_showers = current.get("showers")
                 
-                field_read = None
-                if raw_precip is not None:
-                    precip_val = float(raw_precip)
-                    field_read = "current.precipitation"
-                elif raw_rain is not None or raw_showers is not None:
-                    precip_val = float(raw_rain or 0.0) + float(raw_showers or 0.0)
-                    field_read = "current.rain + current.showers"
-                elif curr_idx >= 0 and curr_idx < len(hourly.get("precipitation", [])) and hourly.get("precipitation")[curr_idx] is not None:
-                    precip_val = float(hourly.get("precipitation")[curr_idx])
-                    field_read = f"hourly.precipitation[{curr_idx}]"
-                elif curr_idx >= 0 and (hourly.get("rain", [None])[curr_idx] is not None or hourly.get("showers", [None])[curr_idx] is not None):
-                    precip_val = float(hourly.get("rain", [0])[curr_idx] or 0.0) + float(hourly.get("showers", [0])[curr_idx] or 0.0)
-                    field_read = f"hourly.rain[{curr_idx}] + hourly.showers[{curr_idx}]"
-                else:
-                    precip_val = None
-                    field_read = "None (Unavailable)"
-                    
-                # 24h accumulation starting from matched current hour
-                hourly_precip = hourly.get("precipitation", [])[curr_idx:curr_idx+24]
-                valid_precip = [float(p) for p in hourly_precip if p is not None]
-                accum_24h = round(sum(valid_precip), 1) if valid_precip else None
+                rain_val = float(raw_rain) if raw_rain is not None else (float(hourly.get("rain", [None])[curr_idx]) if curr_idx < len(hourly.get("rain", [])) and hourly.get("rain", [])[curr_idx] is not None else None)
+                precip_val = float(raw_precip) if raw_precip is not None else (float(hourly.get("precipitation", [None])[curr_idx]) if curr_idx < len(hourly.get("precipitation", [])) and hourly.get("precipitation", [])[curr_idx] is not None else (rain_val if rain_val is not None else None))
                 
+                # Helper for slicing & summing hourly metrics safely
+                def sum_hourly(arr_key, start_offset, end_offset):
+                    arr = hourly.get(arr_key, [])
+                    s = max(0, curr_idx + start_offset)
+                    e = min(len(arr), curr_idx + end_offset)
+                    if s >= e:
+                        return None
+                    valid = [float(v) for v in arr[s:e] if v is not None]
+                    return round(sum(valid), 1) if valid else None
+
+                # Recent hourly accumulations
+                accum_1h_rain = sum_hourly("rain", 0, 1) or rain_val
+                accum_3h_rain = sum_hourly("rain", -2, 1)
+                accum_6h_rain = sum_hourly("rain", -5, 1)
+                accum_24h_rain = sum_hourly("rain", -23, 1)
+
+                accum_3h_precip = sum_hourly("precipitation", -2, 1)
+                accum_24h_precip = sum_hourly("precipitation", -23, 1)
+
+                # Next 24h forecasts
+                forecast_24h_rain = sum_hourly("rain", 0, 24)
+                forecast_24h_precip = sum_hourly("precipitation", 0, 24)
+
                 # Soil moisture
                 sm_list = hourly.get("soil_moisture_0_to_1cm", [])
                 sm_val = float(sm_list[curr_idx]) if sm_list and curr_idx < len(sm_list) and sm_list[curr_idx] is not None else 0.30
@@ -97,16 +101,24 @@ class WeatherService:
                 
                 return {
                     "success": True,
-                    "rainfall_rate": round(precip_val, 1) if precip_val is not None else None,
-                    "rainfall_display": f"{round(precip_val, 1)} mm/hr" if precip_val is not None else "Unavailable",
-                    "rainfall_mm": accum_24h,
-                    "rainfall_intensity": cls.get_intensity_label(precip_val),
+                    "rainfall_rate": round(rain_val, 1) if rain_val is not None else (round(precip_val, 1) if precip_val is not None else None),
+                    "rainfall_display": f"{round(rain_val if rain_val is not None else precip_val, 1)} mm/hr" if (rain_val is not None or precip_val is not None) else "Unavailable",
+                    "rain_mm_hr": round(rain_val, 1) if rain_val is not None else None,
+                    "precipitation_mm_hr": round(precip_val, 1) if precip_val is not None else None,
+                    "accum_1h_rain_mm": accum_1h_rain,
+                    "accum_3h_rain_mm": accum_3h_rain,
+                    "accum_6h_rain_mm": accum_6h_rain,
+                    "accum_24h_rain_mm": accum_24h_rain,
+                    "accum_24h_precipitation_mm": accum_24h_precip,
+                    "forecast_24h_rain_mm": forecast_24h_rain,
+                    "forecast_24h_precipitation_mm": forecast_24h_precip,
+                    "rainfall_mm": accum_24h_rain or forecast_24h_precip,
+                    "rainfall_intensity": cls.get_intensity_label(rain_val if rain_val is not None else precip_val),
                     "soil_saturation_pct": round(soil_sat_pct, 1),
                     "temperature_c": round(temp, 1) if temp is not None else None,
                     "wind_speed_kmh": round(wind, 1) if wind is not None else None,
                     "is_live_data": True,
                     "request_url": url,
-                    "field_read": field_read,
                     "matched_hourly_index": curr_idx,
                     "matched_hourly_time": times[curr_idx] if curr_idx < len(times) else None
                 }
